@@ -2,7 +2,22 @@
 name = "orca"
 version = "0.1.0"
 edition = "2021"
+description = "Orca is Automation Tool for testing framework that will help to automate the application testing faster"
+authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
+keywords = ["Orca", "Automation", "testing", "automation-tool"]
+license = "MIT"
+readme = "README.md"
+include = ["src/**/*", "tests/**/*", "Cargo.toml", "LICENSE"]
+repository = "https://github.com/workfoxes/besozzi"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+hyper = { version = "0.14", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
+
+actix = "0.10.0"
+actix-web = "3"
+actix-web-actors = "3.0.0"
+serde = "1.0.117"
+chrono = { version = "0.4", features = ["serde", "rustc-serialize"] }
