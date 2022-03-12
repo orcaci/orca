@@ -1,0 +1,10 @@
+[package]
+name = "antr"
+version = "0.1.0"
+edition = "2021"
+description = "Antr is a Rust verstion of antd (https://ant.design/docs/react/introduce-cn)"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+yew = { git = "https://github.com/yewstack/yew/" }

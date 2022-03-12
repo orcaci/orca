@@ -1,0 +1,25 @@
+[package]
+name = "base"
+version = "0.1.0"
+edition = "2021"
+description = "Engine Have all the common code for the Besozzi"
+authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-http = "2"
+actix-web = "3"
+actix-flash = "0.2"
+actix-files = "0.5"
+futures = { version = "^0.3" }
+futures-util = { version = "^0.3" }
+tera = "1.8.0"
+dotenv = "0.15"
+listenfd = "0.3.3"
+serde = { version = "1.0.123", features = ["derive"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+config = "0.12"
+lazy_static = "1.4.0"
+redis = "0.21.5"
+sea-orm = { version = "0.6.0", default-features = false, features = [ "macros", "debug-print", "runtime-async-std-native-tls", "sqlx-postgres"] }
