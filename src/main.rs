@@ -1,5 +1,7 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 use actix_web::middleware::Logger;
-use env_logger::Env;
 use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 use actix_web::{dev, http, web, App, HttpResponse, HttpServer, Result};
 
@@ -18,7 +20,6 @@ fn add_error_header<B>(mut res: dev::ServiceResponse<B>) -> Result<ErrorHandlerR
 /// main - This is application server that will accessible with API
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::init_from_env(Env::default().default_filter_or("info"));
 
     HttpServer::new(|| {
         App::new()

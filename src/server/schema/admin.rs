@@ -1,8 +1,8 @@
-table! {
-    User (id) {
-        id -> Int4,
-        title -> Varchar,
-        body -> Text,
-        published -> Bool,
-    }
-}
+// table! {
+//     User (id) {
+//         id -> Int4,
+//         title -> Varchar,
+//         body -> Text,
+//         published -> Bool,
+//     }
+// }
