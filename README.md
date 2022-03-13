@@ -1,5 +1,6 @@
 # 🐠 [Orca](https://orca.workfoxes.in)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2d958b72ca3b4bf89d5468b039b5a9ed)](https://app.codacy.com/gh/workfoxes/orca?utm_source=github.com&utm_medium=referral&utm_content=workfoxes/orca&utm_campaign=Badge_Grade_Settings)
 [![MIT OR Apache-2.0](https://img.shields.io/crates/l/orca)](https://github.com/workfoxes/orca/blob/main/LICENSE)
 [![codecov](https://codecov.io/gh/workfoxes/orca/branch/master/graph/badge.svg)](https://codecov.io/gh/workfoxes/orca)
 
