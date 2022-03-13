@@ -1,6 +1,7 @@
 use sea_orm::DatabaseConnection;
 
 
+#[derive(Debug, Clone)]
 pub struct Database {
     connection_url: String,
     conn: DatabaseConnection,

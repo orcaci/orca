@@ -1,25 +1,40 @@
 
-// use lazy_static::lazy_static;
+use futures::executor;
 
 pub mod database;
 pub mod redis;
 
+#[derive(Debug, Clone, Default)]
+pub struct Client {
+    database: Option<database::Database>,
+    redis: Option<redis::Redis>,
+}
 
-// lazy_static! {
-//     pub static ref DB = database::Database::new(super::CONFIG.database.url.clone()).await();
-// }
+impl Client {
+    pub fn default() -> Self {
+        Client {
+            database: None,
+            redis: None,
+        }
+    }
+
+    pub fn database(mut self) -> database::Database {
+        if let Some(x) = self.database.clone() {
+            return x;
+        } else {
+            let database = executor::block_on(database::Database::new(super::CONFIG.database.url.clone()));
+            self.database = Some(database.clone());
+            return database;
+        }
+    }
+}
 
 
-// struct Client {
-//     database: database::Database,
-//     redis: redis::Redis,
-// }
-
-// impl Client {
-//     async fn new() -> Self {
-//         Client {
-//             database: database::Database::new(super::CONFIG.database.url.clone()).await,
-//             redis: redis::Redis::new(super::CONFIG.redis.url.clone()),
-//         }
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        let cli = super::Client::default();
+        let database = cli.database();
+    }
+}
