@@ -12,4 +12,4 @@ jobs:
       - uses: actions/checkout@v2.4.0
       - uses: readmeio/rdme@7.0.0
         with:
-          rdme: openapi ./docs/swagger --key=76nXXxtuRkdYBY8BE1GX1Vfs18Ptmu42 --id=ORCA
+          rdme: openapi ./docs/swagger/orca.yaml --key=76nXXxtuRkdYBY8BE1GX1Vfs18Ptmu42 --id=ORCA
