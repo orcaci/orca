@@ -5,7 +5,6 @@ use base::middleware::error;
 mod core;
 mod route;
 mod server;
-pub mod entity;
 
 
 /// main - This is application server that will accessible with API
