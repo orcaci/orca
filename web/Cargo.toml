@@ -7,7 +7,8 @@ edition = "2021"
 
 [dependencies]
 antr = { path ="../antr"}
-yew = { git = "https://github.com/yewstack/yew/" }
+yew = "0.19"
+yew-router = "0.16.0"
 stylist = "0.10"
 gloo-console = "0.2"
 gloo-timers = "0.2"

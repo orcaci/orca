@@ -1,5 +1,6 @@
 pub mod components;
 pub mod pages;
+pub mod routes;
 
 use yew::prelude::*;
 
@@ -7,7 +8,9 @@ use yew::prelude::*;
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <h1>{ "Hello World" }</h1>
+        <div>
+            <routes.GlobalLayout></routes.GlobalLayout>
+        </div>
     }
 }
 
