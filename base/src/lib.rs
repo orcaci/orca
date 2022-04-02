@@ -1,6 +1,9 @@
 pub mod client;
 pub mod config;
 pub mod env;
+pub mod middleware;
+pub mod utils;
+pub mod server;
 
 
 use lazy_static::lazy_static;

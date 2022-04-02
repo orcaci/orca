@@ -7,4 +7,18 @@ description = "Antr is a Rust verstion of antd (https://ant.design/docs/react/in
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-yew = { git = "https://github.com/yewstack/yew/" }
+yew = "0.19"
+yew-router = "0.16.0"
+stylist = "0.10"
+gloo-console = "0.2"
+gloo-timers = "0.2"
+js-sys = "0.3"
+wasm-bindgen = "0.2"
+wasm-logger = "0.2"
+log = "0.4"
+lipsum = "0.8"
+instant = { version = "0.1", features = ["wasm-bindgen"] }
+getrandom = { version = "0.2", features = ["js"] }
+rand = { version = "0.8", features = ["small_rng"] }
+serde = { version = "1.0", features = ["derive"] }
+lazy_static = "1.4.0"

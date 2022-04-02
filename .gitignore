@@ -13,3 +13,6 @@ Cargo.lock
 
 **/dist
 **target
+
+.vscode
+example

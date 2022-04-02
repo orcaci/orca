@@ -1,0 +1,90 @@
+swagger: "2.0"
+info:
+  description: "Orca - is test automation application that will help application automation with the Record and Playback. [Chromium](https://www.chromium.org/Home), [Firefox](https://www.mozilla.org/en-US/firefox/new/) and [WebKit](https://webkit.org/) built on top of Node.js library."
+  version: "0.1.0"
+  title: "Orca"
+  termsOfService: "https://github.com/workfoxes/orca#readme"
+  contact:
+    email: "itsparser@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "petstore.swagger.io"
+basePath: "/v1"
+tags:
+  - name: "user"
+    description: "Everything about user Management"
+    externalDocs:
+      description: "Find out more about Here"
+      url: "http://swagger.io"
+  - name: "group"
+    description: "Everything about group Management"
+  - name: "enviroment"
+    description: "Everything about enviroment Management"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /admin/user/:
+    get:
+      tags:
+        - "user"
+      summary: "list of all the user based on the query params"
+      description: "list of all the user based on the query params"
+      operationId: "getUsers"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "User object that needs got filter in params"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "405":
+          description: "Invalid input"
+      security:
+        - petstore_auth:
+            - "read:user"
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify pets in your account"
+      read:user: "Read User Information"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  User:
+    type: "object"
+    required:
+      - "name"
+      - "age"
+      - "status"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        example: "Jane dow"
+      age:
+        type: "integer"
+        format: "int64"
+      status:
+        type: "string"
+        description: "user status in the store"
+        enum:
+          - "Invited"
+          - "Active"
+          - "Inactive"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"

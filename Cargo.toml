@@ -7,21 +7,23 @@ authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
 
 
 [dependencies]
-actix = "0.10.0"
-actix-http = "2"
-actix-web = "3"
+actix = "0.13.0"
+actix-service = "2.0.2"
+actix-http = "3.0.4"
+actix-web = "4.0.1"
 actix-flash = "0.2"
-actix-files = "0.5"
-actix-web-actors = "3.0.0"
+actix-files = "0.6.0"
+actix-web-actors = "4.1.0"
 futures = { version = "^0.3" }
 futures-util = { version = "^0.3" }
 tera = "1.8.0"
 dotenv = "0.15"
-listenfd = "0.3.3"
+listenfd = "0.5.0"
 serde = { version = "1.0.123", features = ["derive"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 config = "0.12"
 lazy_static = "1.4.0"
 redis = "0.21.5"
 sea-orm = { version = "0.6.0", default-features = false, features = [ "macros", "debug-print", "runtime-async-std-native-tls", "sqlx-postgres"] }
-base={path="base", version="0.1.0"}
+base = { path = "base" }
+entity = { path = "entity" }
