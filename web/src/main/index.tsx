@@ -15,6 +15,11 @@ const TAB_MENU_OPTIONS = [
     name: "Test suites",
     route: "/home",
     icon: <HeatMapOutlined />
+  },
+  {
+    name: "User Management",
+    route: "/admin",
+    icon: <HeatMapOutlined />
   }
 ];
 
