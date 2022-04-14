@@ -1,0 +1,11 @@
+---
+languages:
+  css:
+    extensions:
+      - "-css.resource"
+exclude_paths:
+  - ".github/**"
+  - "spec/**/*"
+  - "benchmarks/**/*"
+  - "**.min.js"
+  - "**/tests/**"
