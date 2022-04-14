@@ -1,0 +1,16 @@
+.container {
+    height: 100%;
+    display: flex;
+    align-items: initial;
+    justify-content: center;
+}
+
+.userTable {
+    width: 98%;
+}
+
+.userDelete {
+    color: red;
+    background-color: transparent;
+    text-decoration: none;
+}
