@@ -2,8 +2,11 @@ use actix_http::HttpMessage;
 use actix_web::{web, Responder, Scope, HttpRequest, HttpResponse};
 use base::utils::request::query_params;
 use entity::{prelude::*, user};
+use entity::user_group::Relation::User;
 use sea_orm::Set;
 use sea_orm::ActiveModelTrait;
+use sea_orm::EntityTrait;
+use sea_orm::QueryOrder;
 use crate::server::context::request::RequestContext;
 
 /// register - this will register all the endpoint in admin route
@@ -20,8 +23,8 @@ pub fn admin_config(cfg: &mut web::ServiceConfig) {
                 )
                 .service(
                     web::scope("/role")
-                        .route("/", web::get().to(get_users))
-                        .route("/", web::post().to(get_users))
+                        .route("/", web::get().to(get_user))
+                        .route("/", web::post().to(get_user))
                         .route("/{id}", web::delete().to(get_user))
                         .route("/{id}", web::put().to(get_user))
                         .route("/{id}", web::get().to(get_user)),
@@ -30,9 +33,9 @@ pub fn admin_config(cfg: &mut web::ServiceConfig) {
 }
 
 
-async fn create_user(req: &HttpRequest, user: web::Json<user::User>) -> impl Responder {
+async fn create_user(user: web::Json<user::User>) -> impl Responder {
     // let params = query_params(req);
-    let request_ctx = req.extensions().get::<RequestContext>().unwrap();
+    let request_ctx = RequestContext::default();
     let db = request_ctx.database();
     let u = user.into_inner();
     let f = user::ActiveModel {
@@ -49,8 +52,13 @@ async fn create_user(req: &HttpRequest, user: web::Json<user::User>) -> impl Res
     HttpResponse::Created().json(f)
 }
 
-async fn get_users() -> impl Responder {
-    "Hello world!"
+/// Get the user Based on the filter
+async fn get_users() -> Result<HttpResponse, MyError> {
+    let request_ctx = RequestContext::default();
+    let db = request_ctx.database();
+    let users :Vec<entity::user::Model> = user::Entity::find().order_by_asc(user::Column::Name).all(&db.conn).await?;
+    // println!("{}",users);
+    Ok(HttpResponse::Ok().json(users))
 }
 
 async fn get_user(path: web::Path<(u32,)>) -> impl Responder {

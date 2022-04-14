@@ -2,6 +2,7 @@
 
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
+use sea_orm::EntityTrait;
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct User {
