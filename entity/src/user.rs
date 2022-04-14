@@ -2,6 +2,7 @@
 
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
+use sea_orm::EntityTrait;
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct User {
@@ -21,6 +22,7 @@ pub struct Model {
     pub last_name: Option<String>,
     pub name: String,
     pub email: String,
+    pub is_active: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

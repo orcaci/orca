@@ -1,8 +1,15 @@
 
 use futures::executor;
+use lazy_static::lazy_static; // 1.4.0
+use std::sync::Mutex;
 
 pub mod database;
 pub mod redis;
+
+
+lazy_static! {
+    pub static ref CLIENT: Mutex<Client> = Mutex::new(Client::default());
+}
 
 #[derive(Debug, Clone, Default)]
 pub struct Client {
