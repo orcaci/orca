@@ -21,6 +21,7 @@ pub struct Model {
     pub last_name: Option<String>,
     pub name: String,
     pub email: String,
+    pub is_active: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
