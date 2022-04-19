@@ -7,6 +7,7 @@ authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
 
 
 [dependencies]
+log = "0.4.16"
 actix = "0.13.0"
 actix-service = "2.0.2"
 actix-http = "3.0.4"

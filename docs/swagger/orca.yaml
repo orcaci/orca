@@ -5,11 +5,11 @@ info:
   title: "Orca"
   termsOfService: "https://github.com/workfoxes/orca#readme"
   contact:
-    email: "itsparser@gmail.com"
+    email: "admin@workfoxes.in"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "petstore.swagger.io"
+host: "orca.workfoxes.in"
 basePath: "/v1"
 tags:
   - name: "user"
@@ -19,6 +19,8 @@ tags:
       url: "http://swagger.io"
   - name: "group"
     description: "Everything about group Management"
+  - name: "Profile"
+    description: "Profile Management"
   - name: "enviroment"
     description: "Everything about enviroment Management"
 schemes:
@@ -29,9 +31,28 @@ paths:
     get:
       tags:
         - "user"
-      summary: "list of all the user based on the query params"
-      description: "list of all the user based on the query params"
+      summary: "list of all active user based on the query params"
+      description: "list of all active user based on the query params"
       operationId: "getUsers"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        "400":
+          description: "Invalid status value"
+    post:
+      tags:
+        - "user"
+      summary: "Create New User as inactive status"
+      description: "Create New User as inactive status"
+      operationId: "createUser"
       consumes:
         - "application/json"
       produces:
@@ -44,11 +65,465 @@ paths:
           schema:
             $ref: "#/definitions/User"
       responses:
+        "200":
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/User"
         "405":
           description: "Invalid input"
-      security:
-        - petstore_auth:
-            - "read:user"
+  /admin/user/{userId}/:
+    get:
+      tags:
+        - "user"
+      summary: "list of all active user based on the query params"
+      description: "list of all active user based on the query params"
+      operationId: "getUser"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "ID of user to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "204":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Invalid status value"
+    delete:
+      tags:
+        - "user"
+      summary: "Delete the user which id is in params"
+      description: "Delete the user which id is in params"
+      operationId: "deleteUser"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "ID of user to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        "400":
+          description: "Invalid status value"
+    put:
+      tags:
+        - "user"
+      summary: "Update Existing User which are active status"
+      description: "Update Existing User which are active status"
+      operationId: "updateUser"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "ID of user to return"
+          required: true
+          type: "integer"
+          format: "int64"
+        - in: "body"
+          name: "body"
+          description: "User object that needs got filter in params"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "200":
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/SuccessResponse"
+        "405":
+          description: "Invalid input"
+  /admin/group/:
+    get:
+      tags:
+        - "group"
+      summary: "list of all active group based on the query params"
+      description: "list of all active group based on the query params"
+      operationId: "getGroups"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Group"
+        "400":
+          description: "Invalid status value"
+    post:
+      tags:
+        - "group"
+      summary: "Create New Group as inactive status"
+      description: "Create New Group as inactive status"
+      operationId: "createGroup"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "group object that needs got filter in params"
+          required: true
+          schema:
+            $ref: "#/definitions/Group"
+      responses:
+        "200":
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/Group"
+        "405":
+          description: "Invalid input"
+  /admin/group/{groupId}/:
+    get:
+      tags:
+        - "group"
+      summary: "Get the Group details By the Group Id"
+      description: "Get the Group details By the Group Id"
+      operationId: "getGroup"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "groupId"
+          in: "path"
+          description: "ID of group to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "204":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Group"
+        "400":
+          description: "Invalid status value"
+    delete:
+      tags:
+        - "group"
+      summary: "Delete the group which id is in params"
+      description: "Delete the group which id is in params"
+      operationId: "deletegroup"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "groupId"
+          in: "path"
+          description: "ID of group to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        "400":
+          description: "Invalid status value"
+    put:
+      tags:
+        - "group"
+      summary: "Update Existing Group which are active status"
+      description: "Update Existing Group which are active status"
+      operationId: "updateGroup"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "groupId"
+          in: "path"
+          description: "ID of user to return"
+          required: true
+          type: "integer"
+          format: "int64"
+        - in: "body"
+          name: "body"
+          description: "Group object params"
+          required: true
+          schema:
+            $ref: "#/definitions/Group"
+      responses:
+        "200":
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/SuccessResponse"
+        "405":
+          description: "Invalid input"
+  /profile/:
+    get:
+      tags:
+        - "Profile"
+      summary: "list of all active profile based on the query params"
+      description: "list of all active profile based on the query params"
+      operationId: "getProfiles"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Profile"
+        "400":
+          description: "Invalid status value"
+    post:
+      tags:
+        - "Profile"
+      summary: "Create New Profile"
+      description: "Create New Profile "
+      operationId: "createProfile"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Profile object that needs got filter in params"
+          required: true
+          schema:
+            $ref: "#/definitions/Profile"
+      responses:
+        "200":
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/Profile"
+        "405":
+          description: "Invalid input"
+  /profile/{profileId}/:
+    get:
+      tags:
+        - "Profile"
+      summary: "Get the Profile details By the Profile Id"
+      description: "Get the Profile details By the Profile Id"
+      operationId: "getProfile"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "profileId"
+          in: "path"
+          description: "ID of profile to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "204":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Profile"
+        "400":
+          description: "Invalid status value"
+    delete:
+      tags:
+        - "Profile"
+      summary: "Delete the Profile which id is in params"
+      description: "Delete the Profile which id is in params"
+      operationId: "deleteProfile"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "profileId"
+          in: "path"
+          description: "ID of Profile to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        "400":
+          description: "Invalid status value"
+    put:
+      tags:
+        - "Profile"
+      summary: "Update Existing Profile"
+      description: "Update Existing Profile"
+      operationId: "updateProfile"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "profileId"
+          in: "path"
+          description: "ID of user to return"
+          required: true
+          type: "integer"
+          format: "int64"
+        - in: "body"
+          name: "body"
+          description: "Profile object params"
+          required: true
+          schema:
+            $ref: "#/definitions/Profile"
+      responses:
+        "200":
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/SuccessResponse"
+        "405":
+          description: "Invalid input"
+  /profile/{profileId}/data/:
+    get:
+      tags:
+        - "Profile"
+      summary: "Get the Profile datas By the Profile Id"
+      description: "Get the Profile datas By the Profile Id"
+      operationId: "getProfileDatas"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "profileId"
+          in: "path"
+          description: "ID of profile to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "204":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ProfileData"
+        "400":
+          description: "Invalid status value"
+    post:
+      tags:
+        - "Profile"
+      summary: "Add Profile data"
+      description: "Add Profile data"
+      operationId: "addProfileData"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "profileId"
+          in: "path"
+          description: "ID of user to return"
+          required: true
+          type: "integer"
+          format: "int64"
+        - in: "body"
+          name: "body"
+          description: "Profile Data object params"
+          required: true
+          schema:
+            $ref: "#/definitions/ProfileData"
+      responses:
+        "200":
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/SuccessResponse"
+        "405":
+          description: "Invalid input"
+  /profile/{profileId}/data/{dataId}/:
+    delete:
+      tags:
+        - "Profile"
+      summary: "Delete the Profile data By the ProfileData Id"
+      description: "Get the Profile data By the ProfileData Id"
+      operationId: "deleteProfileData"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "profileId"
+          in: "path"
+          description: "ID of profile"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "dataId"
+          in: "path"
+          description: "ID of profile data to been deleted"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "204":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/SuccessResponse"
+        "400":
+          description: "Invalid status value"
+    patch:
+      tags:
+        - "Profile"
+      summary: "Update the Profile data By the ProfileData Id"
+      description: "Update the Profile data By the ProfileData Id"
+      operationId: "updateProfileData"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "profileId"
+          in: "path"
+          description: "ID of profile"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "dataId"
+          in: "path"
+          description: "ID of profile data to been updated"
+          required: true
+          type: "integer"
+          format: "int64"
+        - in: "body"
+          name: "body"
+          description: "Profile Data object params"
+          required: true
+          schema:
+            $ref: "#/definitions/ProfileData"
+      responses:
+        "204":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/SuccessResponse"
+        "400":
+          description: "Invalid status value"
 securityDefinitions:
   petstore_auth:
     type: "oauth2"
@@ -62,11 +537,53 @@ securityDefinitions:
     name: "api_key"
     in: "header"
 definitions:
+  SuccessResponse:
+    type: "object"
+    required:
+      - "status"
+    properties:
+      status:
+        type: "string"
+        example: "Sucess"
+  Group:
+    type: "object"
+    required:
+      - "name"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        example: "Sucess"
+  Profile:
+    type: "object"
+    required:
+      - "name"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        example: "Dev Env"
+  ProfileData:
+    type: "object"
+    required:
+      - "name"
+    properties:
+      name:
+        type: "string"
+        example: "env"
+      value:
+        type: "string"
+        format: "dev"
   User:
     type: "object"
     required:
       - "name"
-      - "age"
+      - "first_name"
+      - "email"
       - "status"
     properties:
       id:
@@ -75,9 +592,15 @@ definitions:
       name:
         type: "string"
         example: "Jane dow"
-      age:
-        type: "integer"
-        format: "int64"
+      first_name:
+        type: "string"
+        example: "Jane"
+      last_name:
+        type: "string"
+        example: "dow"
+      email:
+        type: "string"
+        example: "jane@gmail.com"
       status:
         type: "string"
         description: "user status in the store"

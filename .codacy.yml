@@ -1,0 +1,12 @@
+---
+languages:
+  css:
+    extensions:
+      - "-css.resource"
+exclude_paths:
+  - ".github/**"
+  - "**.md"
+  - "**.MD"
+  - "benchmarks/**/*"
+  - "**.min.js"
+  - "**/tests/**"
