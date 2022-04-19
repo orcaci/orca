@@ -20,6 +20,11 @@ const TAB_MENU_OPTIONS = [
     name: "User Management",
     route: "/admin",
     icon: <HeatMapOutlined />
+  },
+  {
+    name: "Profile",
+    route: "/profile",
+    icon: <HeatMapOutlined />
   }
 ];
 

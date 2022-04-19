@@ -14,10 +14,14 @@ export const MAIN_ROUTES = [
 export const HOME_ROUTES = [
     {
         path: "/home",
-        component: React.lazy(() => import("./home").then(({Homepage}) => ({default: Homepage})))
+        component: React.lazy(() => import("./page/home").then(({Homepage}) => ({default: Homepage})))
     },
     {
         path: "/admin",
-        component: React.lazy(() => import("./admin").then(({Adminpage}) => ({default:Adminpage})))
+        component: React.lazy(() => import("./page/admin").then(({Adminpage}) => ({default:Adminpage})))
+    },
+    {
+        path: "/profile",
+        component: React.lazy(() => import("./page/profile").then(({ProfileComponent}) => ({default:ProfileComponent})))
     }
-]
+];

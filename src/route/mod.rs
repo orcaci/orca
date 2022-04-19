@@ -4,6 +4,7 @@ use base::utils::request::generate_success_response;
 pub(crate) mod admin;
 pub(crate) mod ws;
 pub(crate) mod profile;
+pub(crate) mod case;
 
 /// general_config - this will register all the endpoint in common route
 pub fn general_config(cfg: &mut web::ServiceConfig) {

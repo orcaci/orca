@@ -5,37 +5,29 @@ use serde::{Deserialize, Serialize};
 
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
-pub struct ProfileData {
-    pub name: String,
-    pub value: String
+pub struct TestCase {
+    pub name: String
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
-#[sea_orm(table_name = "profile_data")]
+#[sea_orm(table_name = "test_case")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = true)]
     pub id: i32,
     pub name: String,
-    pub value: String,
-    pub profile_id: i32
+    pub is_deleted: bool
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::profile::Entity",
-        from = "Column::ProfileId",
-        to = "super::profile::Column::Id",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    Profile
+    #[sea_orm(has_many = "super::test_step::Entity")]
+    TestStep,
 }
 
 
-impl Related<super::profile::Entity> for Entity {
+impl Related<super::test_step::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Profile.def()
+        Relation::TestStep.def()
     }
 }
 

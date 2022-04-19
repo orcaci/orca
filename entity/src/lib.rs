@@ -4,9 +4,11 @@ pub mod prelude;
 pub mod user;
 pub mod user_group;
 pub mod group;
-// pub mod profile;
-// pub mod profile_data;
-// pub mod activity;
+pub mod profile;
+pub mod profile_data;
+pub mod activity;
+pub mod test_case;
+pub mod test_step;
 
 #[cfg(test)]
 mod tests {

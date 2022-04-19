@@ -9,7 +9,7 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "petstore.swagger.io"
+host: "orca.workfoxes.in"
 basePath: "/v1"
 tags:
   - name: "user"
@@ -46,9 +46,6 @@ paths:
       responses:
         "405":
           description: "Invalid input"
-      security:
-        - petstore_auth:
-            - "read:user"
 securityDefinitions:
   petstore_auth:
     type: "oauth2"

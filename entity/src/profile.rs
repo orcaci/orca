@@ -4,6 +4,12 @@ use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
 
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+pub struct Profile {
+    pub name: String,
+    pub is_default: bool
+}
+
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
 #[sea_orm(table_name = "profile")]
 pub struct Model {
@@ -15,7 +21,15 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(has_many = "super::profile_data::Entity")]
+    ProfileData,
 }
 
+
+impl Related<super::profile_data::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::ProfileData.def()
+    }
+}
 
 impl ActiveModelBehavior for ActiveModel {}

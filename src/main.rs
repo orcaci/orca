@@ -29,6 +29,8 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/v1")
                     .configure(route::general_config)
                     .configure(route::admin::admin_config)
+                    .configure(route::case::test_case_config)
+
                     .configure(route::profile::profile_config)
             )
     })
