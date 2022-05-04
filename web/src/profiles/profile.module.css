@@ -1,0 +1,22 @@
+.profilecontainer {
+  height: 100%;
+}
+
+.breadcrumbcontainer {
+  margin-bottom: 1.2rem;
+}
+
+.createcontainer {
+  margin-bottom: 1.2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.inputcontainer {
+  margin-bottom: 2rem;
+}
+
+.buttoncontainer {
+  display: flex;
+  justify-content: flex-end;
+}
