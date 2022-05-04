@@ -18,8 +18,8 @@ pub struct Reponse {
 }
 
 pub fn generate_success_response(status_code: Option<http::StatusCode>, status: Option<String>, data: Option<Value>) -> Result<HttpResponse> {
-    let _status = status.unwrap_or("Success".into());
-    let response = Reponse{
+    let _status = status.unwrap_or("success".into());
+    let response = Reponse {
         status: _status,
         data: data.clone(),
     };

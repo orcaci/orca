@@ -1,15 +1,14 @@
-use actix_http::{HttpMessage, StatusCode};
-use actix_web::{Error, HttpRequest, HttpResponse, Responder, Scope, web};
+use actix_web::{http, HttpResponse, Responder, web};
 use actix_web::web::Path;
-use base::utils::request::query_params;
-use entity::{prelude::*, user};
-use entity::user_group::Relation::User;
+use base::utils::request::generate_success_response;
+use entity::user;
 use sea_orm::ActiveModelTrait;
-use sea_orm::EntityTrait;
-use sea_orm::QueryOrder;
-use sea_orm::QueryFilter;
 use sea_orm::ColumnTrait;
+use sea_orm::EntityTrait;
+use sea_orm::QueryFilter;
+use sea_orm::QueryOrder;
 use sea_orm::Set;
+use serde_json::Value;
 
 use crate::server::context::request::RequestContext;
 
@@ -50,6 +49,7 @@ async fn get_users() -> HttpResponse {
 }
 
 
+/// Create User for orca
 async fn create_user(user: web::Json<user::User>) -> impl Responder {
     // let params = query_params(req);
     let request_ctx = RequestContext::default();
@@ -60,6 +60,7 @@ async fn create_user(user: web::Json<user::User>) -> impl Responder {
         last_name: Set(u.last_name.to_owned()),
         email: Set(u.email.to_owned()),
         name: Set(u.name.to_owned()),
+        is_active: Set(u.is_active.to_owned().or(Some(false)).unwrap()),
         ..Default::default()
     }.insert(&db.conn).await;
     let f = match f {
@@ -69,24 +70,26 @@ async fn create_user(user: web::Json<user::User>) -> impl Responder {
     HttpResponse::Created().json(f)
 }
 
-async fn update_user(path: Path<i32>, user: web::Json<user::User>) -> impl Responder {
+async fn update_user(path: Path<i32>, body: web::Json<Value>) -> impl Responder {
     let id = path.into_inner();
     let request_ctx = RequestContext::default();
     let db = request_ctx.database();
-    let u = user.into_inner();
-    let _user = user::ActiveModel {
-        first_name: Set(u.first_name.to_owned()),
-        last_name: Set(u.last_name.to_owned()),
-        email: Set(u.email.to_owned()),
-        name: Set(u.name.to_owned()),
-        ..Default::default()
-    }.save(&db.conn).await;
-    let response = match _user {
+    let existing_user = user::Entity::find_by_id(id).one(&db.conn).await.unwrap();
+    if existing_user.is_none() {
+        return generate_success_response(Some(http::StatusCode::NOT_FOUND),
+                                         Some("User Not Found".parse().unwrap()), None);
+    }
+    let mut _user: user::ActiveModel = existing_user.unwrap().into();
+    _user.name = Set(body.get("name").and_then(Value::as_str).unwrap_or(&_user.name.take().unwrap()).to_owned());
+    _user.first_name = Set(body.get("first_name").and_then(Value::as_str).unwrap_or(&_user.first_name.take().unwrap()).to_owned());
+    _user.last_name = Set(Some(body.get("last_name").and_then(Value::as_str).unwrap().to_owned()));
+    _user.is_active = Set(body.get("is_active").and_then(Value::as_bool).unwrap().to_owned());
+    let response = _user.save(&db.conn).await;
+    let _response = match response {
         Ok(file) => file,
         Err(error) => panic!("Error while inserting: {:?}", error),
     };
-    todo!("need to test this and fix this up");
-    HttpResponse::Ok()
+    generate_success_response(None, None, None)
 }
 
 async fn delete_user(path: Path<i32>) -> impl Responder {
@@ -107,12 +110,17 @@ async fn get_user(path: Path<i32>) -> impl Responder {
     let id = path.into_inner();
     let request_ctx = RequestContext::default();
     let db = request_ctx.database();
-    let user = user::Entity::find_by_id(id).one(&db.conn).await;
-    let response = match user {
+    let existing_user = user::Entity::find_by_id(id).filter(user::Column::IsActive.eq(true))
+        .one(&db.conn).await;
+    let response = match existing_user {
         Ok(_users) => _users,
         Err(error) => panic!("Error while inserting: {:?}", error),
     };
-    HttpResponse::Ok().json(response)
+    if response.is_none() {
+        return generate_success_response(Some(http::StatusCode::NOT_FOUND),
+                                         Some("User Not Found".parse().unwrap()), None);
+    }
+    Ok(HttpResponse::Ok().json(response))
 }
 
 async fn get_user_s(path: web::Path<(u32,)>) -> impl Responder {

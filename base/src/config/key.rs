@@ -8,13 +8,19 @@ use std::env;
 #[allow(unused)]
 pub struct Config {
     debug: bool,
-    pub database: Database
+    pub database: Database,
+    pub selinum: Selinum
 }
 
 #[derive(Debug, Deserialize)]
 #[allow(unused)]
 pub struct Database {
     pub url: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Selinum {
+    pub hub: String,
 }
 
 

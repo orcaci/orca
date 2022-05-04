@@ -1,7 +1,4 @@
-use actix_http::ContentEncoding;
-use actix_service::Service;
-use actix_web::{App, Error, http, HttpServer, middleware, web};
-use actix_web::dev::ServiceRequest;
+use actix_web::{App, http, HttpServer, middleware, web};
 use actix_web::middleware::{Compress, ErrorHandlers, Logger};
 use base::middleware::error;
 
@@ -25,12 +22,12 @@ async fn main() -> std::io::Result<()> {
                 http::StatusCode::INTERNAL_SERVER_ERROR,
                 error::add_error_header,
             ))
+            .configure(route::general_config)
             .service(
                 web::scope("/v1")
-                    .configure(route::general_config)
+                    .configure(route::auth::auth_config)
                     .configure(route::admin::admin_config)
                     .configure(route::case::test_case_config)
-
                     .configure(route::profile::profile_config)
             )
     })

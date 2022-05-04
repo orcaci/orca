@@ -8,9 +8,10 @@ use serde::{Deserialize, Serialize};
 pub struct TestStep {
     pub command: String,
     pub target: String,
-    pub value: String,
-    pub output: String,
-    pub desc: String
+    pub value: Option<String>,
+    pub output: Option<String>,
+    pub desc: Option<String>,
+    pub exection_order: i32
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
@@ -20,9 +21,12 @@ pub struct Model {
     pub id: i32,
     pub command: String,
     pub target: String,
-    pub value: String,
-    pub output: String,
-    pub desc: String,
+    #[sea_orm(nullable)]
+    pub value: Option<String>,
+    #[sea_orm(nullable)]
+    pub output: Option<String>,
+    #[sea_orm(nullable)]
+    pub desc: Option<String>,
     pub exection_order: i32,
     pub test_case_id: i32,
 }
