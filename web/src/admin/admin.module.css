@@ -14,3 +14,17 @@
     background-color: transparent;
     text-decoration: none;
 }
+
+.editModalElement {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.editModalElement input {
+    margin-bottom: 10px;
+}
+
+.editModalElement div {
+    margin-bottom: 5px;
+}
