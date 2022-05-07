@@ -24,6 +24,40 @@ services:
     volumes:
       - ./cache/postgresql:/var/lib/postgresql/data
 
+
+  orca-client:
+    build:
+      context: ./web
+      dockerfile: local.Dockerfile
+    image: orca/client
+    ports:
+      - "8000:3000"
+    container_name: orca-client
+    environment:
+      - SERVICE_NAME=orca
+      - ENV=Local
+    volumes:
+      - ./web:/app
+    depends_on: [postgres]
+    restart: always
+
+
+  orca-gateway:
+    build:
+      context: ./nginx
+      dockerfile: dev.Dockerfile
+    image: orca/gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    container_name: orca-gateway
+    depends_on:
+#      - orion-service
+      - orca-client
+    environment:
+      - ENV=Local
+      - PORT=80
+
   pgadmin:
     container_name: pgadmin4
     image: dpage/pgadmin4
