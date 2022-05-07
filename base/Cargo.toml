@@ -26,4 +26,4 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 config = "0.12"
 lazy_static = "1.4.0"
 redis = "0.21.5"
-sea-orm = { version = "0.6.0", default-features = false, features = [ "macros", "debug-print", "runtime-async-std-native-tls", "sqlx-postgres"] }
+sea-orm = { version = "0.7.1", default-features = false, features = [ "macros", "debug-print", "runtime-actix-native-tls", "sqlx-postgres"] }

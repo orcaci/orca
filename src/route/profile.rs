@@ -74,8 +74,16 @@ async fn get_profile(path: Path<i32>) -> impl Responder {
 }
 
 /// Delete the Single profile With ID
-async fn delete_profile() -> impl Responder {
-    "Got Profile By ID"
+async fn delete_profile(path: Path<i32>) -> impl Responder {
+    let id = path.into_inner();
+    let request_ctx = RequestContext::default();
+    let db = request_ctx.database();
+    let existing_profile = profile::Entity::delete_by_id(id).exec(&db.conn).await;
+    let _profile = match existing_profile {
+        Ok(_profile) => _profile,
+        Err(error) => panic!("Error while inserting: {:?}", error),
+    };
+    generate_success_response(None, None, None)
 }
 
 
@@ -115,8 +123,16 @@ async fn get_profile_data(path: Path<i32>) -> impl Responder {
 }
 
 /// Delete the Single profile data
-async fn delete_profile_data() -> impl Responder {
-    "delete Profile By ID"
+async fn delete_profile_data(path: Path<(i32, i32)>) -> impl Responder {
+    let (_profile_id, data_id) = path.into_inner();
+    let request_ctx = RequestContext::default();
+    let db = request_ctx.database();
+    let _profile_data = profile_data::Entity::delete_by_id(data_id).exec(&db.conn).await;
+    let _profile = match _profile_data {
+        Ok(_profile) => _profile,
+        Err(error) => panic!("Error while inserting: {:?}", error),
+    };
+    generate_success_response(None, None, None)
 }
 
 
