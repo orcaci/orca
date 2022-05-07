@@ -1,9 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+title: "[FR] - Feature request for orca"
+labels: enhancement
+assignees: itsparser
 
 ---
 

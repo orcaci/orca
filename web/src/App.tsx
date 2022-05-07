@@ -22,7 +22,7 @@ function App() {
           </Suspense>
         );
       })}
-      <Redirect to="/home" />
+      {/* <Redirect to="/home" /> */}
     </BrowserRouter>
   );
 }

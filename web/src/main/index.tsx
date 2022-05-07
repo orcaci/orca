@@ -20,6 +20,11 @@ const TAB_MENU_OPTIONS = [
     name: "User Management",
     route: "/admin",
     icon: <HeatMapOutlined />
+  },
+  {
+    name: "Profiles",
+    route: "/profiles",
+    icon: <HeatMapOutlined />
   }
 ];
 
@@ -49,14 +54,16 @@ export function Mainpage() {
         </Menu>
       </Sider>
       <Layout>
-        {HOME_ROUTES.map((route) => {
-          const Component = route.component;
-          return (
-            <Route path={`${route.path}`} key={route.path}>
-              <Component />
-            </Route>
-          );
-        })}
+        <div className={styles.layoutcontainer}>
+          {HOME_ROUTES.map((route) => {
+            const Component = route.component;
+            return (
+              <Route path={`${route.path}`} key={route.path}>
+                <Component />
+              </Route>
+            );
+          })}
+        </div>
       </Layout>
     </Layout>
   );
