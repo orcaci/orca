@@ -9,7 +9,14 @@
     width: 98%;
 }
 
+.userEdit {
+    cursor: pointer;
+    color: steelblue;
+    background-color: transparent;
+    text-decoration: none;
+}
 .userDelete {
+    cursor: pointer;
     color: red;
     background-color: transparent;
     text-decoration: none;
