@@ -21,3 +21,7 @@ Functions with two or more optional arguments are now passed with the builder pa
 - [saresend/selenium-rs](https://github.com/saresend/selenium-rs)
 - [https://crates.io/crates/webdriver](https://crates.io/crates/webdriver)
 - [mattsse/chromiumoxide](https://github.com/mattsse/chromiumoxide)
+
+
+----
+Thanks to `Jetbrains` for the [Open Source License](https://www.jetbrains.com/community/opensource/)
