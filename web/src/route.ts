@@ -35,5 +35,13 @@ export const HOME_ROUTES = [
         default: ProfilePage
       }))
     )
+  },
+  {
+    path: "/datatable",
+    component: React.lazy(() =>
+      import("./datatable").then(({ DataTable }) => ({
+        default: DataTable
+      }))
+    )
   }
 ];
