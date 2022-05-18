@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { Modal, Button } from "antd";
-
+import { Modal, Button, Input } from "antd";
+import style from "./datatable.module.css";
 interface ModalProps {
   handleColumnChange: any;
   handleOnSubmit: any;
   showModal: any;
   isModalVisible: any;
   handleCancel: any;
+  columnName: string;
+  columnError: string;
 }
 
 export const DataModal = (props: ModalProps) => {
@@ -15,9 +16,25 @@ export const DataModal = (props: ModalProps) => {
     handleOnSubmit,
     showModal,
     isModalVisible,
-    handleCancel
+    handleCancel,
+    columnName,
+    columnError
   } = props;
 
+  const customFooter = () => {
+    return [
+      <Button key="submit" type="primary" onClick={handleCancel}>
+        Cancel
+      </Button>,
+      <Button
+        type="primary"
+        onClick={handleOnSubmit}
+        disabled={columnError.length >= 1}
+      >
+        Okay
+      </Button>
+    ];
+  };
   return (
     <>
       <Button type="primary" onClick={showModal}>
@@ -28,8 +45,16 @@ export const DataModal = (props: ModalProps) => {
         visible={isModalVisible}
         onOk={handleOnSubmit}
         onCancel={handleCancel}
+        footer={customFooter()}
       >
-        <input onChange={handleColumnChange} />
+        <Input
+          placeholder="Enter Column Name"
+          onChange={handleColumnChange}
+          value={columnName}
+        />
+        {columnError.length >= 1 && (
+          <p className={style.columnError}>{columnError}</p>
+        )}
       </Modal>
     </>
   );

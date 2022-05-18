@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { IColumnItems } from "../interface/datatable";
 import { DataModal } from "./modal";
+import { Button } from "antd";
 import styles from "./datatable.module.css";
-
+import { Input } from "antd";
 export function DataTable() {
   const [rows, setRows] = useState<IColumnItems>([]);
   const [columnName, setColumnName] = useState<IColumnItems>("");
@@ -11,9 +12,12 @@ export function DataTable() {
   ]);
   const [columns, setColumns] = useState<IColumnItems>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [columnError, setColumnError] = useState("");
 
   const showModal = () => {
+    setColumnName("");
     setIsModalVisible(true);
+    setColumnError("");
   };
 
   const handleAddRow = () => {
@@ -28,6 +32,8 @@ export function DataTable() {
     if (columnName.length > 0) {
       setIntialColumns([...initialColumns, item]);
       setColumns([...columns, item]);
+      handleCancel();
+      setColumnName("");
     }
     return;
   };
@@ -35,14 +41,12 @@ export function DataTable() {
   const updateState = (e: React.ChangeEvent) => {
     let target = e.target.attributes as any;
     let prope = target.column.value;
-    let index = (e.target.attributes as any).index.value;
-    let fieldValue = target.value;
-    const tempRows = rows as any;
+    let index = target.index.value;
+    let fieldValue = e.target.value as any;
     const tempObj = rows[index] as any;
     tempObj[prope] = fieldValue;
-
-    tempRows[index] = tempObj;
-    setRows(tempRows);
+    rows[index] = tempObj;
+    setRows(rows);
   };
 
   const postResults = () => {
@@ -50,16 +54,23 @@ export function DataTable() {
   };
 
   const handleColumnChange = (e) => {
-    console.log(e.target.value, columns, "handleColumnChange");
-    // columns.map((column) => {
-    // if (column.name !== e.target.value) {
-    setColumnName(e.target.value);
-    // }
-    // });
+    const name = e.target.value.toLowerCase();
+    var nospecial = /^[^*|\":<>[\]{}`\\()';@&$=+]+$/;
+    initialColumns.map((column) => {
+      if (column.name !== name) {
+        setColumnName(name);
+        setColumnError("Duplicate column found");
+      } else {
+        setColumnError("");
+      }
+      return null;
+    });
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setColumnName("");
+    setColumnError("");
   };
 
   const handleOnSubmit = () => {
@@ -69,53 +80,58 @@ export function DataTable() {
   return (
     <div>
       <div className="container">
-        <div className="row clearfix">
-          <div className="col-md-12 column">
-            <table className="table table-bordered table-hover" id="tab_logic">
-              <div className={styles.columnHeader}>
+        <div>
+          <div>
+            <div className={styles.columnHeader}>
+              <table className={styles.customers}>
                 <thead>
                   <tr>
                     {initialColumns.map((column, index) => (
-                      <th className="text-center" key={index}>
+                      <th
+                        className={index !== 0 ? styles.initialHeader : ""}
+                        key={index}
+                      >
                         {column.name}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                {
-                  <DataModal
-                    handleColumnChange={handleColumnChange}
-                    handleOnSubmit={handleOnSubmit}
-                    showModal={showModal}
-                    isModalVisible={isModalVisible}
-                    handleCancel={handleCancel}
-                  />
-                }
-              </div>
-              <tbody>
-                {rows.map((item, idx) => (
-                  <tr key={idx}>
-                    <td>{idx + 1}</td>
-                    {columns.map((column, index) => (
-                      <td key={index}>
-                        <input
-                          type="text"
-                          data-column={column.name}
-                          data-index={idx}
-                          className="form-control"
-                          value={rows[idx][column]}
-                          onChange={(e) => updateState(e)}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button onClick={handleAddRow} className="btn btn-primary">
-              +
-            </button>
+                <tbody>
+                  {rows.map((item, idx) => (
+                    <tr key={idx}>
+                      <td>{idx + 1}</td>
+                      {columns.map((column, index) => (
+                        <td key={index}>
+                          <Input
+                            type="text"
+                            column={column.name}
+                            index={idx}
+                            value={rows[idx][column]}
+                            onChange={(e) => updateState(e)}
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {
+                <DataModal
+                  handleColumnChange={handleColumnChange}
+                  handleOnSubmit={handleOnSubmit}
+                  showModal={showModal}
+                  isModalVisible={isModalVisible}
+                  handleCancel={handleCancel}
+                  columnName={columnName}
+                  columnError={columnError}
+                />
+              }
+            </div>
           </div>
+          <Button onClick={handleAddRow} type="primary">
+            +
+          </Button>
+          <div onClick={postResults}>save</div>
         </div>
       </div>
     </div>

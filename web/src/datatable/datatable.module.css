@@ -1,5 +1,32 @@
+.customers td,
+.customers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.customers tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.customers tr:hover {
+  background-color: #ddd;
+}
+
+.customers th {
+  text-align: left;
+  background-color: #1890ff;
+  color: white;
+}
+
+.initialHeader {
+  width: 10rem;
+}
+
 .columnHeader {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+}
+
+.columnError {
+  color: red;
+  font-size: 12px;
 }
