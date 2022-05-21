@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { IColumnItems } from "../interface/datatable";
 import { DataModal } from "./modal";
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import styles from "./datatable.module.css";
 import { Input } from "antd";
 export function DataTable() {
   const [rows, setRows] = useState<IColumnItems>([]);
-  const [columnName, setColumnName] = useState<IColumnItems>("");
+  const [columnName, setColumnName] = useState("");
   const [initialColumns, setIntialColumns] = useState<IColumnItems>([
     { name: "S.NO" }
   ]);
@@ -38,11 +38,12 @@ export function DataTable() {
     return;
   };
 
-  const updateState = (e: React.ChangeEvent) => {
+  const updateState = (e: any) => {
     let target = e.target.attributes as any;
-    let prope = target.column.value;
-    let index = target.index.value;
-    let fieldValue = e.target.value as any;
+    console.log(target, "updateState");
+    let prope = target["data-column"].value;
+    let index = target["data-index"].value;
+    let fieldValue = e.target.value;
     const tempObj = rows[index] as any;
     tempObj[prope] = fieldValue;
     rows[index] = tempObj;
@@ -50,17 +51,24 @@ export function DataTable() {
   };
 
   const postResults = () => {
-    console.log(rows);
+    let isToast = false;
+    rows.map((each) => Object.keys(each).length >= 1)
+      ? console.log(rows)
+      : (isToast = true);
+
+    if (isToast)
+      notification.open({
+        message: "Please updated atleast one cell in all rows"
+      });
   };
 
-  const handleColumnChange = (e) => {
+  const handleColumnChange = (e: any) => {
     const name = e.target.value.toLowerCase();
-    var nospecial = /^[^*|\":<>[\]{}`\\()';@&$=+]+$/;
     initialColumns.map((column) => {
-      if (column.name !== name) {
-        setColumnName(name);
+      if (column.name === name) {
         setColumnError("Duplicate column found");
       } else {
+        setColumnName(name);
         setColumnError("");
       }
       return null;
@@ -104,9 +112,9 @@ export function DataTable() {
                         <td key={index}>
                           <Input
                             type="text"
-                            column={column.name}
-                            index={idx}
-                            value={rows[idx][column]}
+                            data-column={column.name}
+                            data-index={idx}
+                            value={rows?.idx?.column}
                             onChange={(e) => updateState(e)}
                           />
                         </td>
@@ -131,8 +139,14 @@ export function DataTable() {
           <Button onClick={handleAddRow} type="primary">
             +
           </Button>
-          <div onClick={postResults}>save</div>
         </div>
+        <Button
+          onClick={postResults}
+          type="primary"
+          className={styles.saveButton}
+        >
+          save
+        </Button>
       </div>
     </div>
   );

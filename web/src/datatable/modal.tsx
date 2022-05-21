@@ -23,7 +23,7 @@ export const DataModal = (props: ModalProps) => {
 
   const customFooter = () => {
     return [
-      <Button key="submit" type="primary" onClick={handleCancel}>
+      <Button type="primary" onClick={handleCancel}>
         Cancel
       </Button>,
       <Button

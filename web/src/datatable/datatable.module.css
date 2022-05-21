@@ -30,3 +30,8 @@
   color: red;
   font-size: 12px;
 }
+
+.saveButton {
+  display: flex;
+  margin-left: auto;
+}
