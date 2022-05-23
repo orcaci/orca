@@ -1,28 +1,35 @@
 .container {
-    height: 100%;
-    display: flex;
-    align-items: initial;
-    justify-content: center;
+  height: 100%;
+  display: flex;
+  align-items: initial;
+  justify-content: center;
 }
 
 .userTable {
-    width: 98%;
+  width: 98%;
 }
 
 .userEdit {
-    cursor: pointer;
-    color: steelblue;
-    background-color: transparent;
-    text-decoration: none;
+  cursor: pointer;
+  color: steelblue;
+  background-color: transparent;
+  text-decoration: none;
 }
 .userDelete {
-    cursor: pointer;
-    color: red;
-    background-color: transparent;
-    text-decoration: none;
+  cursor: pointer;
+  color: red;
+  background-color: transparent;
+  text-decoration: none;
 }
 
-.editModalElement {
+.buttoncontainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+/* .editModalElement {
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -34,4 +41,8 @@
 
 .editModalElement div {
     margin-bottom: 5px;
+} */
+
+.editModalElement :global(.ant-select-selector) {
+  border-radius: 8px !important;
 }

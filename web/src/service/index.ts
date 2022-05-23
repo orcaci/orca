@@ -24,6 +24,7 @@ function sendRequest(url: String, options?: RequestParams) {
   return fetch(request).then((response) => response.json());
 }
 
+
 export const Service = {
   get: async (url: String) => {
     return sendRequest(url);
@@ -31,5 +32,13 @@ export const Service = {
   post: (url: String, options: any) => {
     options.method = "POST";
     return sendRequest(url, options);
+  },
+  update: (url: String, options: any) => {
+    options.method = "PUT";
+    return sendRequest(url, options)
+  },
+  delete: (url: String, options: any={}) => {
+    options.method = "DELETE";
+    return sendRequest(url, options)
   }
 };
