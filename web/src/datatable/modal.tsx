@@ -1,5 +1,7 @@
 import { Modal, Button, Input } from "antd";
+
 import style from "./datatable.module.css";
+
 interface ModalProps {
   handleColumnChange: any;
   handleOnSubmit: any;
@@ -31,27 +33,24 @@ export const DataModal = (props: ModalProps) => {
         onClick={handleOnSubmit}
         disabled={columnError.length >= 1}
       >
-        Okay
+        Add
       </Button>
     ];
   };
+
   return (
     <>
       <Button type="primary" onClick={showModal}>
         +
       </Button>
       <Modal
-        title="Basic Modal"
+        title="Column Name"
         visible={isModalVisible}
         onOk={handleOnSubmit}
         onCancel={handleCancel}
         footer={customFooter()}
       >
-        <Input
-          placeholder="Enter Column Name"
-          onChange={handleColumnChange}
-          value={columnName}
-        />
+        <Input onChange={handleColumnChange} value={columnName} />
         {columnError.length >= 1 && (
           <p className={style.columnError}>{columnError}</p>
         )}

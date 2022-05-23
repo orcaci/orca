@@ -1,18 +1,18 @@
-.customers td,
-.customers th {
+.tableHead td,
+.tableHead th {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-.customers tr:nth-child(even) {
+.tableHead tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-.customers tr:hover {
+.tableHead tr:hover {
   background-color: #ddd;
 }
 
-.customers th {
+.tableHead th {
   text-align: left;
   background-color: #1890ff;
   color: white;

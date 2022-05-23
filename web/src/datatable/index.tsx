@@ -1,15 +1,16 @@
 import React, { useState } from "react";
+import { Button, notification, Input } from "antd";
 import { IColumnItems } from "../interface/datatable";
 import { DataModal } from "./modal";
-import { Button, notification } from "antd";
 import styles from "./datatable.module.css";
-import { Input } from "antd";
+
 export function DataTable() {
   const [rows, setRows] = useState<IColumnItems>([]);
   const [columnName, setColumnName] = useState("");
   const [initialColumns, setIntialColumns] = useState<IColumnItems>([
     { name: "S.NO" }
   ]);
+
   const [columns, setColumns] = useState<IColumnItems>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [columnError, setColumnError] = useState("");
@@ -40,7 +41,6 @@ export function DataTable() {
 
   const updateState = (e: any) => {
     let target = e.target.attributes as any;
-    console.log(target, "updateState");
     let prope = target["data-column"].value;
     let index = target["data-index"].value;
     let fieldValue = e.target.value;
@@ -52,9 +52,13 @@ export function DataTable() {
 
   const postResults = () => {
     let isToast = false;
-    rows.map((each) => Object.keys(each).length >= 1)
-      ? console.log(rows)
-      : (isToast = true);
+    rows.map((each) => {
+      const rowLength = Object.keys(each).length >= 1;
+      if (!rowLength) {
+        isToast = true;
+      }
+      return null;
+    });
 
     if (isToast)
       notification.open({
@@ -86,68 +90,62 @@ export function DataTable() {
   };
 
   return (
-    <div>
-      <div className="container">
-        <div>
-          <div>
-            <div className={styles.columnHeader}>
-              <table className={styles.customers}>
-                <thead>
-                  <tr>
-                    {initialColumns.map((column, index) => (
-                      <th
-                        className={index !== 0 ? styles.initialHeader : ""}
-                        key={index}
-                      >
-                        {column.name}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((item, idx) => (
-                    <tr key={idx}>
-                      <td>{idx + 1}</td>
-                      {columns.map((column, index) => (
-                        <td key={index}>
-                          <Input
-                            type="text"
-                            data-column={column.name}
-                            data-index={idx}
-                            value={rows?.idx?.column}
-                            onChange={(e) => updateState(e)}
-                          />
-                        </td>
-                      ))}
-                    </tr>
+    <React.Fragment>
+      <div>
+        <div className={styles.columnHeader}>
+          <table className={styles.tableHead}>
+            <thead>
+              <tr>
+                {initialColumns.map((column, index) => (
+                  <th
+                    className={index !== 0 && styles.initialHeader}
+                    key={index}
+                  >
+                    {column.name}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((item, idx) => (
+                <tr key={idx}>
+                  <td>{idx + 1}</td>
+                  {columns.map((column, index) => (
+                    <td key={index}>
+                      <Input
+                        type="text"
+                        data-column={column.name}
+                        data-index={idx}
+                        value={rows.idx?.column}
+                        onChange={updateState}
+                      />
+                    </td>
                   ))}
-                </tbody>
-              </table>
-              {
-                <DataModal
-                  handleColumnChange={handleColumnChange}
-                  handleOnSubmit={handleOnSubmit}
-                  showModal={showModal}
-                  isModalVisible={isModalVisible}
-                  handleCancel={handleCancel}
-                  columnName={columnName}
-                  columnError={columnError}
-                />
-              }
-            </div>
-          </div>
-          <Button onClick={handleAddRow} type="primary">
-            +
-          </Button>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <DataModal
+            handleColumnChange={handleColumnChange}
+            handleOnSubmit={handleOnSubmit}
+            showModal={showModal}
+            isModalVisible={isModalVisible}
+            handleCancel={handleCancel}
+            columnName={columnName}
+            columnError={columnError}
+          />
         </div>
-        <Button
-          onClick={postResults}
-          type="primary"
-          className={styles.saveButton}
-        >
-          save
+        <Button onClick={handleAddRow} type="primary">
+          +
         </Button>
       </div>
-    </div>
+      <Button
+        onClick={postResults}
+        type="primary"
+        className={styles.saveButton}
+      >
+        Save
+      </Button>
+    </React.Fragment>
   );
 }
