@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Button, notification, Input } from "antd";
 import { IColumnItems } from "../interface/datatable";
 import { DataModal } from "./modal";
@@ -39,7 +39,7 @@ export function DataTable() {
     return;
   };
 
-  const updateState = (e: any) => {
+  const updateState = (e: ChangeEvent<HTMLInputElement>) => {
     let target = e.target.attributes as any;
     let prope = target["data-column"].value;
     let index = target["data-index"].value;
@@ -66,7 +66,7 @@ export function DataTable() {
       });
   };
 
-  const handleColumnChange = (e: any) => {
+  const handleColumnChange = (e: ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value.toLowerCase();
     initialColumns.map((column) => {
       if (column.name === name) {
