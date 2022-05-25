@@ -22,8 +22,7 @@ code {
 }
 
 input {
-  height: 2.4rem !important;
-  border-radius: 8px !important;
+  border-radius: 8px !important; 
 }
 
 h1 {
