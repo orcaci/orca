@@ -2,78 +2,58 @@ import React, { useEffect } from "react";
 import styles from "./admin.module.css";
 import {
   Table,
-  // Tag,
   Space,
-  // Switch,
   Popconfirm,
   message,
   Form,
   Modal,
   Input,
-  // Select,
   Button
 } from "antd";
 import { Service } from "../../service";
-// import { Link } from "react-router-dom";
-// import {EditModal} from "../components/editModal/index"
-// const { Option } = Select;
+import { IUser, IUserList } from "../../interface/user";
 
-// const data = [
-//   {
-//     key: "1",
-//     name: "John Brown",
-//     email: "john@gmail.com",
-//     status: "Active",
-//     roles: ["admin"]
-//   },
-//   {
-//     key: "2",
-//     name: "Jim Green",
-//     email: "jim@gmail.com",
-//     status: "Active",
-//     roles: ["admin"]
-//   },
-//   {
-//     key: "3",
-//     name: "Joe Black",
-//     email: "joe@gmail.com",
-//     status: "Inactive",
-//     roles: ["user"]
-//   }
-// ];
+const MODAL_STATES = {
+  CREATE: "CREATE",
+  EDIT: "EDIT"
+};
+
+const INITIAL_USER_STATE = {
+  name: "",
+  first_name: "",
+  last_name: "",
+  email: ""
+};
 
 export function Adminpage() {
-  // const [visible, setVisible] = React.useState(false);
-  const [isCreate, setIsCreate] = React.useState(false);
+  const [modalState, setModalState] = React.useState<String>("");
   const [confirmLoading, setConfirmLoading] = React.useState(false);
-  // const [modalText, setModalText] = React.useState("");
-  const [modalData, setModalData] = React.useState<any>({});
-  const [userData, setUserData] = React.useState<any>([]);
+  const [modalData, setModalData] = React.useState<IUser>(INITIAL_USER_STATE);
+  const [userData, setUserData] = React.useState<IUserList>([]);
 
   useEffect(() => {
     Service.get("/v1/admin/user/").then((response) => setUserData(response));
   }, []);
 
-  const showModal = (record: any) => {
+  const showModal = (record: IUser) => {
+    setModalState(MODAL_STATES.EDIT);
     setModalData(record);
-    // setVisible(true);
   };
   const [form] = Form.useForm();
 
   function onCreateuserClick() {
     form.resetFields();
-    setIsCreate(true);
+    setModalState(MODAL_STATES.CREATE);
   }
 
-  const onFormSubmit = (values: any) => {
-    // console.log("MURALI createHandleOk VALUES", values);
-    function updateData(response: any) {
-      setUserData((state: any) => {
-        if (isCreate) {
+  const onFormSubmit = (values: IUser) => {
+    function updateData(response: IUser) {
+      setUserData((state: IUserList) => {
+        if (modalState === MODAL_STATES.CREATE) {
           return [...state, response];
         } else {
           const dataIndex = state.findIndex(
-            (user: any) => user.id === values.id
+            (user: IUser) => user.id === values.id
           );
           const cloneData = { ...values };
           state[dataIndex] = cloneData;
@@ -84,43 +64,34 @@ export function Adminpage() {
     }
     let url: String = "/v1/admin/user/";
     let promise = Service.post;
-    if (!isCreate) {
+    if (modalState !== MODAL_STATES.CREATE) {
       url = `/v1/admin/user/${values.id}`;
       promise = Service.update;
     }
     const body = { ...values };
     promise(url, { body })
-      .then((response: any) => {
+      .then((response: IUser) => {
         updateData(response);
       })
       .catch(() => {
-        updateData({});
+        updateData(INITIAL_USER_STATE);
       });
-    setModalData({});
-
-    // setModalText('The modal will be closed after two seconds');
+    setModalData(INITIAL_USER_STATE);
     setConfirmLoading(true);
-    // form.resetFields();
-    // setTimeout(() => {
-    setIsCreate(false);
+    setModalState("");
     setConfirmLoading(false);
-    // }, 2000);
   };
 
   const handleCancel = () => {
-    console.log("Clicked cancel button");
-    setIsCreate(false);
-    setModalData({});
-    // form.resetFields();
+    setModalState("");
+    setModalData(INITIAL_USER_STATE);
   };
 
-  function confirmDelete(e: any) {
-    console.log("e", e);
-
+  function confirmDelete(e: IUser) {
     let url: String = `/v1/admin/user/${e.id}`;
-    Service.delete(url).then((response: any) => {
-      setUserData((state: any) => {
-        return state.filter((item: any) => item.id !== e.id);
+    Service.delete(url).then(() => {
+      setUserData((state: IUserList) => {
+        return state.filter((item: IUser) => item.id !== e.id);
       });
     });
     message.success("User deleted successfully");
@@ -130,20 +101,17 @@ export function Adminpage() {
     {
       title: "Name",
       dataIndex: "name",
-      key: "name",
-      render: (text: any) => <span>{text}</span>
+      key: "name"
     },
     {
       title: "Firstname",
       dataIndex: "first_name",
-      key: "first_name",
-      render: (text: any) => <span>{text}</span>
+      key: "first_name"
     },
     {
       title: "Lastname",
       dataIndex: "last_name",
-      key: "last_name",
-      render: (text: any) => <span>{text}</span>
+      key: "last_name"
     },
     {
       title: "Email",
@@ -190,14 +158,13 @@ export function Adminpage() {
       title: "Action",
       key: "action",
       dataIndex: "action",
-      render: (text: string, record: any) => {
+      render: (text: String, record: IUser) => {
         return (
           <Space size="middle">
             <>
               <div
                 className={styles.userEdit}
                 onClick={() => {
-                  console.log("REC", record);
                   showModal({ ...record });
                 }}
               >
@@ -207,7 +174,6 @@ export function Adminpage() {
             <Popconfirm
               title="Are you sure want to delete this user?"
               onConfirm={() => confirmDelete(record)}
-              // onCancel={cancel}
               okText="Delete"
               cancelText="Cancel"
             >
@@ -225,9 +191,11 @@ export function Adminpage() {
         <Button type="primary" onClick={onCreateuserClick}>
           Create User
         </Button>
-        {(isCreate || Object.keys(modalData).length > 0) && (
+        {modalState && (
           <Modal
-            title={isCreate ? "Create User" : "Edit User"}
+            title={
+              modalState === MODAL_STATES.CREATE ? "Create User" : "Edit User"
+            }
             visible={true}
             onOk={form.submit}
             confirmLoading={confirmLoading}
