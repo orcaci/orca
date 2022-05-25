@@ -1,47 +1,29 @@
 .container {
   height: 100%;
   display: flex;
-  align-items: initial;
   justify-content: center;
 }
 
 .userTable {
-  width: 98%;
+  width: 100%;
+  padding: 0 1px;
 }
 
 .userEdit {
   cursor: pointer;
   color: steelblue;
-  background-color: transparent;
-  text-decoration: none;
 }
 .userDelete {
   cursor: pointer;
   color: red;
-  background-color: transparent;
-  text-decoration: none;
 }
 
 .buttoncontainer {
   display: flex;
   justify-content: flex-end;
-  margin-right: 10px;
+  margin-right: 2px;
   margin-bottom: 10px;
 }
-
-/* .editModalElement {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-}
-
-.editModalElement input {
-    margin-bottom: 10px;
-}
-
-.editModalElement div {
-    margin-bottom: 5px;
-} */
 
 .editModalElement :global(.ant-select-selector) {
   border-radius: 8px !important;

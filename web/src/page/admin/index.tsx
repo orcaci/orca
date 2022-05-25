@@ -28,74 +28,9 @@ const INITIAL_USER_STATE = {
 export function Adminpage() {
   const [modalState, setModalState] = React.useState<String>("");
   const [confirmLoading, setConfirmLoading] = React.useState(false);
-  const [modalData, setModalData] = React.useState<IUser>(INITIAL_USER_STATE);
+  const [editModalData, setEditModalData] =
+    React.useState<IUser>(INITIAL_USER_STATE);
   const [userData, setUserData] = React.useState<IUserList>([]);
-
-  useEffect(() => {
-    Service.get("/v1/admin/user/").then((response) => setUserData(response));
-  }, []);
-
-  const showModal = (record: IUser) => {
-    setModalState(MODAL_STATES.EDIT);
-    setModalData(record);
-  };
-  const [form] = Form.useForm();
-
-  function onCreateuserClick() {
-    form.resetFields();
-    setModalState(MODAL_STATES.CREATE);
-  }
-
-  const onFormSubmit = (values: IUser) => {
-    function updateData(response: IUser) {
-      setUserData((state: IUserList) => {
-        if (modalState === MODAL_STATES.CREATE) {
-          return [...state, response];
-        } else {
-          const dataIndex = state.findIndex(
-            (user: IUser) => user.id === values.id
-          );
-          const cloneData = { ...values };
-          state[dataIndex] = cloneData;
-          state[dataIndex].roles = [cloneData.roles].flat();
-          return [...state];
-        }
-      });
-    }
-    let url: String = "/v1/admin/user/";
-    let promise = Service.post;
-    if (modalState !== MODAL_STATES.CREATE) {
-      url = `/v1/admin/user/${values.id}`;
-      promise = Service.update;
-    }
-    const body = { ...values };
-    promise(url, { body })
-      .then((response: IUser) => {
-        updateData(response);
-      })
-      .catch(() => {
-        updateData(INITIAL_USER_STATE);
-      });
-    setModalData(INITIAL_USER_STATE);
-    setConfirmLoading(true);
-    setModalState("");
-    setConfirmLoading(false);
-  };
-
-  const handleCancel = () => {
-    setModalState("");
-    setModalData(INITIAL_USER_STATE);
-  };
-
-  function confirmDelete(e: IUser) {
-    let url: String = `/v1/admin/user/${e.id}`;
-    Service.delete(url).then(() => {
-      setUserData((state: IUserList) => {
-        return state.filter((item: IUser) => item.id !== e.id);
-      });
-    });
-    message.success("User deleted successfully");
-  }
 
   const columns = [
     {
@@ -185,6 +120,71 @@ export function Adminpage() {
     }
   ];
 
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    Service.get("/v1/admin/user/").then((response) => setUserData(response));
+  }, []);
+
+  const showModal = (record: IUser) => {
+    setModalState(MODAL_STATES.EDIT);
+    setEditModalData(record);
+  };
+
+  function onCreateuserClick() {
+    form.resetFields();
+    setModalState(MODAL_STATES.CREATE);
+  }
+
+  const onFormSubmit = (values: IUser) => {
+    function updateData(response: IUser) {
+      setUserData((state: IUserList) => {
+        if (modalState === MODAL_STATES.CREATE) {
+          return [response, ...state];
+        } else {
+          return [...state];
+        }
+      });
+    }
+    let url: String = "/v1/admin/user/";
+    let promise = Service.post;
+    if (modalState !== MODAL_STATES.CREATE) {
+      url = `/v1/admin/user/${values.id}`;
+      promise = Service.update;
+    }
+    const body = { ...values };
+    promise(url, { body })
+      .then((response: IUser) => {
+        updateData(response);
+      })
+      .catch(() => {
+        if (modalState === MODAL_STATES.EDIT) {
+          updateData(body);
+        }
+      });
+    resetStates();
+  };
+
+  const resetStates = () => {
+    setEditModalData(INITIAL_USER_STATE);
+    setConfirmLoading(true);
+    setModalState("");
+    setConfirmLoading(false);
+  };
+
+  const handleCancel = () => {
+    resetStates();
+  };
+
+  function confirmDelete(e: IUser) {
+    Service.delete(`/v1/admin/user/${e.id}`).then(() => {
+      setUserData((state: IUserList) => {
+        return state.filter((item: IUser) => item.id !== e.id);
+      });
+    });
+    message.success("User deleted successfully");
+  }
+
   return (
     <div>
       <div className={styles.buttoncontainer}>
@@ -208,8 +208,8 @@ export function Adminpage() {
               onFinish={(values) =>
                 onFormSubmit({
                   ...values,
-                  id: modalData.id,
-                  key: modalData.key
+                  id: editModalData.id,
+                  key: editModalData.key
                 })
               }
             >
@@ -219,7 +219,7 @@ export function Adminpage() {
                 label="Name"
                 rules={[{ required: true }]}
                 preserve={false}
-                initialValue={modalData.name}
+                initialValue={editModalData.name}
               >
                 <Input />
               </Form.Item>
@@ -229,7 +229,7 @@ export function Adminpage() {
                 label="First name"
                 rules={[{ required: true }]}
                 preserve={false}
-                initialValue={modalData.first_name}
+                initialValue={editModalData.first_name}
               >
                 <Input />
               </Form.Item>
@@ -239,7 +239,7 @@ export function Adminpage() {
                 label="Last name"
                 rules={[{ required: true }]}
                 preserve={false}
-                initialValue={modalData.last_name}
+                initialValue={editModalData.last_name}
               >
                 <Input />
               </Form.Item>
@@ -248,7 +248,7 @@ export function Adminpage() {
                 label="Email"
                 rules={[{ required: true }]}
                 preserve={false}
-                initialValue={modalData.email}
+                initialValue={editModalData.email}
               >
                 <Input type="email" />
               </Form.Item>
@@ -257,7 +257,7 @@ export function Adminpage() {
               label="Status"
               rules={[{ required: true }]}
               preserve={false}
-              initialValue={modalData.status}
+              initialValue={editModalData.status}
             >
               <Select
                 optionFilterProp="children"
@@ -278,7 +278,7 @@ export function Adminpage() {
               label="Role"
               rules={[{ required: true }]}
               preserve={false}
-              initialValue={modalData.roles}
+              initialValue={editModalData.roles}
             >
               <Select
                 optionFilterProp="children"
