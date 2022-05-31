@@ -12,7 +12,7 @@ const { Sider } = Layout;
 
 const TAB_MENU_OPTIONS = [
   {
-    name: "Test suites",
+    name: "Home",
     route: "/home",
     icon: <HeatMapOutlined />
   },
@@ -24,6 +24,11 @@ const TAB_MENU_OPTIONS = [
   {
     name: "Profiles",
     route: "/profiles",
+    icon: <HeatMapOutlined />
+  },
+  {
+    name: "Test Suite",
+    route: "/suite",
     icon: <HeatMapOutlined />
   }
 ];

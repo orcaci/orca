@@ -1,0 +1,19 @@
+.suitecontainer {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  grid-gap: 12px;
+}
+
+.editor {
+  width: 100%;
+  height: 600px;
+}
+
+.filename {
+  font-size: 16px;
+}
+
+.footerbutton {
+  display: flex;
+  justify-content: flex-end;
+}

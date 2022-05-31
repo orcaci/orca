@@ -35,5 +35,11 @@ export const HOME_ROUTES = [
         default: ProfilePage
       }))
     )
+  },
+  {
+    path: "/suite",
+    component: React.lazy(() =>
+      import("./test_suite").then(({ TestSuite }) => ({ default: TestSuite }))
+    )
   }
 ];

@@ -39,13 +39,6 @@ export function Profiles() {
       width: "40%"
     },
     {
-      title: "Value",
-      dataIndex: "value",
-      key: "value",
-      editable: true,
-      width: "40%"
-    },
-    {
       title: "Action",
       key: "action",
       editable: false,
