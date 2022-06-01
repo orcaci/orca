@@ -25,6 +25,11 @@ const TAB_MENU_OPTIONS = [
     name: "Profiles",
     route: "/profiles",
     icon: <HeatMapOutlined />
+  },
+  {
+    name: "DataTable",
+    route: "/datatable",
+    icon: <HeatMapOutlined />
   }
 ];
 
