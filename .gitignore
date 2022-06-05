@@ -17,3 +17,6 @@ Cargo.lock
 .vscode
 example
 **.DS_Store
+
+**sample**
+config

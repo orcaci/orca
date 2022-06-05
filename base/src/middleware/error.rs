@@ -6,6 +6,7 @@ use actix_web::{
     dev,
     http::header, Result,
 };
+use log::debug;
 
 // pub struct ErrorHandler;
 
@@ -65,6 +66,5 @@ pub fn add_error_header<B>(mut res: dev::ServiceResponse<B>) -> Result<ErrorHand
         header::CONTENT_TYPE,
         header::HeaderValue::from_static("Error"),
     );
-
     Ok(ErrorHandlerResponse::Response(res.map_into_left_body()))
 }

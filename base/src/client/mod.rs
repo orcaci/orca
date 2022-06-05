@@ -29,7 +29,8 @@ impl Client {
         if let Some(x) = self.database.clone() {
             return x;
         } else {
-            let database = executor::block_on(database::Database::new(super::CONFIG.database.url.clone()));
+            let future_db = database::Database::new(super::CONFIG.database.url.clone());
+            let database = executor::block_on(future_db); //"sqlite::memory:".to_string())); //
             self.database = Some(database.clone());
             return database;
         }

@@ -7,6 +7,7 @@ authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
 
 
 [dependencies]
+base64 = "0.13.0"
 log = "0.4.16"
 actix = "0.13.0"
 actix-service = "2.0.2"
@@ -28,5 +29,6 @@ lazy_static = "1.4.0"
 redis = "0.21.5"
 base = { path = "base" }
 entity = { path = "entity" }
+migration = { path = "migration" }
 
-sea-orm = { version = "0.7.1", default-features = true, features = [ "macros", "debug-print", "runtime-actix-native-tls", "sqlx-sqlite"] }
+sea-orm = { version = "0.8.0", default-features = true, features = [ "macros", "debug-print", "runtime-async-std-native-tls", "sqlx-postgres"] }

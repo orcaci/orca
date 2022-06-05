@@ -1,4 +1,5 @@
-use actix_web::{http, HttpResponse, Responder, web};
+use actix_web::{Error, http, HttpResponse, Responder, web};
+use actix_web::error::ErrorUnauthorized;
 use actix_web::web::Path;
 use base::utils::request::generate_success_response;
 use entity::user;
@@ -36,7 +37,7 @@ pub fn admin_config(cfg: &mut web::ServiceConfig) {
 }
 
 /// Get the user Based on the filter
-async fn get_users() -> HttpResponse {
+async fn get_users() -> Result<HttpResponse, Error> {
     let request_ctx = RequestContext::default();
     let db = request_ctx.database();
     let users = user::Entity::find().filter(user::Column::IsActive.eq(true))
@@ -45,7 +46,8 @@ async fn get_users() -> HttpResponse {
         Ok(_users) => _users,
         Err(error) => panic!("Error while inserting: {:?}", error),
     };
-    HttpResponse::Ok().json(response)
+    Err(ErrorUnauthorized("err"))
+    // HttpResponse::Ok().json(response)
 }
 
 

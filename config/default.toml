@@ -4,5 +4,5 @@ debug = false
 url = "postgresql://postgres:postgres@localhost:5432/postgres"
 
 [selinum]
-hub = "http://localhost:4444/wd/hub"
+hub = "http://34.72.113.188:4444/wd/hub"
 
