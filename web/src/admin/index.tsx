@@ -10,8 +10,8 @@ import {
   Input,
   Button
 } from "antd";
-import { Service } from "../../service";
-import { IUser, IUserList } from "../../interface/user";
+import { Service } from "../service";
+import { IUser, IUserList } from "../interface/user";
 
 const MODAL_STATES = {
   CREATE: "CREATE",

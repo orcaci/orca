@@ -1,0 +1,44 @@
+.login {
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login h1 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.login form {
+  width: 400px;
+  box-shadow: 0 0 3px gray;
+  padding: 20px;
+}
+
+.login button {
+  background-color: black;
+  box-shadow: none;
+  outline: none;
+  border: none;
+}
+
+.login .footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login input {
+  box-shadow: none;
+  outline: none;
+  border: 1px solid gray;
+}
+
+.login input:hover {
+  border: 1px solid gray;
+}
+
+.login input:focus {
+  border: 1px solid gray;
+}
