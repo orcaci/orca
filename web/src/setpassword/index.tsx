@@ -92,7 +92,7 @@ export function SetPassword() {
           <Button
             type="primary"
             htmlType="submit"
-            disabled={!(newPassword === confirmNewPassword)}
+            disabled={!(newPassword === confirmNewPassword && newPassword && confirmNewPassword)}
           >
             Create password
           </Button>
