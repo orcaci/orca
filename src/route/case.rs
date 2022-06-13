@@ -1,4 +1,4 @@
-use actix_web::{HttpRequest, HttpResponse, Responder, Scope, web};
+use actix_web::{Error, HttpRequest, HttpResponse, Responder, Scope, web};
 use actix_web::web::Path;
 use base::utils::request::generate_success_response;
 use entity::{prelude::*, profile, profile_data, user};
@@ -30,16 +30,15 @@ pub fn test_case_config(cfg: &mut web::ServiceConfig) {
 }
 
 /// list all the test cases in the Orca Application
-async fn get_cases() -> impl Responder {
+async fn get_cases() -> Result<HttpResponse, Error> {
     let request_ctx = RequestContext::default();
     let db = request_ctx.database();
-    let _profiles = profile::Entity::find().order_by_asc(profile::Column::Name).all(&db.conn).await;
-    let response = match _profiles {
-        Ok(_profile) => _profile,
+    let cases = test_case::Entity::find().order_by_asc(test_case::Column::Name).all(&db.conn).await;
+    let response = match cases {
+        Ok(_cases) => _cases,
         Err(error) => panic!("Error while inserting: {:?}", error),
     };
-    print!("{:?}", response);
-    HttpResponse::Ok().json(response)
+    Ok(HttpResponse::Ok().json(response))
 }
 
 /// Create New test case

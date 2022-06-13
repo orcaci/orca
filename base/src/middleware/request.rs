@@ -5,12 +5,12 @@ use actix_http::header::{HeaderName, HeaderValue};
 use actix_web::{dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform}, Error, web};
 use actix_web::error::ErrorUnauthorized;
 use actix_web::http::header;
-use base::constant::header::REQUEST_ID_HEADER;
-use base::utils::uuid::request_uuid;
 use futures_util::future::LocalBoxFuture;
 use log::info;
 
-use crate::server::context::request::RequestContext;
+use crate::constant::header::REQUEST_ID_HEADER;
+use crate::error::OrcaError;
+use crate::utils::uuid::request_uuid;
 
 // There are two steps in middleware processing.
 // 1. Middleware initialization, middleware factory gets called with
@@ -51,7 +51,7 @@ where
 {
     type Response = ServiceResponse<B>;
     type Error = Error;
-    type Future = LocalBoxFuture<'static, Result<Self::Response, Self::Error>>;
+    type Future = LocalBoxFuture<'static, Result<Self::Response, Error>>;
 
     forward_ready!(service);
 
@@ -59,18 +59,25 @@ where
         let request_id = request_uuid();
         let start_time = Instant::now();
         info!("Starting the Request {}", &request_id.clone());
-        let authorization = req.headers().get(header::AUTHORIZATION);
-        if authorization.is_none() {
-            return Box::pin(async { Err(ErrorUnauthorized("err")) });
-        }
-        req = RequestContext::set_request_value(req);
+        // let authorization = req.headers().get(header::AUTHORIZATION);
+        // if authorization.is_none() {
+        //     return Box::pin(async { Err(ErrorUnauthorized("err")) });
+        // }
+        // req = RequestContext::set_request_value(req);
         let fut = self.service.call(req);
         Box::pin(async move {
-            let mut res = fut.await?;
+            let sg = fut.await;
+            let mut res = sg?;
             res.headers_mut().insert(HeaderName::from_static(REQUEST_ID_HEADER),
                                      HeaderValue::from_str(&request_id).unwrap());
             info!("Completed Request after - {:?}", start_time.elapsed());
             Ok(res)
         })
+    }
+}
+
+pub fn map_io_error(e: std::io::Error) -> OrcaError {
+    match e.kind() {
+        _ => OrcaError::IoError(e),
     }
 }

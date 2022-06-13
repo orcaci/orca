@@ -2,19 +2,14 @@ extern crate base;
 
 use actix_web::{App, http, HttpServer, web};
 use actix_web::middleware::{Compress, ErrorHandlers, Logger};
-use base::middleware::error;
+use base::middleware::{error, request::RequestHandler};
 use base::utils::logger;
 use log::{debug, error, info, Level, log_enabled, logger};
-
-use crate::server::middleware::request::RequestHandler;
-
 
 mod constant;
 mod core;
 mod route;
 mod server;
-
-
 
 /// main - This is application server that will accessible with API
 #[actix_web::main]
@@ -29,10 +24,10 @@ async fn main() -> std::io::Result<()> {
             // .app_data(web::Data::new(rc.clone()))
             .wrap(Logger::default())
             .wrap(Compress::default())
-            .wrap(ErrorHandlers::new().handler(
-                http::StatusCode::INTERNAL_SERVER_ERROR,
-                error::add_error_header,
-            ))
+            // .wrap(ErrorHandlers::new().handler(
+            //     http::StatusCode::INTERNAL_SERVER_ERROR,
+            //     error::add_error_header,
+            // ))
             .wrap(RequestHandler::default())
             .configure(route::general_config)
             .service(

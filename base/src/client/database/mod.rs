@@ -1,3 +1,4 @@
+use std::error::Error;
 use sea_orm::{Database as SeaDB, DatabaseConnection};
 
 

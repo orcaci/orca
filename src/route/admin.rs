@@ -1,8 +1,10 @@
-use actix_web::{Error, http, HttpResponse, Responder, web};
+use std::io::Error;
+use actix_web::{http, HttpResponse, Responder, web};
 use actix_web::error::ErrorUnauthorized;
 use actix_web::web::Path;
+use base::error::OrcaResult;
 use base::utils::request::generate_success_response;
-use entity::user;
+use entity::{group, user};
 use sea_orm::ActiveModelTrait;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
@@ -26,8 +28,8 @@ pub fn admin_config(cfg: &mut web::ServiceConfig) {
                         .route("/{id}", web::get().to(get_user)),
                 )
                 .service(
-                    web::scope("/role")
-                        .route("/", web::get().to(get_user_s))
+                    web::scope("/group")
+                        .route("/", web::get().to(get_groups))
                         .route("/", web::post().to(get_user_s))
                         .route("/{id}", web::delete().to(get_user_s))
                         .route("/{id}", web::put().to(get_user_s))
@@ -37,17 +39,14 @@ pub fn admin_config(cfg: &mut web::ServiceConfig) {
 }
 
 /// Get the user Based on the filter
-async fn get_users() -> Result<HttpResponse, Error> {
-    let request_ctx = RequestContext::default();
-    let db = request_ctx.database();
-    let users = user::Entity::find().filter(user::Column::IsActive.eq(true))
-        .order_by_asc(user::Column::Name).all(&db.conn).await;
-    let response = match users {
-        Ok(_users) => _users,
-        Err(error) => panic!("Error while inserting: {:?}", error),
-    };
-    Err(ErrorUnauthorized("err"))
-    // HttpResponse::Ok().json(response)
+async fn get_users() -> OrcaResult {
+    // let request_ctx = RequestContext::default();
+    // let db = request_ctx.database();
+    // let users = user::Entity::find().filter(user::Column::IsActive.eq(true))
+    //     .order_by_asc(user::Column::Name).all(&db.conn).await
+    //     .map_err(|data| ErrorUnauthorized(data))?;
+    // Ok(HttpResponse::Ok().json(users))
+    Err(Error::from_raw_os_error(22))
 }
 
 
@@ -123,6 +122,15 @@ async fn get_user(path: Path<i32>) -> impl Responder {
                                          Some("User Not Found".parse().unwrap()), None);
     }
     Ok(HttpResponse::Ok().json(response))
+}
+
+/// Get the groups in Orca Based on the filter
+async fn get_groups() -> Result<HttpResponse, Error> {
+    // let request_ctx = RequestContext::default();
+    // let db = request_ctx.database();
+    // let groups = group::Entity::find().order_by_asc(user::Column::Name).all(&db.conn).await
+    //     .map_err(|data| ErrorUnauthorized(data))?;
+    Ok(HttpResponse::from(HttpResponse::Ok())) //.json(groups))
 }
 
 async fn get_user_s(path: web::Path<(u32,)>) -> impl Responder {

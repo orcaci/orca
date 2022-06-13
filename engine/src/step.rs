@@ -40,11 +40,11 @@ impl Step {
         let mut _steps = test_step::Entity::find()
             .filter(test_step::Column::TestCaseId.eq(step_id))
             .order_by_asc(test_step::Column::ExectionOrder).paginate(&db.conn, 50);
-        while let Some(steps) = _steps.fetch_and_next().await? {
-            for step in steps.iter() {
-                // step.
-            }
-        }
+        // while let Some(steps) = _steps.fetch_and_next().await {
+        //     for step in steps.iter() {
+        //         // step.
+        //     }
+        // }
         Ok(())
     }
 }
