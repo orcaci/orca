@@ -6,10 +6,9 @@ import { Link } from "react-router-dom";
 export function ForgotPassword() {
   const [email, setEmail] = useState("");
 
-  const onFinish = async (values: { email: String }) => {};
   return (
     <div className={styles.forgotpassword}>
-      <Form layout="vertical" onFinish={onFinish}>
+      <Form layout="vertical">
         <h1>Forgot password</h1>
         <p>
           We will send you an email with instructions to reset your password

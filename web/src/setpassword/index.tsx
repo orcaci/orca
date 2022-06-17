@@ -30,11 +30,9 @@ export function SetPassword() {
     setValidationRule(cloneObj);
   };
 
-  const onFinish = async (values: { newPassword: string }) => {};
-
   return (
     <div className={styles.setpassword}>
-      <Form layout="vertical" onFinish={onFinish}>
+      <Form layout="vertical">
         <h1>Create password</h1>
         <Form.Item name="newPassword">
           <Input
