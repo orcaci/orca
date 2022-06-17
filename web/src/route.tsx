@@ -1,4 +1,3 @@
-import React from "react";
 import { lazily } from "react-lazily";
 import { useHistory } from "react-router-dom";
 
@@ -18,23 +17,26 @@ function AuthorizedComponent(props: any) {
 export const MAIN_ROUTES = [
   {
     path: "/login",
-    component: React.lazy(() =>
-      import("./login").then(({ Login }) => ({ default: Login }))
-    ),
+    component: () => {
+      const { Login } = lazily(() => import("./login"));
+      return <Login />;
+    },
     exact: true
   },
   {
     path: "/forgotpassword",
-    component: React.lazy(() =>
-      import("./forgotpassword").then(({ ForgotPassword }) => ({ default: ForgotPassword }))
-    ),
+    component: () => {
+      const { ForgotPassword } = lazily(() => import("./forgotpassword"));
+      return <ForgotPassword />;
+    },
     exact: true
   },
   {
     path: "/setpassword",
-    component: React.lazy(() =>
-      import("./setpassword").then(({ SetPassword }) => ({ default: SetPassword }))
-    ),
+    component: () => {
+      const { SetPassword } = lazily(() => import("./setpassword"));
+      return <SetPassword />;
+    },
     exact: true
   },
   {
@@ -47,36 +49,36 @@ export const MAIN_ROUTES = [
         </AuthorizedComponent>
       );
     }
-  },
+  }
 ];
 
 export const HOME_ROUTES = [
   {
     path: "/home",
-    component: React.lazy(() =>
-      import("./home").then(({ Homepage }) => ({ default: Homepage }))
-    )
+    component: () => {
+      const { Homepage } = lazily(() => import("./home"));
+      return <Homepage />;
+    }
   },
   {
     path: "/admin",
-    component: React.lazy(() =>
-      import("./admin").then(({ Adminpage }) => ({ default: Adminpage }))
-    )
+    component: () => {
+      const { Adminpage } = lazily(() => import("./admin"));
+      return <Adminpage />;
+    }
   },
   {
     path: "/profiles",
-    component: React.lazy(() =>
-      import("./profiles").then(({ ProfilePage }) => ({
-        default: ProfilePage
-      }))
-    )
+    component: () => {
+      const { ProfilePage } = lazily(() => import("./profiles"));
+      return <ProfilePage />;
+    }
   },
   {
     path: "/datatable",
-    component: React.lazy(() =>
-      import("./datatable").then(({ DataTable }) => ({
-        default: DataTable
-      }))
-    )
+    component: () => {
+      const { DataTable } = lazily(() => import("./datatable"));
+      return <DataTable />;
+    }
   }
 ];

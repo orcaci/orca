@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button, message } from "antd";
-import "./login.css";
+import styles from "./login.module.css";
 import { Link, useHistory } from "react-router-dom";
 
 export function Login() {
@@ -11,7 +11,7 @@ export function Login() {
     try {
       values.password = btoa(values.password);
       localStorage.setItem("loggedIn", "true");
-      history.push("/home")
+      history.push("/home");
       // const result = await axios.post("/api/user/login", values);
       // console.log(result.data);
       // if (!result.data.success) {
@@ -28,10 +28,9 @@ export function Login() {
     }
   };
   return (
-    <div className="login">
+    <div className={styles.login}>
       <Form layout="vertical" onFinish={onFinish}>
         <h1>Login</h1>
-        {/* <hr /> */}
         <Form.Item name="email" label="Email" required>
           <Input
             autoComplete="off"
@@ -44,7 +43,7 @@ export function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Item>
-        <div className="footer">
+        <div className={styles.footer}>
           <Link to="/forgotpassword">Forgot Password</Link>
           <Button
             type="primary"

@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Form, Input, Button } from "antd";
-import "./setpassword.css";
+import styles from "./setpassword.module.css";
 import Circle from "./icons/circle.svg";
 import CirclePass from "./icons/circle.pass.svg";
 
+const VALIDATE_AT_LEAST_EIGHT_CHARACTER_REGEX = /^(?=\S{8,}$).*$/;
+const VALIDATE_BOTH_UPPERCASE_LOWERCASE_CHARACTER_REGEX =
+  /^(?=(?:.*?[A-Z]))(?=.*?[a-z]).*$/;
+const VALIDATE_AT_LEAST_ONE_NUMBER_OR_SYMBOL_REGEX =
+  /^(?=.*[!@#$%^&*])(?=(?:.*?[0-9])).*$/;
+
 export function SetPassword() {
-  const VALIDATE_AT_LEAST_EIGHT_CHARACTER_REGEX = /^(?=\S{8,}$).*$/;
-  const VALIDATE_BOTH_UPPERCASE_LOWERCASE_CHARACTER_REGEX =
-    /^(?=(?:.*?[A-Z]))(?=.*?[a-z]).*$/;
-  const VALIDATE_AT_LEAST_ONE_NUMBER_OR_SYMBOL_REGEX =
-    /^(?=.*[!@#$%^&*])(?=(?:.*?[0-9])).*$/;
   const [valiationRule, setValidationRule] = useState({
     AT_LEAST_EIGHT_CHARACTER: false,
     BOTH_UPPERCASE_LOWERCASE_CHARACTER: false,
@@ -32,7 +33,7 @@ export function SetPassword() {
   const onFinish = async (values: { newPassword: string }) => {};
 
   return (
-    <div className="setpassword">
+    <div className={styles.setpassword}>
       <Form layout="vertical" onFinish={onFinish}>
         <h1>Create password</h1>
         <Form.Item name="newPassword">
@@ -52,16 +53,16 @@ export function SetPassword() {
             onChange={(e) => setConfirmNewPassword(e.target.value)}
           />
         </Form.Item>
-        <div className="resetPasswordValidationInfoBox">
-          <p className="validationTitle">Your Password must contain </p>
-          <p className="validationRuleTxt">
+        <div className={styles.resetPasswordValidationInfoBox}>
+          <p className={styles.validationTitle}>Your Password must contains</p>
+          <p className={styles.validationRuleTxt}>
             <img
               alt="8char"
               src={valiationRule.AT_LEAST_EIGHT_CHARACTER ? CirclePass : Circle}
             />
             At least 8 characters{" "}
           </p>{" "}
-          <p className="validationRuleTxt">
+          <p className={styles.validationRuleTxt}>
             {
               <img
                 alt="upperLowerCase"
@@ -74,7 +75,7 @@ export function SetPassword() {
             }
             Both uppercase and lowercase characters{" "}
           </p>{" "}
-          <p className="validationRuleTxt">
+          <p className={styles.validationRuleTxt}>
             {
               <img
                 alt="numbersymbol"
@@ -88,7 +89,7 @@ export function SetPassword() {
             At least one number or symbol{" "}
           </p>{" "}
         </div>
-        <div className="footer">
+        <div className={styles.footer}>
           <Button
             type="primary"
             htmlType="submit"

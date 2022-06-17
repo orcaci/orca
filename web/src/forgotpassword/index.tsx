@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import { Form, Input, Button } from "antd";
-import "./forgotpassword.css";
+import styles from "./forgotpassword.module.css";
 import { Link } from "react-router-dom";
 
 export function ForgotPassword() {
   const [email, setEmail] = useState("");
 
-  const onFinish = async (values: { email: String }) => {
-    console.log(values);
-  };
+  const onFinish = async (values: { email: String }) => {};
   return (
-    <div className="forgotpassword">
+    <div className={styles.forgotpassword}>
       <Form layout="vertical" onFinish={onFinish}>
         <h1>Forgot password</h1>
-        {/* <hr /> */}
         <p>
           We will send you an email with instructions to reset your password
         </p>
@@ -24,9 +21,9 @@ export function ForgotPassword() {
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Item>
-        <div className="footer">
+        <div className={styles.footer}>
           <Link to="/login">Go back to sign in</Link>
-          <Button type="primary" htmlType="submit" disabled={!email}>
+          <Button type="primary" disabled={!email}>
             Send email
           </Button>
         </div>
