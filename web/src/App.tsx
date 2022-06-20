@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { BrowserRouter, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Skeleton } from "antd";
 
 import { HeaderBar } from "./components/header";
@@ -12,16 +12,18 @@ function App() {
   return (
     <BrowserRouter basename="/view">
       <HeaderBar />
-      {MAIN_ROUTES.map((route) => {
-        const Component = route.component;
-        return (
-          <Suspense fallback={<Skeleton active={true} />}>
-            <Route path={route.path} key={route.path}>
-              <Component />
-            </Route>
-          </Suspense>
-        );
-      })}
+      <Suspense fallback={<Skeleton active={true} />}>
+        <Switch>
+          {MAIN_ROUTES.map((route) => {
+            const Component = route.component;
+            return (
+              <Route path={route.path} exact={route.exact}>
+                <Component />
+              </Route>
+            );
+          })}
+        </Switch>
+      </Suspense>
       {/* <Redirect to="/home" /> */}
     </BrowserRouter>
   );

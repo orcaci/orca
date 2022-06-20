@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import { Layout, Avatar, Dropdown, Menu } from "antd";
 
 import styles from "./header.module.css";
@@ -7,16 +5,14 @@ import styles from "./header.module.css";
 const { Header } = Layout;
 
 export function HeaderBar() {
-  const history = useHistory();
   return (
     <Header className={styles.headercontainer}>
       <div className={styles.logo}>
-        <span>Orca</span>
+        <span>
+          <strong>Orca</strong>
+        </span>
       </div>
       <div className={styles.rightlayout}>
-        <div className={styles.admin} onClick={() => history.push("/admin")}>
-          Admin
-        </div>
         <Dropdown
           overlay={
             <Menu>
