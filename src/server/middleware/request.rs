@@ -5,8 +5,8 @@ use actix_http::header::{HeaderName, HeaderValue};
 use actix_web::{dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform}, Error, web};
 use actix_web::error::ErrorUnauthorized;
 use actix_web::http::header;
-use base::constant::header::REQUEST_ID_HEADER;
-use base::utils::uuid::request_uuid;
+use crate::core::constant::header::REQUEST_ID_HEADER;
+use crate::core::utils::uuid::request_uuid;
 use futures_util::future::LocalBoxFuture;
 use log::info;
 

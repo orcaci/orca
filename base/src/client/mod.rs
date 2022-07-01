@@ -1,7 +1,8 @@
+// 1.4.0
+use std::sync::Mutex;
 
 use futures::executor;
-use lazy_static::lazy_static; // 1.4.0
-use std::sync::Mutex;
+use lazy_static::lazy_static;
 
 pub mod database;
 pub mod redis;

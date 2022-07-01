@@ -1,5 +1,6 @@
-use actix_web::{web, Responder, Scope};
-use base::utils::request::generate_success_response;
+use actix_web::{Responder, Scope, web};
+
+use crate::core::utils::request::generate_success_response;
 
 pub(crate) mod admin;
 pub(crate) mod ws;

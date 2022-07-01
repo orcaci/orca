@@ -5,7 +5,6 @@ use std::io::Error as BaseError;
 use actix_web::{Error as ActixError, HttpResponse, ResponseError};
 use http::StatusCode;
 use serde::{Deserialize, Serialize};
-
 use thiserror::Error;
 
 pub type OrcaResult = Result<HttpResponse, OrcaError>;
@@ -26,7 +25,7 @@ struct Response {
 
 impl ErrorResponse {
     pub fn new(code: StatusCode, error: &str, message: String) -> Self {
-        Self { code: code, error: error.to_string(), message: message }
+        Self { code, error: error.to_string(), message }
     }
 }
 

@@ -1,9 +1,10 @@
 use std::io::Error;
+
 use actix_web::{http, HttpResponse, Responder, web};
 use actix_web::error::ErrorUnauthorized;
 use actix_web::web::Path;
-use base::error::OrcaResult;
-use base::utils::request::generate_success_response;
+use crate::core::error::{OrcaError, OrcaResult};
+use crate::core::utils::request::generate_success_response;
 use entity::{group, user};
 use sea_orm::ActiveModelTrait;
 use sea_orm::ColumnTrait;
@@ -12,6 +13,7 @@ use sea_orm::QueryFilter;
 use sea_orm::QueryOrder;
 use sea_orm::Set;
 use serde_json::Value;
+use crate::core;
 
 use crate::server::context::request::RequestContext;
 
@@ -38,15 +40,15 @@ pub fn admin_config(cfg: &mut web::ServiceConfig) {
     );
 }
 
-/// Get the user Based on the filter
+/// get_users - Get the user from the admin management and request
 async fn get_users() -> OrcaResult {
-    // let request_ctx = RequestContext::default();
-    // let db = request_ctx.database();
-    // let users = user::Entity::find().filter(user::Column::IsActive.eq(true))
-    //     .order_by_asc(user::Column::Name).all(&db.conn).await
-    //     .map_err(|data| ErrorUnauthorized(data))?;
-    // Ok(HttpResponse::Ok().json(users))
-    Err(Error::from_raw_os_error(22))
+    let request_ctx = RequestContext::default();
+    let db = request_ctx.database();
+    let users = user::Entity::find().filter(user::Column::IsActive.eq(true))
+        .order_by_asc(user::Column::Name).all(&db.conn).await
+        .map_err(|data| OrcaError::DBError(data))?;
+    Ok(HttpResponse::Ok().json(users))
+    // Err(Error::from_raw_os_error(22))
 }
 
 

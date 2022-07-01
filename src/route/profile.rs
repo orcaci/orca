@@ -1,6 +1,6 @@
 use actix_web::{web, Responder, Scope, HttpRequest, HttpResponse, http};
 use actix_web::web::Path;
-use base::utils::request::generate_success_response;
+use crate::core::utils::request::generate_success_response;
 use entity::{prelude::*, profile, profile_data, user};
 use crate::server::context::request::RequestContext;
 use sea_orm::ActiveModelTrait;

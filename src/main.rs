@@ -1,33 +1,30 @@
-extern crate base;
+use actix_web::{App, HttpServer, web};
+use actix_web::middleware::{Compress, Logger};
+use log::logger;
 
-use actix_web::{App, http, HttpServer, web};
-use actix_web::middleware::{Compress, ErrorHandlers, Logger};
-use base::middleware::{error, request::RequestHandler};
-use base::utils::logger;
-use log::{debug, error, info, Level, log_enabled, logger};
+use crate::core::middleware::{error, request::RequestHandler};
+use crate::core::utils::logger;
 
 mod constant;
-mod core;
 mod route;
 mod server;
+mod core;
 
-/// main - This is application server that will accessible with API
+/// main - Orca Start here
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    return bootstrap_application_server().await;
+}
+
+
+/// bootstrap_application_server - will kick start the orca application server for the application
+/// this will be responsible for all the application api request in Orca
+async fn bootstrap_application_server() -> std::io::Result<()> {
     logger::init().expect("TODO: panic message");
-    // use migration::{Migrator, MigratorTrait};
-    // let request_ctx = RequestContext::default();
-    // let db = request_ctx.database();
-    // Migrator::up(&db.conn, None).await;
     HttpServer::new(move|| {
         App::new()
-            // .app_data(web::Data::new(rc.clone()))
             .wrap(Logger::default())
             .wrap(Compress::default())
-            // .wrap(ErrorHandlers::new().handler(
-            //     http::StatusCode::INTERNAL_SERVER_ERROR,
-            //     error::add_error_header,
-            // ))
             .wrap(RequestHandler::default())
             .configure(route::general_config)
             .service(

@@ -22,7 +22,6 @@ serde_json = "1.0.59"
 tokio = "1.17.0"
 thirtyfour = "0.28.3"
 sea-orm = { version = "0.8.0", default-features = true, features = [ "macros", "debug-print", "runtime-async-std-native-tls", "sqlx-postgres"] }
-base = {path="../base"}
 entity = {path="../entity"}
 
 

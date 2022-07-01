@@ -10,6 +10,7 @@ authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
 [dependencies]
 http = "0.2.8"
 thiserror = "1.0.31"
+chrono = "0.4"
 actix = "0.13.0"
 actix-service = "2.0.2"
 actix-http = "3.0.4"
