@@ -1,4 +1,4 @@
-use actix_web::{Responder, Scope, web};
+use actix_web::{Responder, web};
 
 use crate::core::utils::request::generate_success_response;
 

@@ -6,6 +6,3 @@ pub enum OauthProvider {
     Github,
     Custom
 }
-
-
-pub

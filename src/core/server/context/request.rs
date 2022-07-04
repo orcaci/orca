@@ -1,17 +1,18 @@
+use std::ops::Deref;
+use std::sync::MutexGuard;
+use std::time::{SystemTime, SystemTimeError};
+
 use actix_http::HttpMessage;
 use actix_web::dev::ServiceRequest;
 use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 use log::info;
 use sea_orm::{DatabaseTransaction, DbErr, TransactionTrait};
-use std::ops::Deref;
-use std::sync::MutexGuard;
-use std::time::{SystemTime, SystemTimeError};
 
-use crate::client::{CLIENT, Client, database};
-use crate::client::database::Database;
-use crate::utils::uuid::request_uuid;
+use crate::core::client::{CLIENT, Client, database};
+use crate::core::client::database::Database;
+use crate::core::utils::uuid::request_uuid;
 
-/// RequestContext - will have all the dependecy for the request
+/// RequestContext - will have all the dependency for the request
 /// this will get created on each request and Will Construct required object in lazy
 #[derive(Debug)]
 pub struct RequestContext {
@@ -28,13 +29,13 @@ impl RequestContext {
             tx: None
         }
     }
-    pub fn get_request_id(self) -> String {
+    pub fn get_request_id(&self) -> String {
         self.request_id.clone()
     }
 
-    pub fn end_request(self) -> Result<(), SystemTimeError> {
+    pub fn end_request(&self) -> Result<(), SystemTimeError> {
         let end_time = SystemTime::now();
-        let a = self.start_time.elapsed()?.as_secs();
+        let start_time = self.start_time.elapsed()?.as_secs();
         info!("Completed Request {:} after - {:?}", self.get_request_id(), self.start_time.elapsed());
         Ok(())
     }

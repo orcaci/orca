@@ -1,7 +1,7 @@
 use std::io::Error;
+use actix_http::HttpMessage;
 
-use actix_web::{http, HttpResponse, Responder, web};
-use actix_web::error::ErrorUnauthorized;
+use actix_web::{http, HttpRequest, HttpResponse, Responder, web};
 use actix_web::web::Path;
 use crate::core::error::{OrcaError, OrcaResult};
 use crate::core::utils::request::generate_success_response;
@@ -41,89 +41,73 @@ pub fn admin_config(cfg: &mut web::ServiceConfig) {
 }
 
 /// get_users - Get the user from the admin management and request
-async fn get_users() -> OrcaResult {
-    let request_ctx = RequestContext::default();
+async fn get_users(mut request_ctx: RequestContext) -> OrcaResult {
     let db = request_ctx.database();
     let users = user::Entity::find().filter(user::Column::IsActive.eq(true))
         .order_by_asc(user::Column::Name).all(&db.conn).await
         .map_err(|data| OrcaError::DBError(data))?;
     Ok(HttpResponse::Ok().json(users))
-    // Err(Error::from_raw_os_error(22))
+    // Err(OrcaError::Forbidden)
 }
 
-
-/// Create User for orca
-async fn create_user(user: web::Json<user::User>) -> impl Responder {
+/// create_user - Create the user in the admin management in InActive state
+/// This will be activated by the admin using active endpoint
+async fn create_user(mut request_ctx: RequestContext, user: web::Json<user::User>) -> OrcaResult {
     // let params = query_params(req);
-    let request_ctx = RequestContext::default();
     let db = request_ctx.database();
     let u = user.into_inner();
-    let f = user::ActiveModel {
+    let user_response = user::ActiveModel {
         first_name: Set(u.first_name.to_owned()),
         last_name: Set(u.last_name.to_owned()),
         email: Set(u.email.to_owned()),
         name: Set(u.name.to_owned()),
         is_active: Set(u.is_active.to_owned().or(Some(false)).unwrap()),
         ..Default::default()
-    }.insert(&db.conn).await;
-    let f = match f {
-        Ok(file) => file,
-        Err(error) => panic!("Error while inserting: {:?}", error),
-    };
-    HttpResponse::Created().json(f)
+    }.insert(&db.conn).await.map_err(|data| OrcaError::DBError(data))?;
+    Ok(HttpResponse::Created().json(user_response))
 }
 
-async fn update_user(path: Path<i32>, body: web::Json<Value>) -> impl Responder {
+/// update_user - Update the user in the admin management
+/// For now we will allow the user to update the is_active field
+async fn update_user(mut request_ctx: RequestContext, path: Path<i32>, body: web::Json<Value>) -> OrcaResult {
     let id = path.into_inner();
-    let request_ctx = RequestContext::default();
     let db = request_ctx.database();
-    let existing_user = user::Entity::find_by_id(id).one(&db.conn).await.unwrap();
+    let existing_user = user::Entity::find_by_id(id).one(&db.conn).await.map_err(|data| OrcaError::DBError(data))?;
     if existing_user.is_none() {
-        return generate_success_response(Some(http::StatusCode::NOT_FOUND),
-                                         Some("User Not Found".parse().unwrap()), None);
+        return Err(OrcaError::UserNotFound(id));
     }
     let mut _user: user::ActiveModel = existing_user.unwrap().into();
     _user.name = Set(body.get("name").and_then(Value::as_str).unwrap_or(&_user.name.take().unwrap()).to_owned());
     _user.first_name = Set(body.get("first_name").and_then(Value::as_str).unwrap_or(&_user.first_name.take().unwrap()).to_owned());
     _user.last_name = Set(Some(body.get("last_name").and_then(Value::as_str).unwrap().to_owned()));
     _user.is_active = Set(body.get("is_active").and_then(Value::as_bool).unwrap().to_owned());
-    let response = _user.save(&db.conn).await;
-    let _response = match response {
-        Ok(file) => file,
-        Err(error) => panic!("Error while inserting: {:?}", error),
-    };
+    let _response = _user.save(&db.conn).await.map_err(|data| OrcaError::DBError(data))?;
     generate_success_response(None, None, None)
 }
 
-async fn delete_user(path: Path<i32>) -> impl Responder {
+async fn delete_user(mut request_ctx: RequestContext, path: Path<i32>) -> OrcaResult {
     let id = path.into_inner();
-    let request_ctx = RequestContext::default();
     let db = request_ctx.database();
-    let user: user::ActiveModel = user::Entity::find_by_id(id).one(&db.conn)
-        .await
-        .unwrap()
-        .unwrap()
-        .into();
-    user.delete(&db.conn).await.unwrap();
-    HttpResponse::NoContent()
+    let existing_user = user::Entity::find_by_id(id).one(&db.conn)
+        .await.map_err(|data| OrcaError::DBError(data))?;
+    if existing_user.is_none() {
+        return Err(OrcaError::UserNotFound(id));
+    }
+    let existing_user: user::ActiveModel = existing_user.unwrap().into();
+    existing_user.delete(&db.conn).await.map_err(|data| OrcaError::DBError(data))?;
+    Ok(HttpResponse::from(HttpResponse::NoContent()))
 }
 
 
-async fn get_user(path: Path<i32>) -> impl Responder {
+async fn get_user(mut request_ctx: RequestContext, path: Path<i32>) -> OrcaResult {
     let id = path.into_inner();
-    let request_ctx = RequestContext::default();
     let db = request_ctx.database();
     let existing_user = user::Entity::find_by_id(id).filter(user::Column::IsActive.eq(true))
-        .one(&db.conn).await;
-    let response = match existing_user {
-        Ok(_users) => _users,
-        Err(error) => panic!("Error while inserting: {:?}", error),
-    };
-    if response.is_none() {
-        return generate_success_response(Some(http::StatusCode::NOT_FOUND),
-                                         Some("User Not Found".parse().unwrap()), None);
+        .one(&db.conn).await.map_err(|data| OrcaError::DBError(data))?;
+    if existing_user.is_none() {
+        return Err(OrcaError::UserNotFound(id));
     }
-    Ok(HttpResponse::Ok().json(response))
+    Ok(HttpResponse::Ok().json(existing_user))
 }
 
 /// Get the groups in Orca Based on the filter

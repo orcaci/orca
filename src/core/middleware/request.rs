@@ -9,10 +9,10 @@ use actix_web::http::header;
 use futures_util::future::LocalBoxFuture;
 use log::info;
 
-use crate::constant::header::REQUEST_ID_HEADER;
-use crate::error::OrcaError;
+use crate::core::constant::header::REQUEST_ID_HEADER;
+use crate::core::error::OrcaError;
+use crate::core::utils::uuid::request_uuid;
 use crate::server::context::request::RequestContext;
-use crate::utils::uuid::request_uuid;
 
 // There are two steps in middleware processing.
 // 1. Middleware initialization, middleware factory gets called with
@@ -65,16 +65,16 @@ where
         // if authorization.is_none() {
         //     return Box::pin(async { Err(ErrorUnauthorized("err")) });
         // }
-        let rc = RequestContext::new();
+        let rc = RequestContext::new(&req);
         req.extensions_mut().insert(rc);
         let fut = self.service.call(req);
         Box::pin(async move {
-            let mut res = fut.await;
+            let mut _response = fut.await;
             // res.headers_mut().insert(HeaderName::from_static(REQUEST_ID_HEADER),
             //                          HeaderValue::from_str(&request_id).unwrap());
             info!("Completed Request after - {:?}", start_time.elapsed());
             // rc.end_request();
-            res
+            _response
         })
     }
 }

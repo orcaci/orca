@@ -11,6 +11,7 @@ base64 = "0.13.0"
 log = "0.4.16"
 http = "0.2.8"
 thiserror = "1.0.31"
+jsonwebtoken = "8"
 chrono = "0.4"
 rand = { version = "0.7", default-features = false, features = ["std"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

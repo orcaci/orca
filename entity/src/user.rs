@@ -39,21 +39,3 @@ impl Related<super::user_group::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-//
-// impl Iden for Column {
-//     fn unquoted(&self, s: &mut dyn std::fmt::Write) {
-//         write!(
-//             s,
-//             "{}",
-//             match self {
-//                 Self::Id => "id",
-//                 Self::FirstName => "first_name",
-//                 Self::last_name => "last_name",
-//                 Self::Name => "name",
-//                 Self::Email => "email",
-//                 Self::is_active => "is_active"
-//             }
-//         )
-//         .unwrap();
-//     }
-// }

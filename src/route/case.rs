@@ -31,7 +31,7 @@ pub fn test_case_config(cfg: &mut web::ServiceConfig) {
 
 /// list all the test cases in the Orca Application
 async fn get_cases() -> Result<HttpResponse, Error> {
-    let request_ctx = RequestContext::default();
+    let mut request_ctx = RequestContext::default();
     let db = request_ctx.database();
     let cases = test_case::Entity::find().order_by_asc(test_case::Column::Name).all(&db.conn).await;
     let response = match cases {
@@ -43,7 +43,7 @@ async fn get_cases() -> Result<HttpResponse, Error> {
 
 /// Create New test case
 async fn create_case(body: web::Json<Value>) -> impl Responder {
-    let request_ctx = RequestContext::default();
+    let mut request_ctx = RequestContext::default();
     let db = request_ctx.database();
     let _c = test_case::ActiveModel {
         name: Set(body.get("name").and_then(Value::as_str).unwrap().to_owned()),
@@ -60,7 +60,7 @@ async fn create_case(body: web::Json<Value>) -> impl Responder {
 /// Create batch step for test case
 async fn create_batch_step(path: Path<i32>, body: web::Json<Vec<test_step::TestStep>>) -> impl Responder {
     let id = path.into_inner();
-    let request_ctx = RequestContext::default();
+    let mut request_ctx = RequestContext::default();
     let db = request_ctx.database();
     let mut _steps: Vec<test_step::ActiveModel> = vec![];
     for step in body.iter() {

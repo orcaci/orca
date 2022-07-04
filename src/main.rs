@@ -1,6 +1,5 @@
 use actix_web::{App, HttpServer, web};
 use actix_web::middleware::{Compress, Logger};
-use log::logger;
 
 use crate::core::middleware::{error, request::RequestHandler};
 use crate::core::utils::logger;
@@ -23,6 +22,7 @@ async fn bootstrap_application_server() -> std::io::Result<()> {
     logger::init().expect("TODO: panic message");
     HttpServer::new(move|| {
         App::new()
+            .data(web::JsonConfig::default().limit(4096))
             .wrap(Logger::default())
             .wrap(Compress::default())
             .wrap(RequestHandler::default())

@@ -1,6 +1,6 @@
 use lazy_static::lazy_static;
 
-pub use crate::config::key::Config as KeyConfig;
+pub use crate::core::config::key::Config as KeyConfig;
 
 pub mod client;
 pub mod config;

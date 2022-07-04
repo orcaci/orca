@@ -1,6 +1,7 @@
 use actix_web::{web, http, Result, HttpResponse, HttpRequest};
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
+use crate::core::error::{OrcaError, OrcaResult};
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 pub struct QueryParam {
@@ -17,7 +18,7 @@ pub struct Reponse {
     pub data: Option<Value>,
 }
 
-pub fn generate_success_response(status_code: Option<http::StatusCode>, status: Option<String>, data: Option<Value>) -> Result<HttpResponse> {
+pub fn generate_success_response(status_code: Option<http::StatusCode>, status: Option<String>, data: Option<Value>) -> OrcaResult {
     let _status = status.unwrap_or("success".into());
     let response = Reponse {
         status: _status,
