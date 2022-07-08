@@ -1,8 +1,5 @@
-use entity::{profile, profile_data, test_case, test_step, user};
-use sea_schema::migration::{
-    *,
-    sea_query::*
-};
+use entity::{profile, profile_data, user};
+use sea_orm_migration::prelude::*;
 
 pub struct Migration;
 
@@ -14,7 +11,6 @@ impl MigrationName for Migration {
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
-
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager.create_table(
         Table::create().table(user::Entity).if_not_exists()
@@ -41,30 +37,6 @@ impl MigrationTrait for Migration {
                 .col(ColumnDef::new(profile_data::Column::ProfileId).integer().not_null())
                 .foreign_key(ForeignKey::create().name("fk-profile-data").from(profile_data::Entity, profile_data::Column::ProfileId)
                                  .to(profile::Entity, profile::Column::Id)
-                                 .on_delete(ForeignKeyAction::Cascade)
-                                 .on_update(ForeignKeyAction::Cascade))
-                .to_owned()
-        ).await?;
-
-        manager.create_table(
-            Table::create().table(test_case::Entity).if_not_exists()
-                .col(ColumnDef::new(test_case::Column::Id).integer().not_null().auto_increment().primary_key())
-                .col(ColumnDef::new(test_case::Column::Name).text().not_null())
-                .col(ColumnDef::new(test_case::Column::IsDeleted).boolean().not_null().default(false))
-                .to_owned()
-        ).await?;
-        manager.create_table(
-            Table::create().table(test_step::Entity).if_not_exists()
-                .col(ColumnDef::new(test_step::Column::Id).integer().not_null().auto_increment().primary_key())
-                .col(ColumnDef::new(test_step::Column::Command).text().not_null())
-                .col(ColumnDef::new(test_step::Column::Target).text().not_null())
-                .col(ColumnDef::new(test_step::Column::Value).text().not_null())
-                .col(ColumnDef::new(test_step::Column::Output).text().not_null())
-                .col(ColumnDef::new(test_step::Column::Desc).text().not_null())
-                .col(ColumnDef::new(test_step::Column::ExectionOrder).integer().not_null())
-                .col(ColumnDef::new(test_step::Column::TestCaseId).integer().not_null())
-                .foreign_key(ForeignKey::create().name("fk-test-case").from(test_step::Entity, test_step::Column::TestCaseId)
-                                 .to(test_case::Entity, test_case::Column::Id)
                                  .on_delete(ForeignKeyAction::Cascade)
                                  .on_update(ForeignKeyAction::Cascade))
                 .to_owned()

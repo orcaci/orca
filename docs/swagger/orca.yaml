@@ -21,8 +21,8 @@ tags:
     description: "Everything about group Management"
   - name: "Profile"
     description: "Profile Management"
-  - name: "enviroment"
-    description: "Everything about enviroment Management"
+  - name: "environment"
+    description: "Everything about environment Management"
 schemes:
   - "https"
   - "http"

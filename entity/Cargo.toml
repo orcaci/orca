@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 serde = { version = "1.0.123", features = ["derive"] }
-sea-orm = { version = "0.6.0", default-features = false, features = [ "macros", "debug-print", "runtime-async-std-native-tls", "sqlx-postgres"] }
+sea-orm = { version = "0.8.0", default-features = true, features = [ "macros", "debug-print", "runtime-async-std-native-tls", "sqlx-postgres"] }

@@ -3,3 +3,6 @@ debug = false
 [database]
 url = "postgresql://postgres:postgres@localhost:5432/postgres"
 
+[selinum]
+hub = "http://34.72.113.188:4444/wd/hub"
+
