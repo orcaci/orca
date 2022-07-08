@@ -24,4 +24,6 @@ Functions with two or more optional arguments are now passed with the builder pa
 
 
 ----
-Thanks to `Jetbrains` for the [Open Source License](https://www.jetbrains.com/community/opensource/)
+## Tools and Infra Providers
+* Jetbrains for the [Open Source License](https://www.jetbrains.com/community/opensource/)
+* Kissflow
