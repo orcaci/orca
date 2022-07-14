@@ -27,7 +27,7 @@ export function TopFrame(props: TopFrameInterface) {
   const {navigation, isAdmin} = props;
   const history = useHistory();
   const onAdmin = async () => {
-    history.push("/admin");
+    history.push("/admin/user");
   };
   return (
     <div>

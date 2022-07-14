@@ -11,8 +11,8 @@ export function ResetPassword() {
               src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
               alt="Orca"
             />
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Sign in to your account
+            <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">
+              Reset password for your Account
             </h2>
           </div>
           <form className="mt-8 space-y-6" action="#" method="POST">
@@ -59,7 +59,7 @@ export function ResetPassword() {
                     aria-hidden="true"
                   />
                 </span>
-                Sign in
+                Reset password
               </button>
             </div>
           </form>
