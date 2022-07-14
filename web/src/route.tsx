@@ -18,34 +18,26 @@ export const MAIN_ROUTES = [
   {
     path: "/login",
     component: () => {
-      const { Login } = lazily(() => import("./login"));
+      const { Login } = lazily(() => import("./pages/auth/login"));
       return <Login />;
-    },
-    exact: true
-  },
-  {
-    path: "/forgotpassword",
-    component: () => {
-      const { ForgotPassword } = lazily(() => import("./forgotpassword"));
-      return <ForgotPassword />;
     },
     exact: true
   },
   {
     path: "/setpassword",
     component: () => {
-      const { SetPassword } = lazily(() => import("./setpassword"));
-      return <SetPassword />;
+      const { ResetPassword } = lazily(() => import("./pages/auth/resetpassword"));
+      return <ResetPassword />;
     },
     exact: true
   },
   {
     path: "/",
     component: () => {
-      const { Mainpage } = lazily(() => import("./main"));
+      const { AuthorizedLayout } = lazily(() => import("./layouts/auth"));
       return (
         <AuthorizedComponent>
-          <Mainpage />
+          <AuthorizedLayout />
         </AuthorizedComponent>
       );
     }
