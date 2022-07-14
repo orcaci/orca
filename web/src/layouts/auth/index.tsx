@@ -9,7 +9,8 @@ export const HOME_ROUTES = [
             const { HomeLayout } = lazily(() => import("../home"));
             return <HomeLayout />;
         },
-        exact: true
+        exact: true,
+        key: "home"
     },
     {
         path: "/admin",
@@ -17,7 +18,17 @@ export const HOME_ROUTES = [
             const { AdminLayout } = lazily(() => import("../admin"));
             return <AdminLayout />;
         },
-        exact: false
+        exact: false,
+        key: "admin"
+    },
+    {
+        path: "/suit/:id",
+        component: () => {
+            const { SuitLayout } = lazily(() => import("../suit"));
+            return <SuitLayout />;
+        },
+        exact: false,
+        key: "suit"
     }
 ];
 
@@ -30,7 +41,7 @@ export function AuthorizedLayout() {
           {HOME_ROUTES.map((route: any) => {
             const Component = route.component;
             return (
-              <Route path={`${route.path}`} key={route.path} exact={route.exact}>
+              <Route path={`${route.path}`} key={route.key} exact={route.exact}>
                 <Component />
               </Route>
             );

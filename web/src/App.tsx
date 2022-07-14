@@ -17,7 +17,7 @@ function App() {
           {MAIN_ROUTES.map((route) => {
             const Component = route.component;
             return (
-              <Route path={route.path} exact={route.exact}>
+              <Route path={route.path} exact={route.exact} key={route.key}>
                 <Component />
               </Route>
             );

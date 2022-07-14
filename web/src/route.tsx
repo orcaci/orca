@@ -21,7 +21,8 @@ export const MAIN_ROUTES = [
       const { Login } = lazily(() => import("./pages/auth/login"));
       return <Login />;
     },
-    exact: true
+    exact: true,
+    key: "login"
   },
   {
     path: "/setpassword",
@@ -29,7 +30,8 @@ export const MAIN_ROUTES = [
       const { ResetPassword } = lazily(() => import("./pages/auth/resetpassword"));
       return <ResetPassword />;
     },
-    exact: true
+    exact: true,
+    key: "setpassword"
   },
   {
     path: "/",
@@ -40,7 +42,8 @@ export const MAIN_ROUTES = [
           <AuthorizedLayout />
         </AuthorizedComponent>
       );
-    }
+    },
+    key: "authlayout"
   }
 ];
 
