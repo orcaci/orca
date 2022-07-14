@@ -11,7 +11,7 @@ import "antd/dist/antd.css";
 function App() {
   return (
     <BrowserRouter basename="/view">
-      <HeaderBar />
+      {/* <HeaderBar /> */}
       <Suspense fallback={<Skeleton active={true} />}>
         <Switch>
           {MAIN_ROUTES.map((route) => {
