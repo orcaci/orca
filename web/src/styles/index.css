@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* 
 :root {
   --white: #ffffff;
 }
@@ -27,4 +31,4 @@ input {
 
 h1 {
   font-size: 2rem;
-}
+} */
