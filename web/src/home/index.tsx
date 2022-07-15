@@ -1,12 +1,12 @@
 import React from "react";
 import { CommandNode } from "../components/node/step/command";
-import styles from "./home.module.css";
+import { Studio } from "../components/studio";
 
 export function Homepage() {
   return (
-    <div className={`flex ${styles.container}`}>
-      <h1>Test Suite page coming soon</h1>
-      <CommandNode />
-    </div>
+    // <div className="flex justify-center">
+    //   <h1>Test Suite page coming soon</h1>
+    // </div>
+    <Studio />
   );
 }
