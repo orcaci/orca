@@ -27,7 +27,9 @@ export const MAIN_ROUTES = [
   {
     path: "/setpassword",
     component: () => {
-      const { ResetPassword } = lazily(() => import("./pages/auth/resetpassword"));
+      const { ResetPassword } = lazily(
+        () => import("./pages/auth/resetpassword")
+      );
       return <ResetPassword />;
     },
     exact: true,
@@ -74,6 +76,13 @@ export const HOME_ROUTES = [
     component: () => {
       const { DataTable } = lazily(() => import("./datatable"));
       return <DataTable />;
+    }
+  },
+  {
+    path: "/studio",
+    component: () => {
+      const { Studio } = lazily(() => import("./components/studio/index"));
+      return <Studio />;
     }
   }
 ];

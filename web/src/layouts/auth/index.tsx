@@ -3,39 +3,48 @@ import { lazily } from "react-lazily";
 import { TopFrame } from "../../components/topframe";
 
 export const HOME_ROUTES = [
-    {
-        path: "/",
-        component: () => {
-            const { HomeLayout } = lazily(() => import("../home"));
-            return <HomeLayout />;
-        },
-        exact: true,
-        key: "home"
+  {
+    path: "/",
+    component: () => {
+      const { HomeLayout } = lazily(() => import("../home"));
+      return <HomeLayout />;
     },
-    {
-        path: "/admin",
-        component: () => {
-            const { AdminLayout } = lazily(() => import("../admin"));
-            return <AdminLayout />;
-        },
-        exact: false,
-        key: "admin"
+    exact: true,
+    key: "home"
+  },
+  {
+    path: "/admin",
+    component: () => {
+      const { AdminLayout } = lazily(() => import("../admin"));
+      return <AdminLayout />;
     },
-    {
-        path: "/suit/:id",
-        component: () => {
-            const { SuitLayout } = lazily(() => import("../suit"));
-            return <SuitLayout />;
-        },
-        exact: false,
-        key: "suit"
-    }
+    exact: false,
+    key: "admin"
+  },
+  {
+    path: "/suit/:id",
+    component: () => {
+      const { SuitLayout } = lazily(() => import("../suit"));
+      return <SuitLayout />;
+    },
+    exact: false,
+    key: "suit"
+  },
+  {
+    path: "/studio",
+    component: () => {
+      const { Studio } = lazily(() => import("../../components/studio"));
+      return <Studio />;
+    },
+    exact: false,
+    key: "studio"
+  }
 ];
 
 export function AuthorizedLayout() {
   return (
     <div>
-      <TopFrame navigation={HOME_ROUTES}/>
+      <TopFrame navigation={HOME_ROUTES} />
       <main>
         <div className="max-w-12xl">
           {HOME_ROUTES.map((route: any) => {
