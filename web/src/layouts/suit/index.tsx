@@ -1,4 +1,4 @@
-import { AcademicCapIcon, UserIcon } from "@heroicons/react/outline";
+import { AcademicCapIcon, ChipIcon, CollectionIcon, TableIcon, UserIcon } from "@heroicons/react/outline";
 import { lazily } from "react-lazily";
 import { Route, useHistory } from "react-router-dom";
 
@@ -11,7 +11,7 @@ export const ADMIN_ROUTES = [
         },
         "isMenu": true,
         name: "Test Case",
-        icon: UserIcon,
+        icon: ChipIcon,
         redirectPath: "/admin/user",
         key: "suitTest"
     },
@@ -23,7 +23,7 @@ export const ADMIN_ROUTES = [
         },
         name: "Datatable",
         "isMenu": true,
-        icon: AcademicCapIcon,
+        icon: TableIcon,
         redirectPath: "/admin/table",
         key: "suitTable"
     },
@@ -35,7 +35,7 @@ export const ADMIN_ROUTES = [
         },
         name: "Test Step",
         "isMenu": true,
-        icon: AcademicCapIcon,
+        icon: CollectionIcon,
         redirectPath: "/admin/table",
         key: "suitStep"
     },
