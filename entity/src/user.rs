@@ -23,6 +23,7 @@ pub struct Model {
     pub last_name: Option<String>,
     pub name: String,
     pub email: String,
+    pub password: String,
     pub is_active: bool
 }
 
@@ -30,11 +31,27 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(has_many = "super::user_group::Entity")]
     UserGroup,
+    #[sea_orm(has_many = "super::user_session::Entity")]
+    UserSession,
+    #[sea_orm(has_many = "super::user_role::Entity")]
+    UserRole,
 }
 
 impl Related<super::user_group::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::UserGroup.def()
+    }
+}
+
+impl Related<super::user_session::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::UserSession.def()
+    }
+}
+
+impl Related<super::user_role::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::UserRole.def()
     }
 }
 
