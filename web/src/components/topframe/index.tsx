@@ -6,12 +6,13 @@ import {
   LibraryIcon,
   XIcon
 } from "@heroicons/react/outline";
-import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 
-const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Test Suit", href: "#", current: false }
-];
+// const navigation = [
+//   { name: "Dashboard", href: "#", current: true },
+//   { name: "Test Suit", href: "#", current: false }
+// ];
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -25,10 +26,7 @@ export interface TopFrameInterface {
 
 export function TopFrame(props: TopFrameInterface) {
   const {navigation, isAdmin} = props;
-  const history = useHistory();
-  const onAdmin = async () => {
-    history.push("/admin/user");
-  };
+
   return (
     <div>
       <Disclosure as="nav" className="bg-gray-800">
@@ -59,43 +57,22 @@ export function TopFrame(props: TopFrameInterface) {
                       alt="Workflow"
                     />
                   </div>
-                  <div className="hidden sm:block sm:ml-6">
+                  <div className="hidden sm:flex sm:ml-6 sm:items-center">
                     <div className="flex space-x-4">
-                      {navigation.map((item: any) => (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-gray-900 text-white"
-                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                            "px-3 py-2 rounded-md text-sm font-medium"
-                          )}
-                          aria-current={item.current ? "page" : undefined}
-                        >
-                          {item.name}
-                        </a>
-                      ))}
+                    <Link to="/suite" className="text-gray-300 hover:bg-gray-700 hover:text-white">Test suite</Link>
                     </div>
                   </div>
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                  <Link to="/admin">
                   <button
                     type="button"
                     className="bg-gray-800 p-4 rounded-full text-gray-400 hover:text-white focus:outline-none"
-                    onClick={onAdmin}
                   >
                     <span className="sr-only">Admin Management</span>
                     <LibraryIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
-
-                  <button
-                    type="button"
-                    className="bg-gray-800 p-4 rounded-full text-gray-400 hover:text-white focus:outline-none"
-                  >
-                    <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                  </Link>
 
                   {/* Profile dropdown */}
                   <Menu as="div" className="ml-3 relative">
@@ -122,7 +99,7 @@ export function TopFrame(props: TopFrameInterface) {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -135,7 +112,7 @@ export function TopFrame(props: TopFrameInterface) {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -148,7 +125,7 @@ export function TopFrame(props: TopFrameInterface) {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"

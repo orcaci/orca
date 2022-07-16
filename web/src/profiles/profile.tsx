@@ -9,7 +9,7 @@ import {
   Input,
   Breadcrumb
 } from "antd";
-import { useHistory, Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { IProfileItems, IProfile } from "../interface/profile";
 import { Service } from "../service";
@@ -28,7 +28,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export function Profiles() {
-  const history = useHistory();
+  // const history = useHistory();
   const { profileId } = useParams() as any;
   const COLUMNS = [
     {
@@ -68,7 +68,7 @@ export function Profiles() {
             {!profileId && (
               <Typography.Link
                 onClick={() => {
-                  history.push(`/profiles/${record.id}`);
+                  // history.push(`/profiles/${record.id}`);
                 }}
               >
                 View

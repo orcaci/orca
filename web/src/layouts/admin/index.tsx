@@ -1,34 +1,34 @@
 import { AcademicCapIcon, UserIcon } from "@heroicons/react/outline";
 import { lazily } from "react-lazily";
-import { Route, useHistory } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 export const ADMIN_ROUTES = [
     {
-        path: "/admin/user",
+        path: "user",
         component: () => {
             const { UserManagement } = lazily(() => import("../../pages/admin/user"));
-            return <UserManagement />;
+            return UserManagement;
         },
         "isMenu": true,
         name: "User Management",
         icon: UserIcon,
-        redirectPath: "/admin/user"
+        relativePath: "/admin/user"
     },
     {
         path: "/role",
         component: () => {
             const { DataTable } = lazily(() => import("../../datatable"));
-            return <DataTable />;
+            return DataTable;
         },
         name: "Role Management",
         "isMenu": true,
         icon: AcademicCapIcon,
-        redirectPath: "/admin/user"
+        relativePath: "/admin/role"
     },
 ];
 
 export function AdminLayout() {
-    const history = useHistory();
+    // const history = useHistory();
     //Reference URL - https://tailwind-elements.com/docs/standard/navigation/sidenav/ 
     return (
         <div className="flex h-screen">
@@ -53,12 +53,13 @@ export function AdminLayout() {
                         if(item.isMenu)
                         return (
                             <li className="relative">
-                                <a className="flex space-x-4 items-center text-sm py-4 px-5 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out" onClick={()=>{history.push("/admin"+item.path)}} data-mdb-ripple="true" data-mdb-ripple-color="primary">
+                                <Link to={item.relativePath} className="flex space-x-4 items-center text-sm py-4 px-5 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out" data-mdb-ripple="true" data-mdb-ripple-color="primary">
                                     <item.icon className="h-6 w-6" aria-hidden="true" />
                                     <span>{item.name}</span>
-                                </a>
+                                </Link>
                             </li>
                         );
+                        return null
                     })
                 }
             </ul>
@@ -112,27 +113,9 @@ export function AdminLayout() {
                 </li>
             </ul> */}
         </div>
-        <div className="h-full w-full shadow-md bg-white" id="admin-content">
-            {ADMIN_ROUTES.map((route: any) => {
-                const Component = route.component;
-                return (
-                <Route path={`${route.path}`} key={route.path} exact={true}>
-                    <Component />
-                </Route>
-                );
-            })}
-        </div>
+
+        <Outlet />
         </div>
     );
 }
 
-// <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-//   {ADMIN_ROUTES.map((route: any) => {
-//     const Component = route.component;
-//     return (
-//       <Route path={`${route.path}`} key={route.path} exact={true}>
-//         <Component />
-//       </Route>
-//     );
-//   })}
-// </div>

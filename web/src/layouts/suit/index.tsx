@@ -1,6 +1,6 @@
 import { AcademicCapIcon, UserIcon } from "@heroicons/react/outline";
 import { lazily } from "react-lazily";
-import { Route, useHistory } from "react-router-dom";
+import { Route } from "react-router-dom";
 
 export const ADMIN_ROUTES = [
     {
@@ -42,7 +42,7 @@ export const ADMIN_ROUTES = [
 ];
 
 export function SuitLayout() {
-    const history = useHistory();
+    // const history = useHistory();
     //Reference URL - https://tailwind-elements.com/docs/standard/navigation/sidenav/ 
     return (
         <div className="flex h-screen">
@@ -67,7 +67,7 @@ export function SuitLayout() {
                         if(item.isMenu)
                         return (
                             <li className="relative" key={item.key}>
-                                <a className="flex space-x-4 items-center text-sm py-4 px-5 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out" onClick={()=>{history.push(item.path)}} data-mdb-ripple="true" data-mdb-ripple-color="primary">
+                                <a className="flex space-x-4 items-center text-sm py-4 px-5 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out" data-mdb-ripple="true" data-mdb-ripple-color="primary">
                                     <item.icon className="h-6 w-6" aria-hidden="true" />
                                     <span>{item.name}</span>
                                 </a>
@@ -162,9 +162,7 @@ export function SuitLayout() {
             {ADMIN_ROUTES.map((route: any) => {
                 const Component = route.component;
                 return (
-                <Route path={`${route.path}`} key={route.path} exact={false}>
-                    <Component />
-                </Route>
+                <Route path={`${route.path}`} key={route.path} element={<Component />} />
                 );
             })}
         </div>
