@@ -5,11 +5,11 @@ import { Modal, Button, Input } from "antd";
 import style from "./datatable.module.css";
 
 interface ModalProps {
-  handleColumnChange: Function;
-  handleOnSubmit: Function;
-  showModal: Function;
+  handleColumnChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleOnSubmit: (event: MouseEvent<HTMLElement>) => void;
+  showModal: (event: MouseEvent<HTMLElement>) => void;
   isModalVisible: boolean;
-  handleCancel: Function;
+  handleCancel: (event: MouseEvent<HTMLElement>) => void;
   columnName: string;
   columnError: string;
 }
@@ -29,13 +29,15 @@ export const DataModal = (props: ModalProps) => {
     return [
       <Button
         type="primary"
-        onClick={(event: MouseEvent<HTMLElement>) => handleCancel}
+        key="cancel"
+        onClick={(event: MouseEvent<HTMLElement>) => handleCancel(event)}
       >
         Cancel
       </Button>,
       <Button
         type="primary"
-        onClick={(event: MouseEvent<HTMLElement>) => handleOnSubmit}
+        key="add"
+        onClick={(event: MouseEvent<HTMLElement>) => handleOnSubmit(event)}
         disabled={columnError.length >= 1}
       >
         Add
@@ -47,20 +49,20 @@ export const DataModal = (props: ModalProps) => {
     <React.Fragment>
       <Button
         type="primary"
-        onClick={(event: MouseEvent<HTMLElement>) => showModal}
+        onClick={(event: MouseEvent<HTMLElement>) => showModal(event)}
       >
         +
       </Button>
       <Modal
         title="Column Name"
         visible={isModalVisible}
-        onOk={(event: MouseEvent<HTMLElement>) => handleOnSubmit}
-        onCancel={(event: MouseEvent<HTMLElement>) => handleCancel}
+        onOk={(event: MouseEvent<HTMLElement>) => handleOnSubmit(event)}
+        onCancel={(event: MouseEvent<HTMLElement>) => handleCancel(event)}
         footer={customFooter()}
       >
         <Input
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            handleColumnChange
+            handleColumnChange(event)
           }
           value={columnName}
         />

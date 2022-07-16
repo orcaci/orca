@@ -5,7 +5,7 @@ import App from "./App";
 
 import "./styles/index.css";
 
-let rootDiv = document.getElementById("root");
+const rootDiv = document.getElementById("root");
 const root = createRoot(rootDiv!);
 
 root.render(

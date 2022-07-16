@@ -7,14 +7,14 @@ import {
 export interface ColumnInterface {
   key: string;
   name: string;
-  width?: Number;
+  width?: number;
   isResize?: boolean;
   isFilter?: boolean;
 }
 
 export interface DataTableInterface {
   column: Array<ColumnInterface>;
-  souce: Array<Object>;
+  souce: Array<unknown>;
   defaultKey: string;
   loading?: boolean;
   defaultPageSize?: number;
@@ -24,17 +24,19 @@ export interface DataTableInterface {
 }
 
 export function Table(props: DataTableInterface) {
-  let {
+  const {
     souce,
     column,
-    pageSizeOption = [10, 25, 50, 100],
+    // pageSizeOption = [10, 25, 50, 100],
     defaultPageSize = 10,
-    loading = false,
+    // loading = false,
     fullSize,
     defaultKey
   } = props;
-  let currentPage: number = 1;
-  if (!fullSize) fullSize = souce.length;
+
+  let size = fullSize
+  const currentPage = 1;
+  if (!size) size = souce.length;
   return (
     <div className="overflow-x-auto  m-6">
       <table className="table-auto w-full text-sm text-left text-gray-500">
@@ -90,7 +92,7 @@ export function Table(props: DataTableInterface) {
         </div>
         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div>
-            {fullSize > 1 ? (
+            {size > 1 ? (
               <p className="text-sm text-gray-700">
                 Showing{" "}
                 <span className="font-medium">
@@ -98,11 +100,11 @@ export function Table(props: DataTableInterface) {
                 </span>{" "}
                 to{" "}
                 <span className="font-medium">
-                  {fullSize < defaultPageSize * currentPage
-                    ? fullSize
+                  {size < defaultPageSize * currentPage
+                    ? size
                     : defaultPageSize * currentPage}
                 </span>{" "}
-                of <span className="font-medium">{fullSize}</span> results
+                of <span className="font-medium">{size}</span> results
               </p>
             ) : null}
           </div>

@@ -22,7 +22,7 @@ export function DataTable() {
   };
 
   const handleAddRow = () => {
-    let empty = {};
+    const empty = {};
     setRows([...rows, empty]);
   };
 
@@ -40,10 +40,10 @@ export function DataTable() {
   };
 
   const updateState = (e: ChangeEvent<HTMLInputElement>) => {
-    let target = e.target.attributes as any;
-    let prope = target["data-column"].value;
-    let index = target["data-index"].value;
-    let fieldValue = e.target.value;
+    const target = e.target.attributes as any;
+    const prope = target["data-column"].value;
+    const index = target["data-index"].value;
+    const fieldValue = e.target.value;
     const tempObj = rows[index] as any;
     tempObj[prope] = fieldValue;
     rows[index] = tempObj;

@@ -72,6 +72,40 @@ export const MAIN_ROUTES = [
       }
     ],
     key: "admin"
+  },
+  {
+    path: "/suit",
+    key: "suit",
+    component: () => {
+      const { SuitLayout } = lazily(() => import("./layouts/suit"));
+      return SuitLayout;
+    },
+    nestedRoute: [
+      {
+        path: ":id/testcase",
+        component: () => {
+          const { UserManagement } = lazily(() => import("./pages/admin/user"));
+          return UserManagement;
+        },
+        key: "testcase"
+      },
+      {
+        path: ":id/datatable",
+        component: () => {
+          const { DataTable } = lazily(() => import("./datatable"));
+          return DataTable;
+        },
+        key: "datatable"
+      },
+      {
+        path: ":id/stepgroup",
+        component: () => {
+          const { DataTable } = lazily(() => import("./datatable"));
+          return DataTable;
+        },
+        key: "stepgroup"
+      }
+    ]
   }
 ];
 // {

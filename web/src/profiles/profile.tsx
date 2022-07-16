@@ -50,7 +50,7 @@ export function Profiles() {
       key: "action",
       editable: false,
       width: "20%",
-      render: (text: String, record: IProfile) => {
+      render: (text: string, record: IProfile) => {
         if (editingKey === record.key) {
           return (
             <Space size="middle">
@@ -90,7 +90,7 @@ export function Profiles() {
   ];
 
   const [profileData, setProfileData] = useState<IProfileItems>([]);
-  const [editingKey, setEditingKey] = useState<String>("");
+  const [editingKey, setEditingKey] = useState<string>("");
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   const [form] = Form.useForm();
@@ -225,11 +225,12 @@ export function Profiles() {
 
   function onCreateProfile(data: any) {
     const { name, isDefault, value } = data;
-    let body: any = {
+    const body: any = {
       name,
       value
     };
     if (!profileId) {
+      // eslint-disable-next-line camelcase
       body.is_default = isDefault;
     }
     let url = "/v1/profile/";

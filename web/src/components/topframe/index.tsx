@@ -1,13 +1,8 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import {
-  BellIcon,
-  MenuIcon,
-  LibraryIcon,
-  ChevronDownIcon,
-  XIcon
-} from "@heroicons/react/outline";
+import { MenuIcon, ChevronDownIcon, XIcon } from "@heroicons/react/outline";
 import { Link } from "react-router-dom";
+import { CogIcon } from "@heroicons/react/solid";
 // import { useHistory } from "react-router-dom";
 
 // const navigation = [
@@ -15,12 +10,12 @@ import { Link } from "react-router-dom";
 //   { name: "Test Suit", href: "#", current: false }
 // ];
 
-function classNames(...classes: any) {
+function classNames(...classes: Array<string>) {
   return classes.filter(Boolean).join(" ");
 }
 
 export interface TopFrameInterface {
-  navigation: Array<Object>;
+  navigation: Array<unknown>;
   isAdmin?: boolean;
 }
 
@@ -68,7 +63,7 @@ export function TopFrame(props: TopFrameInterface) {
                       className="bg-gray-800 p-4 rounded-full text-gray-400 hover:text-white focus:outline-none"
                     >
                       <span className="sr-only">Admin Management</span>
-                      <LibraryIcon className="h-6 w-6" aria-hidden="true" />
+                      <CogIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </Link>
 
