@@ -2,6 +2,8 @@
 
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
+use crate::profile_data;
+use crate::profile_data::EnvironmentData;
 
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
@@ -16,7 +18,9 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = true)]
     pub id: i32,
     pub name: String,
-    pub is_default: bool
+    pub is_default: bool,
+    #[sea_orm(ignore)]
+    pub data: Vec<profile_data::Model>
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

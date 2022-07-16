@@ -10,6 +10,12 @@ pub struct ProfileData {
     pub value: String
 }
 
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, DeriveIntoActiveModel)]
+pub struct EnvironmentData {
+    pub name: String,
+    pub value: String
+}
+
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
 #[sea_orm(table_name = "profile_data")]
 pub struct Model {
