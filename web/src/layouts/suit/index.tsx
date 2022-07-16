@@ -2,8 +2,6 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "../../components/sidebar";
 
 export function SuitLayout() {
-  // const id = useParams();
-  // const history = useHistory();
   // Reference URL - https://tailwind-elements.com/docs/standard/navigation/sidenav/
   return (
     <>

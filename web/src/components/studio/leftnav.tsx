@@ -6,7 +6,7 @@ import {
   ChevronLeftIcon,
   PlusIcon
 } from "@heroicons/react/outline";
-import { Route, useHistory } from "react-router-dom";
+import { Route } from "react-router-dom";
 import styles from "./studio.module.css";
 
 const ADMIN_ROUTES = [
@@ -25,7 +25,7 @@ const ADMIN_ROUTES = [
 ];
 
 export function Leftnav() {
-  const history = useHistory();
+  const history = [];
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleChange = () => {

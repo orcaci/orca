@@ -9,13 +9,9 @@ use sea_orm::QueryOrder;
 use sea_orm::Set;
 use serde::Deserialize;
 
+use crate::constant::metadata::user::AuthData;
+use crate::core::error::OrcaResult;
 use crate::server::context::request::RequestContext;
-
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-pub struct AuthData {
-    pub user_name: String,
-    pub password: bool
-}
 
 /// profile_config - this will register all the endpoint in profile route
 pub fn auth_config(cfg: &mut web::ServiceConfig) {
@@ -29,7 +25,8 @@ pub fn auth_config(cfg: &mut web::ServiceConfig) {
 
 }
 /// signin - will get username and password as payload
-async fn signin(auth_data: web::Json<AuthData>) -> impl Responder {
+async fn signin(_auth_data: web::Json<AuthData>, mut request_ctx: RequestContext) -> OrcaResult {
+    request_ctx
     "Got Profile By ID"
 }
 

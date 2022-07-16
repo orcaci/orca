@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useCallback, useState } from "react";
-import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls } from 'react-flow-renderer';
-import { MarkerType } from "react-flow-renderer";
+import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls, MarkerType } from 'react-flow-renderer';
 import { Node } from "../node";
 import { EndNode } from "../node/step/end";
 import { StartNode } from "../node/step/start";
@@ -12,7 +11,7 @@ const nodeSource = [
     id: "1",
     type: "start",
     data: {
-      data: { label: 'Input Node' },
+      data: { label: "Input Node" },
     },
     position: { x: 100, y: 0 }
   },
@@ -31,7 +30,7 @@ const nodeSource = [
   {
     id: "3",
     type: "end",
-    data: { label: 'Input Node' },
+    data: { label: "Input Node" },
     position: { x: 400, y: 0 },
   }
 ];
@@ -106,7 +105,7 @@ export function StudioContent() {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
-        style={{backgroundColor: '#B8CEFF',position: 'absolute'}}
+        style={{backgroundColor: "#B8CEFF",position: "absolute"}}
       >
         {/* <MiniMap
           // nodeStrokeColor={(n) => {
