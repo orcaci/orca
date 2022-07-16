@@ -17,7 +17,7 @@ import { AcademicCapIcon, UserIcon } from "@heroicons/react/outline";
 export const MAIN_ROUTES = [
   {
     path: "/login",
-    component: ():React.FunctionComponent => {
+    component: (): React.FunctionComponent => {
       const { Login } = lazily(() => import("./pages/auth/login"));
       return Login;
     },
@@ -25,8 +25,10 @@ export const MAIN_ROUTES = [
   },
   {
     path: "/setpassword",
-    component: ():React.FunctionComponent => {
-      const { ResetPassword } = lazily(() => import("./pages/auth/resetpassword"));
+    component: (): React.FunctionComponent => {
+      const { ResetPassword } = lazily(
+        () => import("./pages/auth/resetpassword")
+      );
       return ResetPassword;
     },
     key: "setpassword"
@@ -34,41 +36,43 @@ export const MAIN_ROUTES = [
   {
     path: "/home",
     component: () => {
-        const { HomeLayout } = lazily(() => import("./layouts/home"));
-        return HomeLayout;
+      const { HomeLayout } = lazily(() => import("./layouts/home"));
+      return HomeLayout;
     },
     key: "home"
-},
-{
-    path: "/admin",
-    component: () => {
-        const { AdminLayout } = lazily(() => import("./layouts/admin"));
-        return AdminLayout;
-    },
-    nestedRoute: [{
-      path: "user",
-      component: () => {
-          const { UserManagement } = lazily(() => import("./pages/admin/user"));
-          return UserManagement;
-      },
-      "isMenu": true,
-      name: "User Management",
-      icon: UserIcon,
-      relativePath: "/admin/user",
   },
   {
-      path: "role",
-      component: () => {
+    path: "/admin",
+    component: () => {
+      const { AdminLayout } = lazily(() => import("./layouts/admin"));
+      return AdminLayout;
+    },
+    nestedRoute: [
+      {
+        path: "user",
+        component: () => {
+          const { UserManagement } = lazily(() => import("./pages/admin/user"));
+          return UserManagement;
+        },
+        isMenu: true,
+        name: "User Management",
+        icon: UserIcon,
+        relativePath: "/admin/user"
+      },
+      {
+        path: "role",
+        component: () => {
           const { DataTable } = lazily(() => import("./datatable"));
           return DataTable;
-      },
-      name: "Role Management",
-      "isMenu": true,
-      icon: AcademicCapIcon,
-      relativePath: "/admin/role"
-  }],
+        },
+        name: "Role Management",
+        isMenu: true,
+        icon: AcademicCapIcon,
+        relativePath: "/admin/role"
+      }
+    ],
     key: "admin"
-}
+  }
 ];
 // {
 //   path: "*",

@@ -3,82 +3,97 @@ import { lazily } from "react-lazily";
 import { Route } from "react-router-dom";
 
 export const ADMIN_ROUTES = [
-    {
-        path: "/suit/:id/test",
-        component: () => {
-            const { UserManagement } = lazily(() => import("../../pages/admin/user"));
-            return <UserManagement />;
-        },
-        "isMenu": true,
-        name: "Test Case",
-        icon: UserIcon,
-        redirectPath: "/admin/user",
-        key: "suitTest"
+  {
+    path: "/suit/:id/test",
+    component: () => {
+      const { UserManagement } = lazily(() => import("../../pages/admin/user"));
+      return <UserManagement />;
     },
-    {
-        path: "/suit/:id/table",
-        component: () => {
-            const { DataTable } = lazily(() => import("../../datatable"));
-            return <DataTable />;
-        },
-        name: "Datatable",
-        "isMenu": true,
-        icon: AcademicCapIcon,
-        redirectPath: "/admin/table",
-        key: "suitTable"
+    isMenu: true,
+    name: "Test Case",
+    icon: UserIcon,
+    redirectPath: "/admin/user",
+    key: "suitTest"
+  },
+  {
+    path: "/suit/:id/table",
+    component: () => {
+      const { DataTable } = lazily(() => import("../../datatable"));
+      return <DataTable />;
     },
-    {
-        path: "/suit/:id/step",
-        component: () => {
-            const { DataTable } = lazily(() => import("../../datatable"));
-            return <DataTable />;
-        },
-        name: "Test Step",
-        "isMenu": true,
-        icon: AcademicCapIcon,
-        redirectPath: "/admin/table",
-        key: "suitStep"
+    name: "Datatable",
+    isMenu: true,
+    icon: AcademicCapIcon,
+    redirectPath: "/admin/table",
+    key: "suitTable"
+  },
+  {
+    path: "/suit/:id/step",
+    component: () => {
+      const { DataTable } = lazily(() => import("../../datatable"));
+      return <DataTable />;
     },
+    name: "Test Step",
+    isMenu: true,
+    icon: AcademicCapIcon,
+    redirectPath: "/admin/table",
+    key: "suitStep"
+  }
 ];
 
 export function SuitLayout() {
-    // const history = useHistory();
-    //Reference URL - https://tailwind-elements.com/docs/standard/navigation/sidenav/ 
-    return (
-        <div className="flex h-screen">
-        <div className="w-80 shadow-md bg-white shadow-md" id="sidenavSecExample">
-            <div className="pt-4 pb-2 px-6">
-                    <div className="flex items-center">
-                        <div className="shrink-0">
-                            {/* <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" className="rounded-full w-10" alt="Avatar" /> */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                            </svg>
-                        </div>
-                        <div className="grow ml-3">
-                            <p className="text-sm font-semibold text-blue-600">Kissflow Admin Test Suit</p>
-                        </div>
-                    </div>
+  // const history = useHistory();
+  //Reference URL - https://tailwind-elements.com/docs/standard/navigation/sidenav/
+  return (
+    <div className="flex h-screen">
+      <div className="w-80 shadow-md bg-white shadow-md" id="sidenavSecExample">
+        <div className="pt-4 pb-2 px-6">
+          <div className="flex items-center">
+            <div className="shrink-0">
+              {/* <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" className="rounded-full w-10" alt="Avatar" /> */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                />
+              </svg>
             </div>
-            <hr className="my-2" />
-            <ul className="relative px-1">
-                {
-                    ADMIN_ROUTES.map((item: any) => {
-                        if(item.isMenu)
-                        return (
-                            <li className="relative" key={item.key}>
-                                <a className="flex space-x-4 items-center text-sm py-4 px-5 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out" data-mdb-ripple="true" data-mdb-ripple-color="primary">
-                                    <item.icon className="h-6 w-6" aria-hidden="true" />
-                                    <span>{item.name}</span>
-                                </a>
-                            </li>
-                        );
-                    })
-                }
-            </ul>
+            <div className="grow ml-3">
+              <p className="text-sm font-semibold text-blue-600">
+                Kissflow Admin Test Suit
+              </p>
+            </div>
+          </div>
         </div>
+        <hr className="my-2" />
+        <ul className="relative px-1">
+          {ADMIN_ROUTES.map((item: any) => {
+            if (item.isMenu)
+              return (
+                <li className="relative" key={item.key}>
+                  <a
+                    className="flex space-x-4 items-center text-sm py-4 px-5 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                    data-mdb-ripple="true"
+                    data-mdb-ripple-color="primary"
+                  >
+                    <item.icon className="h-6 w-6" aria-hidden="true" />
+                    <span>{item.name}</span>
+                  </a>
+                </li>
+              );
+          })}
+        </ul>
+      </div>
 
-        {/* <aside className="w-64" aria-label="Sidebar">
+      {/* <aside className="w-64" aria-label="Sidebar">
             <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800">
                 <div className="pt-4 pb-2 px-6">
                         <div className="flex items-center">
@@ -158,14 +173,18 @@ export function SuitLayout() {
                 </ul>
             </div>
         </aside> */}
-        <div className="h-full w-full shadow-md bg-white" id="admin-content">
-            {ADMIN_ROUTES.map((route: any) => {
-                const Component = route.component;
-                return (
-                <Route path={`${route.path}`} key={route.path} element={<Component />} />
-                );
-            })}
-        </div>
-        </div>
-    );
+      <div className="h-full w-full shadow-md bg-white" id="admin-content">
+        {ADMIN_ROUTES.map((route: any) => {
+          const Component = route.component;
+          return (
+            <Route
+              path={`${route.path}`}
+              key={route.path}
+              element={<Component />}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
 }
