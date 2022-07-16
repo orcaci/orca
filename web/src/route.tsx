@@ -34,7 +34,7 @@ export const MAIN_ROUTES = [
     key: "setpassword"
   },
   {
-    path: "/home",
+    path: "/",
     component: () => {
       const { HomeLayout } = lazily(() => import("./layouts/home"));
       return HomeLayout;
@@ -84,8 +84,8 @@ export const MAIN_ROUTES = [
       {
         path: ":id/testcase",
         component: () => {
-          const { UserManagement } = lazily(() => import("./pages/admin/user"));
-          return UserManagement;
+          const { TestCase } = lazily(() => import("./layouts/testcase"));
+          return TestCase;
         },
         key: "testcase"
       },
@@ -100,8 +100,8 @@ export const MAIN_ROUTES = [
       {
         path: ":id/stepgroup",
         component: () => {
-          const { DataTable } = lazily(() => import("./datatable"));
-          return DataTable;
+          const { Step } = lazily(() => import("./layouts/step"));
+          return Step;
         },
         key: "stepgroup"
       }

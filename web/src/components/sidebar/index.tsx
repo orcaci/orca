@@ -68,7 +68,7 @@ export const Sidebar = () => {
       } duration-300 bg-gray-800 shadow-md p-5 pt-8 relative`}
     >
       <ChevronLeftIcon
-        className={`w-6 text-3xl ${
+        className={`w-6 z-10 text-3xl ${
           !open && "rotate-180"
         } text-white rounded-full 
         bg-indigo-700 hover:bg-indigo-500 border-indigo-700 absolute -right-3 top-9 border cursor-pointer`}

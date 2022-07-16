@@ -9,7 +9,7 @@ export function SuitLayout() {
     <>
       <Sidebar />
       <div className="block">
-        <div className="flex flex-1 items-center">Welcome to Test Suit</div>
+        {/* <div className="flex flex-1 items-center">Welcome to Test Suit</div> */}
         <Outlet />
       </div>
     </>

@@ -40,7 +40,7 @@ export function TopFrame(props: TopFrameInterface) {
                   </Disclosure.Button>
                 </div>
                 <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className="flex-shrink-0 flex items-center">
+                  <Link to="/" className="flex-shrink-0 flex items-center">
                     <img
                       className="block lg:hidden h-8 w-auto"
                       src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
@@ -51,7 +51,7 @@ export function TopFrame(props: TopFrameInterface) {
                       src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
                       alt="Workflow"
                     />
-                  </div>
+                  </Link>
                   <div className="hidden sm:flex sm:ml-6 sm:items-center">
                     <Dropdown />
                   </div>
@@ -175,7 +175,7 @@ function Dropdown() {
         </Menu.Button>
 
         {/* Menu Items */}
-        <Menu.Items className="w-96 origin-top-right absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+        <Menu.Items className="w-96 z-30 origin-top-right absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
           <div className="py-2 px-4">
             <input
               type="text"
