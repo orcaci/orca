@@ -1,16 +1,16 @@
 import { LockClosedIcon } from "@heroicons/react/solid";
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
+// import { useState } from "react";
+// import { useHistory } from "react-router-dom";
 
 export function Login() {
-  const history = useHistory();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const history = useHistory();
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
   const onFinish = async (values: any) => {
     try {
       // values.password = btoa(values.password);
       localStorage.setItem("loggedIn", "true");
-      history.push("/home");
+      // history.push("/home");
       // const result = await axios.post("/api/user/login", values);
       // console.log(result.data);
       // if (!result.data.success) {

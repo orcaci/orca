@@ -1,6 +1,6 @@
 import { RequestParams } from "../interface/request";
 
-function createRequest(url: any, options?: RequestParams) {
+function createRequest(url: string, options?: RequestParams) {
   const reqOption: any = {};
   if (options) {
     reqOption.url = url;
@@ -19,26 +19,25 @@ function createRequest(url: any, options?: RequestParams) {
   return new Request(url, reqOption);
 }
 
-function sendRequest(url: String, options?: RequestParams) {
+function sendRequest(url: string, options?: RequestParams) {
   const request = createRequest(url, options);
   return fetch(request).then((response) => response.json());
 }
 
-
 export const Service = {
-  get: async (url: String) => {
+  get: async (url: string) => {
     return sendRequest(url);
   },
-  post: (url: String, options: any) => {
+  post: (url: string, options: any) => {
     options.method = "POST";
     return sendRequest(url, options);
   },
-  update: (url: String, options: any) => {
+  update: (url: string, options: any) => {
     options.method = "PUT";
-    return sendRequest(url, options)
+    return sendRequest(url, options);
   },
-  delete: (url: String, options: any={}) => {
+  delete: (url: string, options: any = {}) => {
     options.method = "DELETE";
-    return sendRequest(url, options)
+    return sendRequest(url, options);
   }
 };

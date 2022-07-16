@@ -9,7 +9,7 @@ import {
   Input,
   Breadcrumb
 } from "antd";
-import { useHistory, Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { IProfileItems, IProfile } from "../interface/profile";
 import { Service } from "../service";
@@ -28,7 +28,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export function Profiles() {
-  const history = useHistory();
+  // const history = useHistory();
   const { profileId } = useParams() as any;
   const COLUMNS = [
     {
@@ -50,7 +50,7 @@ export function Profiles() {
       key: "action",
       editable: false,
       width: "20%",
-      render: (text: String, record: IProfile) => {
+      render: (text: string, record: IProfile) => {
         if (editingKey === record.key) {
           return (
             <Space size="middle">
@@ -68,7 +68,7 @@ export function Profiles() {
             {!profileId && (
               <Typography.Link
                 onClick={() => {
-                  history.push(`/profiles/${record.id}`);
+                  // history.push(`/profiles/${record.id}`);
                 }}
               >
                 View
@@ -90,7 +90,7 @@ export function Profiles() {
   ];
 
   const [profileData, setProfileData] = useState<IProfileItems>([]);
-  const [editingKey, setEditingKey] = useState<String>("");
+  const [editingKey, setEditingKey] = useState<string>("");
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   const [form] = Form.useForm();
@@ -225,11 +225,12 @@ export function Profiles() {
 
   function onCreateProfile(data: any) {
     const { name, isDefault, value } = data;
-    let body: any = {
+    const body: any = {
       name,
       value
     };
     if (!profileId) {
+      // eslint-disable-next-line camelcase
       body.is_default = isDefault;
     }
     let url = "/v1/profile/";

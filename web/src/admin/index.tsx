@@ -26,7 +26,7 @@ const INITIAL_USER_STATE = {
 };
 
 export function Adminpage() {
-  const [modalState, setModalState] = React.useState<String>("");
+  const [modalState, setModalState] = React.useState<string>("");
   const [confirmLoading, setConfirmLoading] = React.useState(false);
   const [editModalData, setEditModalData] =
     React.useState<IUser>(INITIAL_USER_STATE);
@@ -93,7 +93,7 @@ export function Adminpage() {
       title: "Action",
       key: "action",
       dataIndex: "action",
-      render: (text: String, record: IUser) => {
+      render: (text: string, record: IUser) => {
         return (
           <Space size="middle">
             <>
@@ -146,7 +146,7 @@ export function Adminpage() {
         }
       });
     }
-    let url: String = "/v1/admin/user/";
+    let url = "/v1/admin/user/";
     let promise = Service.post;
     if (modalState !== MODAL_STATES.CREATE) {
       url = `/v1/admin/user/${values.id}`;

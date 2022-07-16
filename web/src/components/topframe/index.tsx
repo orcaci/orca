@@ -1,34 +1,27 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import {
-  BellIcon,
-  MenuIcon,
-  LibraryIcon,
-  XIcon
-} from "@heroicons/react/outline";
-import { useHistory } from "react-router-dom";
+import { MenuIcon, ChevronDownIcon, XIcon } from "@heroicons/react/outline";
+import { Link } from "react-router-dom";
+import { CogIcon } from "@heroicons/react/solid";
+// import { useHistory } from "react-router-dom";
 
-const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Test Suit", href: "#", current: false }
-];
+// const navigation = [
+//   { name: "Dashboard", href: "#", current: true },
+//   { name: "Test Suit", href: "#", current: false }
+// ];
 
-function classNames(...classes: any) {
+function classNames(...classes: Array<string>) {
   return classes.filter(Boolean).join(" ");
 }
 
 export interface TopFrameInterface {
-  navigation: Array<Object>;
+  navigation: Array<unknown>;
   isAdmin?: boolean;
 }
 
-
 export function TopFrame(props: TopFrameInterface) {
-  const {navigation, isAdmin} = props;
-  const history = useHistory();
-  const onAdmin = async () => {
-    history.push("/admin/user");
-  };
+  const { navigation, isAdmin } = props;
+
   return (
     <div>
       <Disclosure as="nav" className="bg-gray-800">
@@ -47,7 +40,7 @@ export function TopFrame(props: TopFrameInterface) {
                   </Disclosure.Button>
                 </div>
                 <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className="flex-shrink-0 flex items-center">
+                  <Link to="/" className="flex-shrink-0 flex items-center">
                     <img
                       className="block lg:hidden h-8 w-auto"
                       src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
@@ -58,44 +51,21 @@ export function TopFrame(props: TopFrameInterface) {
                       src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
                       alt="Workflow"
                     />
-                  </div>
-                  <div className="hidden sm:block sm:ml-6">
-                    <div className="flex space-x-4">
-                      {navigation.map((item: any) => (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-gray-900 text-white"
-                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                            "px-3 py-2 rounded-md text-sm font-medium"
-                          )}
-                          aria-current={item.current ? "page" : undefined}
-                        >
-                          {item.name}
-                        </a>
-                      ))}
-                    </div>
+                  </Link>
+                  <div className="hidden sm:flex sm:ml-6 sm:items-center">
+                    <Dropdown />
                   </div>
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                  <button
-                    type="button"
-                    className="bg-gray-800 p-4 rounded-full text-gray-400 hover:text-white focus:outline-none"
-                    onClick={onAdmin}
-                  >
-                    <span className="sr-only">Admin Management</span>
-                    <LibraryIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-
-                  <button
-                    type="button"
-                    className="bg-gray-800 p-4 rounded-full text-gray-400 hover:text-white focus:outline-none"
-                  >
-                    <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                  <Link to="/admin">
+                    <button
+                      type="button"
+                      className="bg-gray-800 p-4 rounded-full text-gray-400 hover:text-white focus:outline-none"
+                    >
+                      <span className="sr-only">Admin Management</span>
+                      <CogIcon className="h-6 w-6" aria-hidden="true" />
+                    </button>
+                  </Link>
 
                   {/* Profile dropdown */}
                   <Menu as="div" className="ml-3 relative">
@@ -122,11 +92,12 @@ export function TopFrame(props: TopFrameInterface) {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
-                              )} key={"setting"}
+                              )}
+                              key={"setting"}
                             >
                               My Settings
                             </a>
@@ -135,11 +106,12 @@ export function TopFrame(props: TopFrameInterface) {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
-                              )} key={"support"}
+                              )}
+                              key={"support"}
                             >
                               Community and Support
                             </a>
@@ -148,11 +120,12 @@ export function TopFrame(props: TopFrameInterface) {
                         <Menu.Item>
                           {({ active }) => (
                             <a
-                              href="#"
+                              href="/"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
-                              )}  key={"signout"}
+                              )}
+                              key={"signout"}
                             >
                               Sign out
                             </a>
@@ -188,6 +161,104 @@ export function TopFrame(props: TopFrameInterface) {
           </>
         )}
       </Disclosure>
+    </div>
+  );
+}
+
+function Dropdown() {
+  return (
+    <div className=" flex justify-end p-4">
+      <Menu as="div" className="relative">
+        {/* Menu Button */}
+        <Menu.Button className="inline-flex justify-center items-center  shadow-sm  text-sm font-medium  focus:outline-none text-gray-300 hover:text-white">
+          Test suite <ChevronDownIcon className="h-4 w-4 mx-2" />
+        </Menu.Button>
+
+        {/* Menu Items */}
+        <Menu.Items className="w-96 z-30 origin-top-right absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+          <div className="py-2 px-4">
+            <input
+              type="text"
+              placeholder="Search"
+              className="appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="py-1">
+            <Menu.Item>
+              {({ active }) => (
+                <Link
+                  to="/suite"
+                  className={`flex items-center px-4 py-2 text-sm 
+                
+                ${
+                  active
+                    ? "bg-indigo-500 text-white hover:text-white"
+                    : "text-gray-70 hover:text-black"
+                }
+
+                 `}
+                >
+                  My Test suite 1
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <Link
+                  to="/suite"
+                  className={`flex items-center px-4 py-2 text-sm 
+                
+                ${
+                  active
+                    ? "bg-indigo-500 text-white hover:text-white"
+                    : "text-gray-70 hover:text-black"
+                }
+
+                 `}
+                >
+                  My Test suite 1
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <Link
+                  to="/suite"
+                  className={`flex items-center px-4 py-2 text-sm 
+                
+                ${
+                  active
+                    ? "bg-indigo-500 text-white hover:text-white"
+                    : "text-gray-70 hover:text-black"
+                }
+
+                 `}
+                >
+                  My Test suite 1
+                </Link>
+              )}
+            </Menu.Item>
+            <Menu.Item>
+              {({ active }) => (
+                <Link
+                  to="/suite"
+                  className={`flex items-center px-4 py-2 text-sm 
+                
+                ${
+                  active
+                    ? "bg-indigo-500 text-white hover:text-white"
+                    : "text-gray-70 hover:text-black"
+                }
+
+                 `}
+                >
+                  My Test suite 1
+                </Link>
+              )}
+            </Menu.Item>
+          </div>
+        </Menu.Items>
+      </Menu>
     </div>
   );
 }
