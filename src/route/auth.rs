@@ -1,15 +1,9 @@
 use actix_web::{HttpRequest, HttpResponse, Responder, Scope, web};
-use actix_web::cookie::Cookie;
+use actix_web::{cookie::Cookie, web::Path};
 use actix_web::cookie::time::Duration as CookieDuration;
-use actix_web::web::Path;
 use chrono::Duration;
 use entity::{prelude::*, profile, profile_data, user};
-use sea_orm::ActiveModelTrait;
-use sea_orm::ColumnTrait;
-use sea_orm::EntityTrait;
-use sea_orm::QueryFilter;
-use sea_orm::QueryOrder;
-use sea_orm::Set;
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QueryOrder, Set};
 use serde::Deserialize;
 
 use crate::constant::metadata::user::AuthData;
