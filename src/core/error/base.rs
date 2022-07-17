@@ -4,6 +4,7 @@ use std::io::Error as BaseError;
 
 use actix_web::{Error as ActixError, HttpResponse, ResponseError};
 use http::StatusCode;
+use jsonwebtoken::errors::Error;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -41,6 +42,8 @@ pub enum OrcaError {
     IoError(#[from] std::io::Error),
     #[error("DB error: {0}")]
     DBError(#[from] sea_orm::DbErr),
+    #[error("JWT error: {0}")]
+    JWTError(#[from] Error),
     #[error("You are forbidden to access requested file.")]
     Forbidden,
     #[error("Header ({0}) is not available.")]
@@ -63,6 +66,8 @@ impl OrcaError {
             Self::Forbidden => ErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR, "Unknown", self.to_string()),
             Self::IoError(ref _a) => ErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR, "Unknown", self.to_string()),
             Self::DBError(ref _a) => ErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR, "DBError", self.to_string()),
+
+            Self::JWTError(ref _a) => ErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR, "JWTError", self.to_string()),
 
             Self::UserNotFound(ref _a) => ErrorResponse::new(StatusCode::NOT_FOUND, "UserNotFound", self.to_string()),
             _ => ErrorResponse::new(StatusCode::INTERNAL_SERVER_ERROR, "Unknown", self.to_string()),
