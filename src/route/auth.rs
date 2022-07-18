@@ -1,21 +1,15 @@
 use actix_web::{HttpRequest, HttpResponse, Responder, Scope, web};
-use actix_web::web::Path;
+use actix_web::{cookie::Cookie, web::Path};
+use actix_web::cookie::time::Duration as CookieDuration;
+use chrono::Duration;
 use entity::{prelude::*, profile, profile_data, user};
-use sea_orm::ActiveModelTrait;
-use sea_orm::ColumnTrait;
-use sea_orm::EntityTrait;
-use sea_orm::QueryFilter;
-use sea_orm::QueryOrder;
-use sea_orm::Set;
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QueryOrder, Set};
 use serde::Deserialize;
 
+use crate::constant::metadata::user::AuthData;
+use crate::core::error::OrcaResult;
 use crate::server::context::request::RequestContext;
-
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-pub struct AuthData {
-    pub user_name: String,
-    pub password: bool
-}
+use crate::utils::jwt::JWTClaim;
 
 /// profile_config - this will register all the endpoint in profile route
 pub fn auth_config(cfg: &mut web::ServiceConfig) {
@@ -29,8 +23,17 @@ pub fn auth_config(cfg: &mut web::ServiceConfig) {
 
 }
 /// signin - will get username and password as payload
-async fn signin(auth_data: web::Json<AuthData>) -> impl Responder {
-    "Got Profile By ID"
+async fn signin(auth_data: web::Json<AuthData>, req: HttpRequest) -> OrcaResult {
+    let username = auth_data.clone().username;
+    let host = req.uri().host().unwrap();
+    let duration = Duration::days(5);
+    let claim = JWTClaim::new(username, "AUTH".parse().unwrap(), duration, None);
+    let jwt = claim.encode()?;
+    let cookie = Cookie::build("_OUSI_", jwt)
+        .domain(host).path("/").secure(true).max_age(CookieDuration::days(5))
+            .http_only(true)
+            .finish();
+    Ok(HttpResponse::Ok().cookie(cookie).finish())
 }
 
 /// get_redirection_url - get the redirection url for the google authentication

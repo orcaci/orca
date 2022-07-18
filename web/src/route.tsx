@@ -1,79 +1,157 @@
 import { lazily } from "react-lazily";
-import { useHistory } from "react-router-dom";
+import { AcademicCapIcon, UserIcon } from "@heroicons/react/outline";
 
-function AuthorizedComponent(props: any) {
-  const { children } = props;
-  const history = useHistory();
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true";
+// function AuthorizedComponent(props: any) {
+//   const { children } = props;
+//   // const history = useHistory();
+//   const isLoggedIn = localStorage.getItem("loggedIn") === "true";
 
-  if (isLoggedIn) {
-    return children;
-  } else {
-    history.push("/login");
-    return null;
-  }
-}
+//   if (isLoggedIn) {
+//     return children;
+//   } else {
+//     // history.push("/login");
+//     return null;
+//   }
+// }
 
 export const MAIN_ROUTES = [
   {
     path: "/login",
-    component: () => {
+    component: (): React.FunctionComponent => {
       const { Login } = lazily(() => import("./pages/auth/login"));
-      return <Login />;
+      return Login;
     },
-    exact: true,
     key: "login"
   },
   {
     path: "/setpassword",
-    component: () => {
-      const { ResetPassword } = lazily(() => import("./pages/auth/resetpassword"));
-      return <ResetPassword />;
+    component: (): React.FunctionComponent => {
+      const { ResetPassword } = lazily(
+        () => import("./pages/auth/resetpassword")
+      );
+      return ResetPassword;
     },
-    exact: true,
     key: "setpassword"
   },
   {
     path: "/",
     component: () => {
-      const { AuthorizedLayout } = lazily(() => import("./layouts/auth"));
-      return (
-        <AuthorizedComponent>
-          <AuthorizedLayout />
-        </AuthorizedComponent>
-      );
+      const { HomeLayout } = lazily(() => import("./layouts/home"));
+      return HomeLayout;
     },
-    key: "authlayout"
-  }
-];
-
-export const HOME_ROUTES = [
-  {
-    path: "/home",
-    component: () => {
-      const { Homepage } = lazily(() => import("./home"));
-      return <Homepage />;
-    }
+    key: "home"
   },
   {
     path: "/admin",
     component: () => {
-      const { Adminpage } = lazily(() => import("./admin"));
-      return <Adminpage />;
-    }
+      const { AdminLayout } = lazily(() => import("./layouts/admin"));
+      return AdminLayout;
+    },
+    nestedRoute: [
+      {
+        path: "user",
+        component: () => {
+          const { UserManagement } = lazily(() => import("./pages/admin/user"));
+          return UserManagement;
+        },
+        isMenu: true,
+        name: "User Management",
+        icon: UserIcon,
+        relativePath: "/admin/user"
+      },
+      {
+        path: "role",
+        component: () => {
+          const { DataTable } = lazily(() => import("./datatable"));
+          return DataTable;
+        },
+        name: "Role Management",
+        isMenu: true,
+        icon: AcademicCapIcon,
+        relativePath: "/admin/role"
+      }
+    ],
+    key: "admin"
   },
   {
-    path: "/profiles",
+    path: "/suit",
+    key: "suit",
     component: () => {
-      const { ProfilePage } = lazily(() => import("./profiles"));
-      return <ProfilePage />;
-    }
-  },
-  {
-    path: "/datatable",
-    component: () => {
-      const { DataTable } = lazily(() => import("./datatable"));
-      return <DataTable />;
-    }
+      const { SuitLayout } = lazily(() => import("./layouts/suit"));
+      return SuitLayout;
+    },
+    nestedRoute: [
+      {
+        path: ":id/testcase",
+        component: () => {
+          const { TestCase } = lazily(() => import("./layouts/testcase"));
+          return TestCase;
+        },
+        key: "testcase"
+      },
+      {
+        path: ":id/datatable",
+        component: () => {
+          const { DataTable } = lazily(() => import("./pages/suit/datatable"));
+          return DataTable;
+        },
+        key: "datatable"
+      },
+      {
+        path: ":id/datatableold",
+        component: () => {
+          const { DataTable } = lazily(() => import("./datatable"));
+          return DataTable;
+        },
+        key: "datatableold"
+      },
+      {
+        path: ":id/stepgroup",
+        component: () => {
+          const { Step } = lazily(() => import("./layouts/step"));
+          return Step;
+        },
+        key: "stepgroup"
+      }
+    ]
   }
+];
+// {
+//   path: "*",
+//   component: ():React.FunctionComponent => {
+//     const { AuthorizedLayout } = lazily(() => import("./layouts/auth"));
+//     return AuthorizedLayout
+//   },
+//   key: "authlayout"
+// }
+
+export const HOME_ROUTES = [
+  // {
+  //   path: "/home",
+  //   component: ():React.FunctionComponent => {
+  //     const { Homepage } = lazily(() => import("./home"));
+  //     return Homepage;
+  //   }
+  // },
+  // {
+  //   path: "/admin",
+  //   component: ():React.FunctionComponent => {
+  //     const { Adminpage } = lazily(() => import("./admin"));
+  //     return Adminpage;
+  //   }
+  // },
+  // {
+  //   path: "/profiles",
+  //   component: ():React.FunctionComponent => {
+  //     const { ProfilePage } = lazily(() => import("./profiles"));
+  //     return ProfilePage;
+  //   }
+  // },
+  // {
+  //   path: "/datatable",
+  //   component: ():React.FunctionComponent => {
+  //     const { DataTable } = lazily(() => import("./datatable"));
+  //     return DataTable;
+  //   }
+  // }
 ];

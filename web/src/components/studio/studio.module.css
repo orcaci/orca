@@ -1,0 +1,17 @@
+.sideBar {
+  width: 200px;
+  height: 100%;
+  background-color: black;
+  color: white;
+}
+
+.collapsed {
+  width: 52px;
+  height: 100%;
+  background-color: black;
+  color: white;
+}
+
+.react-flow {
+  position: absolute !important;
+}

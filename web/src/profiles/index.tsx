@@ -6,9 +6,7 @@ import { Profiles } from "./profile";
 export function ProfilePage() {
   return (
     <Fragment>
-      <Route path={["/profiles", "/profiles/:profileId"]} exact>
-        <Profiles />
-      </Route>
+      <Route path="/profiles" element={<Profiles />} />
     </Fragment>
   );
 }

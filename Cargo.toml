@@ -1,7 +1,7 @@
 [package]
 name = "orca"
 version = "0.1.0"
-edition = "2021"
+edition = "2018"
 description = "Orca is Automation Tool for testing framework that will help to automate the application testing faster"
 authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
 
@@ -13,6 +13,7 @@ http = "0.2.8"
 thiserror = "1.0.31"
 jsonwebtoken = "8"
 chrono = "0.4"
+uuid = { version = "1.1.2", features = ["v4", "fast-rng", "macro-diagnostics"]}
 rand = { version = "0.7", default-features = false, features = ["std"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 actix = "0.13.0"

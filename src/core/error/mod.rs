@@ -6,4 +6,4 @@ use actix_web::http::StatusCode;
 
 mod base;
 
-pub use base::{OrcaResult, OrcaError};
+pub use base::{OrcaResult, OrcaError, InternalResult};

@@ -8,6 +8,7 @@ mod constant;
 mod route;
 mod server;
 mod core;
+mod utils;
 
 /// main - Orca Start here
 #[actix_web::main]

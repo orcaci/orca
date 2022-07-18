@@ -11,7 +11,7 @@ use log::error;
 
 use crate::core::client::{CLIENT, Client, database};
 use crate::core::client::database::Database;
-use crate::core::error::OrcaError;
+use crate::core::error::{InternalResult, OrcaError};
 
 // This struct represents state
 #[derive(Debug, Clone, Default)]

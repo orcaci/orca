@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Layout, Menu } from "antd";
 import { Route } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import { HeatMapOutlined } from "@ant-design/icons";
 
 import { HOME_ROUTES } from "../route";
@@ -35,7 +35,7 @@ const TAB_MENU_OPTIONS = [
 
 export function Mainpage() {
   const [isCollapsed, setCollapsed] = useState(false);
-  const history = useHistory();
+  // const history = useHistory();
 
   return (
     <Layout className={styles.homecontainer}>
@@ -50,7 +50,7 @@ export function Mainpage() {
               <Menu.Item
                 key={index + 1}
                 icon={item.icon}
-                onClick={() => history.push(item.route)}
+                // onClick={() => history.push(item.route)}
               >
                 {item.name}
               </Menu.Item>
@@ -59,16 +59,14 @@ export function Mainpage() {
         </Menu>
       </Sider>
       <Layout>
-        <div className={styles.layoutcontainer}>
+        {/* <div className={styles.layoutcontainer}>
           {HOME_ROUTES.map((route) => {
-            const Component = route.component;
+            const Component = route.component();
             return (
-              <Route path={`${route.path}`} key={route.path}>
-                <Component />
-              </Route>
+              <Route path={`${route.path}`} key={route.path} element={<Component />} />
             );
           })}
-        </div>
+        </div> */}
       </Layout>
     </Layout>
   );

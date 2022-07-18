@@ -1,68 +1,85 @@
 import { AcademicCapIcon, UserIcon } from "@heroicons/react/outline";
 import { lazily } from "react-lazily";
-import { Route, useHistory } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 export const ADMIN_ROUTES = [
-    {
-        path: "/admin/user",
-        component: () => {
-            const { UserManagement } = lazily(() => import("../../pages/admin/user"));
-            return <UserManagement />;
-        },
-        "isMenu": true,
-        name: "User Management",
-        icon: UserIcon,
-        redirectPath: "/admin/user"
+  {
+    path: "user",
+    component: () => {
+      const { UserManagement } = lazily(() => import("../../pages/admin/user"));
+      return UserManagement;
     },
-    {
-        path: "/role",
-        component: () => {
-            const { DataTable } = lazily(() => import("../../datatable"));
-            return <DataTable />;
-        },
-        name: "Role Management",
-        "isMenu": true,
-        icon: AcademicCapIcon,
-        redirectPath: "/admin/user"
+    isMenu: true,
+    name: "User Management",
+    icon: UserIcon,
+    relativePath: "/admin/user"
+  },
+  {
+    path: "/role",
+    component: () => {
+      const { DataTable } = lazily(() => import("../../datatable"));
+      return DataTable;
     },
+    name: "Role Management",
+    isMenu: true,
+    icon: AcademicCapIcon,
+    relativePath: "/admin/role"
+  }
 ];
 
 export function AdminLayout() {
-    const history = useHistory();
-    //Reference URL - https://tailwind-elements.com/docs/standard/navigation/sidenav/ 
-    return (
-        <div className="flex h-screen">
-        <div className="w-60 shadow-md bg-white" id="sidenavSecExample">
-            <div className="pt-4 pb-2 px-6">
-                    <div className="flex items-center">
-                        <div className="shrink-0">
-                            {/* <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" className="rounded-full w-10" alt="Avatar" /> */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                            </svg>
-                        </div>
-                        <div className="grow ml-3">
-                            <p className="text-sm font-semibold text-blue-600">Admin Settings</p>
-                        </div>
-                    </div>
+  // const history = useHistory();
+  // Reference URL - https://tailwind-elements.com/docs/standard/navigation/sidenav/
+  return (
+    <div className="flex w-screen h-screen">
+      <div className="w-60 shadow-md bg-white" id="sidenavSecExample">
+        <div className="pt-4 pb-2 px-6">
+          <div className="flex items-center">
+            <div className="shrink-0">
+              {/* <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" className="rounded-full w-10" alt="Avatar" /> */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                />
+              </svg>
             </div>
-            <hr className="my-2" />
-            <ul className="relative px-1">
-                {
-                    ADMIN_ROUTES.map((item: any) => {
-                        if(item.isMenu)
-                        return (
-                            <li className="relative">
-                                <a className="flex space-x-4 items-center text-sm py-4 px-5 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out" onClick={()=>{history.push("/admin"+item.path)}} data-mdb-ripple="true" data-mdb-ripple-color="primary">
-                                    <item.icon className="h-6 w-6" aria-hidden="true" />
-                                    <span>{item.name}</span>
-                                </a>
-                            </li>
-                        );
-                    })
-                }
-            </ul>
-            {/* <hr className="my-2" />
+            <div className="grow ml-3">
+              <p className="text-sm font-semibold text-blue-600">
+                Admin Settings
+              </p>
+            </div>
+          </div>
+        </div>
+        <hr className="my-2" />
+        <ul className="relative px-1">
+          {ADMIN_ROUTES.map((item: any) => {
+            if (item.isMenu)
+              return (
+                <li className="relative">
+                  <Link
+                    to={item.relativePath}
+                    className="flex space-x-4 items-center text-sm py-4 px-5 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                    data-mdb-ripple="true"
+                    data-mdb-ripple-color="primary"
+                  >
+                    <item.icon className="h-6 w-6" aria-hidden="true" />
+                    <span>{item.name}</span>
+                  </Link>
+                </li>
+              );
+            return null;
+          })}
+        </ul>
+        {/* <hr className="my-2" />
             <ul className="relative px-1">
                 <li className="relative">
                 <a className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out" href="#!" data-mdb-ripple="true" data-mdb-ripple-color="primary">
@@ -111,28 +128,9 @@ export function AdminLayout() {
                 </ul>
                 </li>
             </ul> */}
-        </div>
-        <div className="h-full w-full shadow-md bg-white" id="admin-content">
-            {ADMIN_ROUTES.map((route: any) => {
-                const Component = route.component;
-                return (
-                <Route path={`${route.path}`} key={route.path} exact={true}>
-                    <Component />
-                </Route>
-                );
-            })}
-        </div>
-        </div>
-    );
-}
+      </div>
 
-// <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-//   {ADMIN_ROUTES.map((route: any) => {
-//     const Component = route.component;
-//     return (
-//       <Route path={`${route.path}`} key={route.path} exact={true}>
-//         <Component />
-//       </Route>
-//     );
-//   })}
-// </div>
+      <Outlet />
+    </div>
+  );
+}

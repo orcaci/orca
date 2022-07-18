@@ -1,10 +1,10 @@
 export interface IProfile {
-  id: String;
-  key: String;
-  name: String;
-  value: String;
-  description?: String;
-  is_default?: Boolean;
+  id: string;
+  key: string;
+  name: string;
+  value: string;
+  description?: string;
+  is_default?: boolean;
 }
 
 export interface IProfileItems extends Array<IProfile> {}
