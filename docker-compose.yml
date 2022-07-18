@@ -1,12 +1,13 @@
 version: '3.7'
 services:
-#  orca-service:
-#    build:
-#      dockerfile: Dockerfile
-#    image: orca/service
-#    ports:
-#      - 8090:8000
-#    container_name: orca-service
+  orca-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: orca/service
+    ports:
+      - "8090:8000"
+    container_name: orca-service
 
   postgres:
     image: postgres:13.6
@@ -24,60 +25,60 @@ services:
     volumes:
       - ./cache/postgresql:/var/lib/postgresql/data
 
-
-  orca-client:
-    build:
-      context: ./web
-      dockerfile: local.Dockerfile
-    image: orca/client
-    ports:
-      - "8000:3000"
-    container_name: orca-client
-    environment:
-      - SERVICE_NAME=orca
-      - ENV=Local
-    volumes:
-      - ./web:/app
-    depends_on: [postgres]
-    restart: always
-
-
-  orca-gateway:
-    build:
-      context: ./nginx
-      dockerfile: dev.Dockerfile
-    image: orca/gateway
-    ports:
-      - "80:80"
-      - "443:443"
-    container_name: orca-gateway
-    depends_on:
-#      - orion-service
-      - orca-client
-    environment:
-      - ENV=Local
-      - PORT=80
-
-  pgadmin:
-    container_name: pgadmin4
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
-    ports:
-      - "5050:80"
-
-  selenoid:
-    network_mode: bridge
-    image: aerokube/selenoid:latest-release
-    volumes:
-      - "./cache/selenoid:/etc/selenoid"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./cache/selenoid/video:/opt/selenoid/video"
-      - "./cache/selenoid/logs:/opt/selenoid/logs"
-    environment:
-      - OVERRIDE_VIDEO_OUTPUT_DIR=/Users/vasanth/Documents/github/workfoxes/orca/cache/selenoid/video
-#    command: [ "-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs" ]
-    ports:
-      - "4444:4444"
+#
+#  orca-client:
+#    build:
+#      context: ./web
+#      dockerfile: local.Dockerfile
+#    image: orca/client
+#    ports:
+#      - "8000:3000"
+#    container_name: orca-client
+#    environment:
+#      - SERVICE_NAME=orca
+#      - ENV=Local
+#    volumes:
+#      - ./web:/app
+#    depends_on: [postgres]
+#    restart: always
+#
+#
+#  orca-gateway:
+#    build:
+#      context: ./nginx
+#      dockerfile: dev.Dockerfile
+#    image: orca/gateway
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    container_name: orca-gateway
+#    depends_on:
+##      - orion-service
+#      - orca-client
+#    environment:
+#      - ENV=Local
+#      - PORT=80
+#
+#  pgadmin:
+#    container_name: pgadmin4
+#    image: dpage/pgadmin4
+#    restart: always
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+#      PGADMIN_DEFAULT_PASSWORD: root
+#    ports:
+#      - "5050:80"
+#
+#  selenoid:
+#    network_mode: bridge
+#    image: aerokube/selenoid:latest-release
+#    volumes:
+#      - "./cache/selenoid:/etc/selenoid"
+#      - "/var/run/docker.sock:/var/run/docker.sock"
+#      - "./cache/selenoid/video:/opt/selenoid/video"
+#      - "./cache/selenoid/logs:/opt/selenoid/logs"
+#    environment:
+#      - OVERRIDE_VIDEO_OUTPUT_DIR=/Users/vasanth/Documents/github/workfoxes/orca/cache/selenoid/video
+##    command: [ "-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs" ]
+#    ports:
+#      - "4444:4444"

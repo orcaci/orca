@@ -31,7 +31,7 @@ export function AdminLayout() {
   // const history = useHistory();
   // Reference URL - https://tailwind-elements.com/docs/standard/navigation/sidenav/
   return (
-    <div className="flex h-screen">
+    <div className="flex w-screen h-screen">
       <div className="w-60 shadow-md bg-white" id="sidenavSecExample">
         <div className="pt-4 pb-2 px-6">
           <div className="flex items-center">

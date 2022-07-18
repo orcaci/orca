@@ -55,12 +55,14 @@ const SOUCE = [
 
 export function UserManagement() {
   return (
-    <Table
-      column={COLUMNS}
-      souce={SOUCE}
-      pageSizeOption={[10, 25, 50]}
-      defaultPageSize={1}
-      defaultKey={"no"}
-    />
+      <div className={"flex-auto"}>
+        <Table
+          column={COLUMNS}
+          source={SOUCE}
+          pageSizeOption={[10, 25, 50]}
+          defaultPageSize={1}
+          defaultKey={"no"}
+        />
+      </div>
   );
 }

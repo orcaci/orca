@@ -92,10 +92,18 @@ export const MAIN_ROUTES = [
       {
         path: ":id/datatable",
         component: () => {
-          const { DataTable } = lazily(() => import("./datatable"));
+          const { DataTable } = lazily(() => import("./pages/suit/datatable"));
           return DataTable;
         },
         key: "datatable"
+      },
+      {
+        path: ":id/datatableold",
+        component: () => {
+          const { DataTable } = lazily(() => import("./datatable"));
+          return DataTable;
+        },
+        key: "datatableold"
       },
       {
         path: ":id/stepgroup",

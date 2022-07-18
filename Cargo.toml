@@ -1,7 +1,7 @@
 [package]
 name = "orca"
 version = "0.1.0"
-edition = "2021"
+edition = "2018"
 description = "Orca is Automation Tool for testing framework that will help to automate the application testing faster"
 authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
 

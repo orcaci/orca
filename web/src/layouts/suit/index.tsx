@@ -6,8 +6,7 @@ export function SuitLayout() {
   return (
     <>
       <Sidebar />
-      <div className="block">
-        {/* <div className="flex flex-1 items-center">Welcome to Test Suit</div> */}
+      <div className={"flex-auto h-screen overflow-auto"}>
         <Outlet />
       </div>
     </>

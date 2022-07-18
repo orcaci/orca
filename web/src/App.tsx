@@ -4,7 +4,6 @@ import { Skeleton } from "antd";
 
 import { MAIN_ROUTES } from "./route";
 import { TopFrame } from "./components/topframe";
-import { Sidebar } from "./components/sidebar";
 
 import "antd/dist/antd.css";
 
@@ -12,7 +11,7 @@ function App() {
   return (
     <BrowserRouter>
       <TopFrame navigation={MAIN_ROUTES} />
-      <main className="flex">
+      <main className="flex w-full">
         <Suspense fallback={<Skeleton active={true} />}>
           <Routes>
             {MAIN_ROUTES.map((route) => {
