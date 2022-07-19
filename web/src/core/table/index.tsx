@@ -50,12 +50,12 @@ export function Table(props: DataTableInterface) {
           </div>
         </div>
         <div className="overflow-auto max-h mx-6">
-          <table className="table-auto w-full text-sm text-left text-gray-500">
+          <table className="table-auto w-full text-sm text-left text-gray-500 border-separate">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
               <tr>
                 {column.map((item) => {
                   return (
-                    <th scope="col" className="py-3 px-6" key={item.key}>
+                    <th scope="col" className="border py-3 px-6" key={item.key}>
                       <div className="flex items-center">
                         {item.name}
                         {item.isFilter ? (
@@ -74,7 +74,7 @@ export function Table(props: DataTableInterface) {
                     {column.map((item) => {
                       return (
                         <td
-                          className="py-4 px-6"
+                          className="border py-4 px-6"
                           key={`${item.key}-`}
                         >
                           {row[item.key]}
