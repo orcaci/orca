@@ -19,6 +19,9 @@ serde_json = "1.0.59"
 tokio = "1.17.0"
 thirtyfour = "0.31.0"
 
+entity = { path = "../entity" }
+cerium = { path = "../cerium"}
+
 
 [features]
 api-automation = []

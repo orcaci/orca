@@ -6,6 +6,9 @@ description = "Cerium - is core libirary for the orca application"
 authors = ["Vasanth Kumar Kalaiselvan <itsparser@gmail.com>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[test]]
+name = "tests"
+path = "tests"
 
 [lib]
 name = "cerium"
@@ -14,4 +17,8 @@ crate-type = ["lib"]
 [dependencies]
 serde = { version = "1.0.147", features = ["derive"] }
 serde_json = "1.0.87"
+surrealdb-rs = { git="https://github.com/surrealdb/surrealdb.rs" }
+config = "0.13.3"
+jsonwebtoken = "8"
+thiserror = "1.0.31"
 

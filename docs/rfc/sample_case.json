@@ -1,0 +1,34 @@
+[
+  {
+    "description": "Click on Submit",
+    "type": "enter",
+    "target": {
+      "type": "css",
+      "value": "#email"
+    },
+    "data": {
+      "type": "hardcode",
+      "value": "mani@gmail.com"
+    }
+  },
+  {
+    "description": "Update user name",
+    "type": "enter",
+    "target": {
+      "type": "id",
+      "value": "#password"
+    },
+    "data": {
+      "type": "runtime",
+      "value": "UserPWD"
+    }
+  },
+  {
+    "description": "login",
+    "type": "enter",
+    "target": {
+      "type": "id",
+      "value": "#button"
+    }
+  }
+]
