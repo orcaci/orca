@@ -1,0 +1,46 @@
+version: '3'
+networks:
+  selenoid:
+    external:
+      name: selenoid # This assumes network is already created
+services:
+  selenoid:
+    networks:
+      selenoid: null
+    image: aerokube/selenoid:latest-release
+    volumes:
+      - "/path/to/config:/etc/selenoid"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/path/to/config/video:/opt/selenoid/video"
+      - "/path/to/config/logs:/opt/selenoid/logs"
+    environment:
+      - OVERRIDE_VIDEO_OUTPUT_DIR=/path/to/config/video
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs", "-container-network", "selenoid"]
+    ports:
+      - "4444:4444"
+
+  ### PostgreSQL ################################################
+  postgres:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=crabby
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    container_name: postgres
+
+  ### Redis ################################################
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    container_name: redis
+    command: redis-server --save "" --appendonly no
+
+
+volumes:
+  data:
