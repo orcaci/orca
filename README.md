@@ -1,4 +1,7 @@
-## **Orca - Test Automation Application [UNDER-DEVELOPMENT]**
+## 🐠 **Orca - Test Automation Application [UNDER-DEVELOPMENT]**
+# 🐠 [Orca](https://orca.workfoxes.in)
+
+[![MIT](https://img.shields.io/crates/l/orca)](https://github.com/orcaci/orca/blob/main/LICENSE)
 
 Orca is a test automation application written in the Rust programming language, designed to help with automating applications through record and playback functionality. It is based on a low-code platform, which allows users to easily create and customize automation scripts without the need for extensive programming knowledge.
 
