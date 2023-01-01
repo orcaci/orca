@@ -4,30 +4,27 @@ use sea_orm::entity::prelude::*;
 use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
+
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
-#[sea_orm(table_name = "case_block")]
+#[sea_orm(table_name = "action_group")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub block_id: Uuid,
-    #[sea_orm(primary_key)]
-    pub ref_block_id: Uuid,
+    pub id: Uuid,
+    pub name: String,
+    pub description: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::case_block::Entity",
-        from = "Column::BlockId",
-        to = "super::case_block::Column::Id"
-    )]
-    CaseBlock,
+    #[sea_orm(has_many = "super::action::Entity")]
+    Action,
 }
 
-impl Related<super::case_block::Entity> for Entity {
+// `Related` trait has to be implemented by hand
+impl Related<super::action::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::CaseBlock.def()
+        Relation::Action.def()
     }
 }
-
 
 impl ActiveModelBehavior for ActiveModel {}

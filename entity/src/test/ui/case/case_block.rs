@@ -40,7 +40,6 @@ pub struct Model {
     #[sea_orm(column_name = "type")]
     pub type_field: BlockType,
     pub reference: String,
-    // pub case_id: Option<i64>,
     pub parent_id: Option<Uuid>,
 }
 

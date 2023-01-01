@@ -111,7 +111,7 @@ mod tests {
         let mut caps = DesiredCapabilities::firefox();
         caps.set_headless().expect("TODO: panic message");
 
-        let d = WebDriver::new("", caps);
+        let d = WebDriver::new("https://localhost:4444//wd/hub/session", caps);
         let driver = Runtime::new().unwrap().block_on(d).expect("TODO: panic message");
         let d = UIDriver::default(&driver);
         d.execute(&action_group).expect("TODO: panic message");
