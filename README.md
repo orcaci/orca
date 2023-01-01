@@ -1,5 +1,4 @@
 ## 🐠 **Orca - Test Automation Application [UNDER-DEVELOPMENT]**
-# 🐠 [Orca](https://orca.workfoxes.in)
 
 [![MIT](https://img.shields.io/crates/l/orca)](https://github.com/orcaci/orca/blob/main/LICENSE)
 
