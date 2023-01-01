@@ -3,8 +3,10 @@ use sea_orm::prelude::Uuid;
 use serde_json::json;
 use entity::prelude::*;
 use entity::prelude::case_block::{BlockKind, BlockType};
-use entity::test::ui::action::{action, group};
+use entity::test::ui::action::{action, data, group, target};
 use entity::test::ui::action::action::ActionKind;
+use entity::test::ui::action::data::{ActionDataKind};
+use entity::test::ui::action::target::ActionTargetKind;
 
 async fn connection() -> DatabaseConnection {
     Database::connect("postgres://root:root@localhost:5432/orca".to_string()).await.expect("Error unable to connect DB")
@@ -57,41 +59,6 @@ async fn t0001_seeding_data() -> Result<(), sea_orm::DbErr> {
 
 #[tokio::test]
 async fn t0002_seeding_action() -> Result<(), sea_orm::DbErr> {
-    let data = json!(
-        [
-          {
-            "description": "Click on Submit",
-            "type": "enter",
-            "target": {
-              "type": "css",
-              "value": "#email"
-            },
-            "data": {
-              "type": "static",
-              "value": "mani@gmail.com"
-            }
-          },
-          {
-            "description": "Update user name",
-            "type": "enter",
-            "target": {
-              "type": "id",
-              "value": "password"
-            },
-            "data": {
-              "type": "runtime",
-              "value": "UserPWD"
-            }
-          },
-          {
-            "description": "login",
-            "type": "enter",
-            "target": {
-              "type": "id",
-              "value": "button"
-            }
-          }
-        ]);
 
     let db = connection().await;
 
@@ -99,15 +66,63 @@ async fn t0002_seeding_action() -> Result<(), sea_orm::DbErr> {
         id: Set(Uuid::new_v4()),
         name: Set("Login Action Group".to_owned()),
         description: Set(Some("login for the Application".to_owned())),
-        ..Default::default()
     }.insert(&db).await?;
-    let _action = action::ActiveModel {
+
+    let _action001 = action::ActiveModel {
         id: Set(Uuid::new_v4()),
         execution_order: Set(1),
         description: Set("Click on Submit".to_string()),
         kind: Set(ActionKind::Enter),
         action_group_id: Set(_group001.id),
-    };
+    }.insert(&db).await?;
+    let _action001_data = data::ActiveModel {
+        id: Set(Uuid::new_v4()),
+        kind: Set(ActionDataKind::Static),
+        value: Set("mani@gmail.com".to_string()),
+        action_id: Set(_action001.id),
+    }.insert(&db).await?;
+    let _action001_target = target::ActiveModel {
+        id: Set(Uuid::new_v4()),
+        kind: Set(ActionTargetKind::Id),
+        value: Set("#email".to_string()),
+        action_id: Set(_action001.id),
+    }.insert(&db).await?;
+
+
+    let _action002 = action::ActiveModel {
+        id: Set(Uuid::new_v4()),
+        execution_order: Set(2),
+        description: Set("Enter password".to_string()),
+        kind: Set(ActionKind::Enter),
+        action_group_id: Set(_group001.id),
+    }.insert(&db).await?;
+    let _action002_data = data::ActiveModel {
+        id: Set(Uuid::new_v4()),
+        kind: Set(ActionDataKind::Static),
+        value: Set("password".to_string()),
+        action_id: Set(_action002.id),
+    }.insert(&db).await?;
+    let _action002_target = target::ActiveModel {
+        id: Set(Uuid::new_v4()),
+        kind: Set(ActionTargetKind::Id),
+        value: Set("#password".to_string()),
+        action_id: Set(_action002.id),
+    }.insert(&db).await?;
+
+
+    let _action003 = action::ActiveModel {
+        id: Set(Uuid::new_v4()),
+        execution_order: Set(3),
+        description: Set("click login".to_string()),
+        kind: Set(ActionKind::Click),
+        action_group_id: Set(_group001.id),
+    }.insert(&db).await?;
+    let _action003_target = target::ActiveModel {
+        id: Set(Uuid::new_v4()),
+        kind: Set(ActionTargetKind::Id),
+        value: Set("#login".to_string()),
+        action_id: Set(_action003.id),
+    }.insert(&db).await?;
 
 
     Ok(())

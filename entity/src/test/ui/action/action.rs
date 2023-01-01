@@ -5,7 +5,7 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "kind")]
+#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "action_kind")]
 pub enum ActionKind {
     #[sea_orm(string_value = "Click")]
     Click,
@@ -20,7 +20,7 @@ pub enum ActionKind {
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Uuid,
-    pub execution_order: i64,
+    pub execution_order: i32,
     pub description: String,
     pub kind: ActionKind,
     pub action_group_id: Uuid
