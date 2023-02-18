@@ -3,7 +3,6 @@ use std::fmt::{Formatter};
 
 use jsonwebtoken::errors::Error;
 use serde::{Serialize};
-use surrealdb_rs::{Error as DatabaseError};
 
 use thiserror::Error;
 
@@ -30,8 +29,8 @@ pub enum CeriumError {
     JsonError(#[from] serde_json::Error),
     #[error("JWT error: {0}")]
     JWTError(#[from] Error),
-    #[error("Database Client Error: {0}")]
-    DatabaseClientError(#[from] DatabaseError),
+    // #[error("Database Client Error: {0}")]
+    // DatabaseClientError(#[from] DatabaseError),
     #[error("User is not Unauthenticated or not Authorized")]
     UnAuthenticated,
     #[error("You are forbidden to access requested file.")]
@@ -45,8 +44,8 @@ impl CeriumError {
             Self::UnAuthenticated => ErrorResponse::new("UnAuthorized", self.to_string()),
             Self::Forbidden => ErrorResponse::new("Unknown", self.to_string()),
             Self::JWTError(ref _a) => ErrorResponse::new("JWTError", self.to_string()),
-            Self::DatabaseClientError(ref _a) => ErrorResponse::new("DatabaseError",
-                                                                    self.to_string()),
+            // Self::DatabaseClientError(ref _a) => ErrorResponse::new("DatabaseError",
+            //                                                         self.to_string()),
             _ => ErrorResponse::new("Unknown", self.to_string()),
         }
     }

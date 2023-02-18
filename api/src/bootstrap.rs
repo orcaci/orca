@@ -65,7 +65,7 @@ pub(crate) async fn run_app_server() -> std::io::Result<()> {
             .configure(route::general_config)
             .service(web::resource("/ws").route(web::get().to(ws_init)))
             .service(
-                web::scope("/v1")
+                web::scope("/api/v1")
                     .configure(route::app::app_config)
             )
     })

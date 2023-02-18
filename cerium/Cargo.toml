@@ -24,7 +24,6 @@ jsonwebtoken = "8"
 thiserror = "1.0.31"
 serde = { version = "1.0.147", features = ["derive"] }
 serde_json = "1.0.87"
-surrealdb-rs = { git="https://github.com/surrealdb/surrealdb.rs" }
 actix-web = "4.2.1"
 http = "0.2.8"
 sea-orm = {version = "0.11.0", default-features = true}
