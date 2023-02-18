@@ -7,7 +7,7 @@ use crate::bootstrap::{init_logger, run_app_server, run_migration};
 pub(crate) mod bootstrap;
 pub(crate) mod utils;
 pub(crate) mod route;
-
+pub(crate) mod server;
 
 
 #[actix_web::main]

@@ -9,10 +9,20 @@
 // pub use super::user_group::Entity as UserGroup;
 
 
-pub use case::Entity as Case;
-pub use case_block::Entity as CaseBlock;
-pub use data_binding::Entity as DataBinding;
+pub use super::test::ui::{
+    action::{
+        target::Entity as ActionTarget,
+        group::Entity as ActionGroup
+    },
+    case::{
+        case::Entity as Case,
+        case_block::Entity as CaseBlock,
+        data_binding::Entity as DataBinding
+    }
+};
 
-// pub use super::test::ui::action::{Action, ActionGroup, ActionKind, ActionTarget};
-pub use super::test::ui::case::*;
+pub use super::test::ui::{
+    action::{target, group},
+    case::{case, case_block, data_binding}
+};
 
