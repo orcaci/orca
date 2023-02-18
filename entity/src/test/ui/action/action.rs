@@ -3,6 +3,8 @@
 use sea_orm::entity::prelude::*;
 use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
+use crate::prelude::target::ActionTargetKind;
+use crate::test::ui::action::data::ActionDataKind;
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
 #[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "action_kind")]
@@ -18,20 +20,32 @@ pub enum ActionKind {
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
 #[sea_orm(table_name = "action")]
 pub struct Model {
+    #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
     pub id: Uuid,
     pub execution_order: i32,
     pub description: String,
     pub kind: ActionKind,
-    pub action_group_id: Uuid
+    pub data_kind: ActionDataKind,
+    pub data_value: String,
+    pub target_kind: ActionTargetKind,
+    pub target_value: String,
+
+    #[serde(skip_deserializing)]
+    pub action_group_id: Uuid,
+
+    #[sea_orm(ignore)]
+    pub data: Option<super::target::Model>,
+    #[sea_orm(ignore)]
+    pub target: Option<super::target::Model>
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_one = "super::target::Entity")]
-    Target,
-    #[sea_orm(has_one = "super::data::Entity")]
-    Data,
+    // #[sea_orm(has_one = "super::target::Entity")]
+    // Target,
+    // #[sea_orm(has_one = "super::data::Entity")]
+    // Data,
     #[sea_orm(
         belongs_to = "super::group::Entity",
         from = "Column::ActionGroupId",
@@ -40,24 +54,24 @@ pub enum Relation {
     ActionGroup,
 }
 
-// `Related` trait has to be implemented by hand
-impl Related<super::target::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Target.def()
-    }
-}
+// // `Related` trait has to be implemented by hand
+// impl Related<super::target::Entity> for Entity {
+//     fn to() -> RelationDef {
+//         Relation::Target.def()
+//     }
+// }
+//
+// // `Related` trait has to be implemented by hand
+// impl Related<super::data::Entity> for Entity {
+//     fn to() -> RelationDef {
+//         Relation::Data.def()
+//     }
+// }
 
 // `Related` trait has to be implemented by hand
 impl Related<super::group::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::ActionGroup.def()
-    }
-}
-
-// `Related` trait has to be implemented by hand
-impl Related<super::data::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Data.def()
     }
 }
 

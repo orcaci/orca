@@ -10,7 +10,8 @@ use entity::app::app;
 
 use crate::utils::config::CONFIG;
 
-pub(crate) mod action_group;
+pub(crate) mod group;
+pub(crate) mod action;
 pub(crate) mod case;
 pub(crate) mod suit;
 pub(crate) mod profile;
@@ -24,6 +25,11 @@ pub fn app_config(cfg: &mut web::ServiceConfig) {
         web::scope("/app")
             .route("/", web::get().to(get_apps))
             .route("/", web::post().to(create_app))
+            .service(
+                web::scope("/{app_id}")
+                    .route("/", web::put().to(create_app))
+                    .configure(group::group_config)
+            )
     );
 
 }

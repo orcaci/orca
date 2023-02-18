@@ -67,6 +67,7 @@ async fn t0002_seeding_action() -> Result<(), sea_orm::DbErr> {
         id: Set(Uuid::new_v4()),
         name: Set("Login Action Group".to_owned()),
         description: Set(Some("login for the Application".to_owned())),
+        app_id: Set("4680b9b4-4c6e-45be-8c06-0799ec8795c9".to_owned().parse().unwrap())
     }.insert(&db).await?;
 
     let _action001 = action::ActiveModel {

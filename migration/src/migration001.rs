@@ -72,6 +72,14 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(action_group::Column::Id).uuid().not_null().primary_key())
                     .col(ColumnDef::new(action_group::Column::Name).string().not_null())
                     .col(ColumnDef::new(action_group::Column::Description).string().not_null())
+                    .col(ColumnDef::new(action_group::Column::AppId).uuid().not_null())
+                    .foreign_key(
+                         ForeignKey::create()
+                            .from(action_group::Entity, action_group::Column::AppId)
+                            .to(app::Entity, app::Column::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
+                    )
                     .to_owned(),
             ).await?;
 
@@ -83,6 +91,10 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(action::Column::Kind).string().not_null())
                     .col(ColumnDef::new(action::Column::ExecutionOrder).integer().not_null())
                     .col(ColumnDef::new(action::Column::Description).string().not_null())
+                    .col(ColumnDef::new(action::Column::TargetKind).string().not_null())
+                    .col(ColumnDef::new(action::Column::TargetValue).string().not_null())
+                    .col(ColumnDef::new(action::Column::DataKind).string().not_null())
+                    .col(ColumnDef::new(action::Column::DataValue).string().not_null())
                     .col(ColumnDef::new(action::Column::ActionGroupId).uuid().not_null())
                     .foreign_key(
                          ForeignKey::create()
@@ -94,39 +106,39 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             ).await?;
 
-        manager.create_table(Table::create()
-                    .table(target::Entity)
-                    .if_not_exists()
-                    .col(ColumnDef::new(target::Column::Id).uuid().not_null().primary_key())
-                    .col(ColumnDef::new(target::Column::Kind).string().not_null())
-                    .col(ColumnDef::new(target::Column::Value).string().not_null())
-                    .col(ColumnDef::new(target::Column::ActionId).uuid().not_null())
-                    .foreign_key(
-                         ForeignKey::create()
-                            .from(target::Entity, target::Column::ActionId)
-                            .to(action::Entity, action::Column::Id)
-                            .on_delete(ForeignKeyAction::Cascade)
-                            .on_update(ForeignKeyAction::Cascade)
-                    )
-                    .to_owned(),
-            ).await?;
-
-        manager.create_table(Table::create()
-                    .table(data::Entity)
-                    .if_not_exists()
-                    .col(ColumnDef::new(data::Column::Id).uuid().not_null().primary_key())
-                    .col(ColumnDef::new(data::Column::Kind).string().not_null())
-                    .col(ColumnDef::new(data::Column::Value).string().not_null())
-                    .col(ColumnDef::new(data::Column::ActionId).uuid().not_null())
-                    .foreign_key(
-                         ForeignKey::create()
-                            .from(data::Entity, data::Column::ActionId)
-                            .to(action::Entity, action::Column::Id)
-                            .on_delete(ForeignKeyAction::Cascade)
-                            .on_update(ForeignKeyAction::Cascade)
-                    )
-                    .to_owned(),
-            ).await?;
+        // manager.create_table(Table::create()
+        //             .table(target::Entity)
+        //             .if_not_exists()
+        //             .col(ColumnDef::new(target::Column::Id).uuid().not_null().primary_key())
+        //             .col(ColumnDef::new(target::Column::Kind).string().not_null())
+        //             .col(ColumnDef::new(target::Column::Value).string().not_null())
+        //             .col(ColumnDef::new(target::Column::ActionId).uuid().not_null())
+        //             .foreign_key(
+        //                  ForeignKey::create()
+        //                     .from(target::Entity, target::Column::ActionId)
+        //                     .to(action::Entity, action::Column::Id)
+        //                     .on_delete(ForeignKeyAction::Cascade)
+        //                     .on_update(ForeignKeyAction::Cascade)
+        //             )
+        //             .to_owned(),
+        //     ).await?;
+        //
+        // manager.create_table(Table::create()
+        //             .table(data::Entity)
+        //             .if_not_exists()
+        //             .col(ColumnDef::new(data::Column::Id).uuid().not_null().primary_key())
+        //             .col(ColumnDef::new(data::Column::Kind).string().not_null())
+        //             .col(ColumnDef::new(data::Column::Value).string().not_null())
+        //             .col(ColumnDef::new(data::Column::ActionId).uuid().not_null())
+        //             .foreign_key(
+        //                  ForeignKey::create()
+        //                     .from(data::Entity, data::Column::ActionId)
+        //                     .to(action::Entity, action::Column::Id)
+        //                     .on_delete(ForeignKeyAction::Cascade)
+        //                     .on_update(ForeignKeyAction::Cascade)
+        //             )
+        //             .to_owned(),
+        //     ).await?;
         Ok(())
     }
 
