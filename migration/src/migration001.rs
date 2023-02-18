@@ -1,4 +1,5 @@
 use sea_orm_migration::prelude::*;
+use entity::app::app;
 use entity::prelude::{case, case_block, data_binding};
 use entity::test::ui::action::{action, data, group as action_group, target};
 
@@ -9,6 +10,16 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        //******************  Application  ******************
+        manager.create_table(Table::create()
+                    .table(app::Entity)
+                    .if_not_exists()
+                    .col(ColumnDef::new(app::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(app::Column::Name).string().not_null())
+                    .col(ColumnDef::new(app::Column::Description).string())
+                    .to_owned(),
+            ).await?;
+
         manager.create_table(Table::create()
                     .table(case::Entity)
                     .if_not_exists()
@@ -120,6 +131,7 @@ impl MigrationTrait for Migration {
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager.drop_table(Table::drop().table(app::Entity).to_owned()).await?;
         manager.drop_table(Table::drop().table(case::Entity).to_owned()).await?;
         manager.drop_table(Table::drop().table(case_block::Entity).to_owned()).await?;
         manager.drop_table(Table::drop().table(data_binding::Entity).to_owned()).await?;

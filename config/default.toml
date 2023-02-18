@@ -1,8 +1,7 @@
 debug = false
 
-[database]
-url = "postgresql://postgres:postgres@localhost:5432/postgres"
+[connection]
+database="postgres://jukbbjhs:T16p5KyqgrrERxCaZRP_nlxgGOFXvRhM@otto.db.elephantsql.com:5432/jukbbjhs"
+selenium="http://34.72.113.188:4444/wd/hub"
 
-[selenium]
-hub = "http://34.72.113.188:4444/wd/hub"
 

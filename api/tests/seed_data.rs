@@ -1,11 +1,12 @@
 use sea_orm::{ActiveModelTrait, Database, DatabaseConnection, EntityTrait, ModelTrait, Set};
 use sea_orm::prelude::Uuid;
 use serde_json::json;
+
 use entity::prelude::*;
 use entity::prelude::case_block::{BlockKind, BlockType};
 use entity::test::ui::action::{action, data, group, target};
 use entity::test::ui::action::action::ActionKind;
-use entity::test::ui::action::data::{ActionDataKind};
+use entity::test::ui::action::data::ActionDataKind;
 use entity::test::ui::action::target::ActionTargetKind;
 
 async fn connection() -> DatabaseConnection {

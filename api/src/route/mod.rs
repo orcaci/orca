@@ -1,9 +1,11 @@
-pub(crate) mod ws;
-
 use std::fmt::Error;
+
 use actix_web::{http, HttpResponse, Responder, web};
-use serde_json::{Value};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+pub(crate) mod ws;
+pub(crate) mod app;
 
 // pub(crate) mod admin;
 // pub(crate) mod ws;

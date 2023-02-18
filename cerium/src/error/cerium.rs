@@ -1,9 +1,8 @@
 use std::fmt;
-use std::fmt::{Display, Formatter};
-use std::io::Error as BaseError;
+use std::fmt::{Formatter};
 
 use jsonwebtoken::errors::Error;
-use serde::{Deserialize, Serialize};
+use serde::{Serialize};
 use surrealdb_rs::{Error as DatabaseError};
 
 use thiserror::Error;
