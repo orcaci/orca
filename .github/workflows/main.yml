@@ -1,3 +1,5 @@
+name: "Buiil for Binary"
+
 # on:
 #   release:
 #     types: [created]
