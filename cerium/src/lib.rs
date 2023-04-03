@@ -12,11 +12,15 @@ pub mod utils;
 pub mod env;
 
 
+// lazy_static! {
+//     // AsyncOnce::new(async {
+//     //     Config::new().await
+//     // });
+//     pub static ref CONFIG: Config = Config::new().unwrap();
+//     pub static ref ENV: Environment = CONFIG.env.clone();
+//     // Environment::new().unwrap();
+// }
+
 lazy_static! {
-    // AsyncOnce::new(async {
-    //     Config::new().await
-    // });
-    pub static ref CONFIG: Config = Config::new().unwrap();
-    pub static ref ENV: Environment = CONFIG.env.clone();
-    // Environment::new().unwrap();
+    pub static ref CONFIG: AsyncOnce<Config> = AsyncOnce::new(async { Config::new() });
 }

@@ -16,7 +16,7 @@ pub(crate) mod case;
 pub(crate) mod suit;
 pub(crate) mod profile;
 pub(crate) mod object_repo;
-
+pub(crate) mod datatable;
 
 
 /// app_config - this will register all the endpoint in App route
@@ -29,6 +29,7 @@ pub fn app_config(cfg: &mut web::ServiceConfig) {
                 web::scope("/{app_id}")
                     .route("/", web::put().to(create_app))
                     .configure(group::group_config)
+                    .configure(datatable::datatable_config)
             )
     );
 

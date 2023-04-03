@@ -11,18 +11,34 @@ pub struct Model {
     pub id: Uuid,
     pub name: String,
     pub description: Option<String>,
+    
+    #[serde(skip_deserializing)]
+    pub app_id: Uuid
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(has_many = "super::case_block::Entity")]
     CaseBlock,
+    
+    #[sea_orm(
+        belongs_to = "crate::app::app::Entity",
+        from = "Column::AppId",
+        to = "crate::app::app::Column::Id"
+    )]
+    App,
 }
 
 // `Related` trait has to be implemented by hand
 impl Related<super::case_block::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::CaseBlock.def()
+    }
+}
+
+impl Related<crate::app::app::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::App.def()
     }
 }
 

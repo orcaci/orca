@@ -15,10 +15,10 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new() -> Result<Self, ConfigError> {
-        let env = Environment::new()?;
+    pub fn new() -> Self {
+        let env = Environment::new();
         let config = Config{ env, db: None };
-        Ok(config)
+        config
     }
 
     /// database - will give connection SeaOrm Database

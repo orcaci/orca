@@ -13,6 +13,7 @@ use cerium::error::web::OrcaError;
 use cerium::utils::uuid::request_uuid;
 
 use crate::server::context::request::RequestContext;
+use crate::utils::config::CONFIG;
 
 // There are two steps in middleware processing.
 // 1. Middleware initialization, middleware factory gets called with
@@ -65,10 +66,12 @@ where
         // if authorization.is_none() {
         //     return Box::pin(async { Err(ErrorUnauthorized("err")) });
         // }
+
         let rc = RequestContext::new(&req);
         req.extensions_mut().insert(rc);
         let fut = self.service.call(req);
         Box::pin(async move {
+            let trx = &CONFIG.get().await.db_client;
             let mut _response = fut.await;
             // res.headers_mut().insert(HeaderName::from_static(REQUEST_ID_HEADER),
             //                          HeaderValue::from_str(&request_id).unwrap());

@@ -22,6 +22,7 @@ pub mod auth;
 pub mod common;
 pub mod test;
 pub mod app;
+pub mod command;
 
 
 

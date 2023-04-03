@@ -1,3 +1,4 @@
+
 use actix_web::{HttpResponse, web};
 use actix_web::web::Path;
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, IntoActiveModel, ModelTrait, NotSet, QueryFilter, QueryOrder, Value};
@@ -6,40 +7,40 @@ use sea_orm::prelude::Uuid;
 
 use cerium::error::web::OrcaError;
 use entity::prelude::group;
-use entity::test::ui::action::action;
+use entity::test::ui::action::{action, datatable};
 
 use crate::utils::config::CONFIG;
 
-/// action_config - this will register all the endpoint in ACTION route
-pub fn action_config(cfg: &mut web::ServiceConfig) {
+/// datatable_config - this will register all the endpoint in Datatable route
+pub fn datatable_config(cfg: &mut web::ServiceConfig) {
     cfg.service(
-        web::scope("/action")
-            .route("/", web::get().to(get_action))
-            .route("/", web::post().to(create_action))
-            .route("/{action_id}/", web::put().to(update_action))
-            .route("/{action_id}/", web::delete().to(delete_action))
+        web::scope("/datatable")
+            .route("/", web::get().to(get_datatables))
+            .route("/", web::post().to(create_datatable))
+            .route("/{table_id}/", web::put().to(update_action))
+            .route("/{table_id}/", web::delete().to(delete_action))
     );
 
 }
 
 
-/// get_action - list all the Action Group in Specific Application in the Orca Application
-async fn get_action(path: Path<(Uuid, Uuid)>) -> Result<HttpResponse, OrcaError> {
-    let (_, group_id) = path.into_inner();
-    let actions = action::Entity::find().filter(action::Column::ActionGroupId.eq(group_id))
-        .order_by_asc(action::Column::ExecutionOrder).all(&CONFIG.get().await.db_client).await
+/// get_datatable - list all the DataTable in Specific Application in the Orca
+async fn get_datatables(path: Path<(Uuid)>) -> Result<HttpResponse, OrcaError> {
+    let app_id = path.into_inner();
+    let tables = datatable::Entity::find().filter(datatable::Column::AppId.eq(app_id))
+        .order_by_asc(datatable::Column::Name).all(&CONFIG.get().await.db_client).await
         .expect("TODO: panic message");
-    Ok(HttpResponse::Ok().json(actions))
+    Ok(HttpResponse::Ok().json(tables))
 }
 
 
-/// create_action - this will create new Action Group in Application Application in Orca
-async fn create_action(path: Path<(Uuid, Uuid)>, mut body: web::Json<action::Model>) -> Result<HttpResponse, OrcaError> {
-    let (_, group_id) = path.into_inner();
+/// create_datatable - this will create new DataTable in Application in Orca
+async fn create_datatable(path: Path<(Uuid)>, mut body: web::Json<datatable::Model>) -> Result<HttpResponse, OrcaError> {
+    let app_id = path.into_inner();
     body.id = Uuid::new_v4();
-    body.action_group_id = group_id;
-    let app = body.clone().into_active_model();
-    let result = app.insert(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+    body.app_id = app_id;
+    let table = body.clone().into_active_model();
+    let result = table.insert(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
     Ok(HttpResponse::Ok().json(result))
 }
 

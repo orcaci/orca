@@ -15,6 +15,13 @@ pub enum ActionKind {
     Enter,
     #[sea_orm(string_value = "DoubleClick")]
     DoubleClick,
+    #[sea_orm(string_value = "Open")]
+    Open,
+
+    #[sea_orm(string_value = "VerifyText")]
+    VerifyText,
+    #[sea_orm(string_value = "VerifyAttribute")]
+    VerifyAttribute,
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
@@ -24,12 +31,13 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Uuid,
     pub execution_order: i32,
-    pub description: String,
+    #[serde(skip_deserializing)]
+    pub description: Option<String>,
     pub kind: ActionKind,
-    pub data_kind: ActionDataKind,
-    pub data_value: String,
-    pub target_kind: ActionTargetKind,
-    pub target_value: String,
+    pub data_kind: Option<ActionDataKind>,
+    pub data_value: Option<String>,
+    pub target_kind: Option<ActionTargetKind>,
+    pub target_value: Option<String>,
 
     #[serde(skip_deserializing)]
     pub action_group_id: Uuid,

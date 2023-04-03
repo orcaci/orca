@@ -1,7 +1,8 @@
 use sea_orm_migration::prelude::*;
 use entity::app::app;
+use entity::command;
 use entity::prelude::{case, case_block, data_binding};
-use entity::test::ui::action::{action, data, group as action_group, target};
+use entity::test::ui::action::{action, data, datatable, field, group as action_group, target};
 
 
 #[derive(DeriveMigrationName)]
@@ -21,13 +22,63 @@ impl MigrationTrait for Migration {
             ).await?;
 
         manager.create_table(Table::create()
+                    .table(action_group::Entity)
+                    .if_not_exists()
+                    .col(ColumnDef::new(action_group::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(action_group::Column::Name).string().not_null())
+                    .col(ColumnDef::new(action_group::Column::TypeField).string().not_null())
+                    .col(ColumnDef::new(action_group::Column::Description).string())
+                    .col(ColumnDef::new(action_group::Column::AppId).uuid().not_null())
+                    .foreign_key(
+                         ForeignKey::create()
+                            .from(action_group::Entity, action_group::Column::AppId)
+                            .to(app::Entity, app::Column::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
+                    )
+                    .to_owned(),
+            ).await?;
+
+
+        manager.create_table(Table::create()
+                    .table(action::Entity)
+                    .if_not_exists()
+                    .col(ColumnDef::new(action::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(action::Column::Kind).string().not_null())
+                    .col(ColumnDef::new(action::Column::ExecutionOrder).integer().not_null())
+                    .col(ColumnDef::new(action::Column::Description).string())
+                    .col(ColumnDef::new(action::Column::TargetKind).string())
+                    .col(ColumnDef::new(action::Column::TargetValue).string())
+                    .col(ColumnDef::new(action::Column::DataKind).string())
+                    .col(ColumnDef::new(action::Column::DataValue).string())
+                    .col(ColumnDef::new(action::Column::ActionGroupId).uuid().not_null())
+                    .foreign_key(
+                         ForeignKey::create()
+                            .from(action::Entity, action::Column::ActionGroupId)
+                            .to(action_group::Entity, action_group::Column::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
+                    )
+                    .to_owned(),
+            ).await?;
+
+        manager.create_table(Table::create()
                     .table(case::Entity)
                     .if_not_exists()
                     .col(ColumnDef::new(case::Column::Id).uuid().not_null().primary_key())
                     .col(ColumnDef::new(case::Column::Name).string().not_null())
                     .col(ColumnDef::new(case::Column::Description).string())
+                    .col(ColumnDef::new(case::Column::AppId).uuid().not_null())
+                    .foreign_key(
+                         ForeignKey::create()
+                            .from(case::Entity, case::Column::AppId)
+                            .to(app::Entity, app::Column::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
+                    )
                     .to_owned(),
             ).await?;
+
         manager.create_table(Table::create()
                     .table(case_block::Entity)
                     .if_not_exists()
@@ -35,17 +86,19 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(case_block::Column::ExecutionOrder).integer().not_null())
                     .col(ColumnDef::new(case_block::Column::TypeField).string().not_null())
                     .col(ColumnDef::new(case_block::Column::Kind).string().not_null())
-                    .col(ColumnDef::new(case_block::Column::Reference).string().not_null())
+                    .col(ColumnDef::new(case_block::Column::Reference).uuid())
                     .col(ColumnDef::new(case_block::Column::ParentId).uuid())
-                    // .foreign_key(
-                    //      ForeignKey::create()
-                    //         .from(case_block::Entity, case_block::Column::ParentId)
-                    //         .to(case_block::Entity, case_block::Column::Id)
-                    //         .on_delete(ForeignKeyAction::Cascade)
-                    //         .on_update(ForeignKeyAction::Cascade)
-                    // )
+                    .col(ColumnDef::new(case_block::Column::CaseId).uuid().not_null())
+                    .foreign_key(
+                         ForeignKey::create()
+                            .from(case_block::Entity, case_block::Column::CaseId)
+                            .to(case::Entity, case::Column::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
+                    )
                     .to_owned(),
             ).await?;
+
         manager.create_table(Table::create()
                     .table(data_binding::Entity)
                     .if_not_exists()
@@ -65,17 +118,27 @@ impl MigrationTrait for Migration {
             ).await?;
 
 
+        manager.create_table(Table::create()
+                    .table(command::Entity)
+                    .if_not_exists()
+                    .col(ColumnDef::new(command::Column::Id).integer().auto_increment().not_null().primary_key())
+                    .col(ColumnDef::new(command::Column::Kind).string().not_null())
+                    .col(ColumnDef::new(command::Column::TableName).string().not_null())
+                    .col(ColumnDef::new(command::Column::Command).string().not_null())
+                    .to_owned(),
+            ).await?;
+
 
         manager.create_table(Table::create()
-                    .table(action_group::Entity)
+                    .table(datatable::Entity)
                     .if_not_exists()
-                    .col(ColumnDef::new(action_group::Column::Id).uuid().not_null().primary_key())
-                    .col(ColumnDef::new(action_group::Column::Name).string().not_null())
-                    .col(ColumnDef::new(action_group::Column::Description).string().not_null())
-                    .col(ColumnDef::new(action_group::Column::AppId).uuid().not_null())
+                    .col(ColumnDef::new(datatable::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(datatable::Column::Name).string().not_null())
+                    .col(ColumnDef::new(datatable::Column::Description).string().not_null())
+                    .col(ColumnDef::new(datatable::Column::AppId).uuid().not_null())
                     .foreign_key(
                          ForeignKey::create()
-                            .from(action_group::Entity, action_group::Column::AppId)
+                            .from(datatable::Entity, datatable::Column::AppId)
                             .to(app::Entity, app::Column::Id)
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade)
@@ -85,21 +148,17 @@ impl MigrationTrait for Migration {
 
 
         manager.create_table(Table::create()
-                    .table(action::Entity)
+                    .table(field::Entity)
                     .if_not_exists()
-                    .col(ColumnDef::new(action::Column::Id).uuid().not_null().primary_key())
-                    .col(ColumnDef::new(action::Column::Kind).string().not_null())
-                    .col(ColumnDef::new(action::Column::ExecutionOrder).integer().not_null())
-                    .col(ColumnDef::new(action::Column::Description).string().not_null())
-                    .col(ColumnDef::new(action::Column::TargetKind).string().not_null())
-                    .col(ColumnDef::new(action::Column::TargetValue).string().not_null())
-                    .col(ColumnDef::new(action::Column::DataKind).string().not_null())
-                    .col(ColumnDef::new(action::Column::DataValue).string().not_null())
-                    .col(ColumnDef::new(action::Column::ActionGroupId).uuid().not_null())
+                    .col(ColumnDef::new(field::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(field::Column::Name).string().not_null())
+                    .col(ColumnDef::new(field::Column::Kind).string().not_null())
+                    .col(ColumnDef::new(field::Column::Option).string())
+                    .col(ColumnDef::new(field::Column::TableId).uuid().not_null())
                     .foreign_key(
                          ForeignKey::create()
-                            .from(action::Entity, action::Column::ActionGroupId)
-                            .to(action_group::Entity, action_group::Column::Id)
+                            .from(field::Entity, field::Column::TableId)
+                            .to(datatable::Entity, datatable::Column::Id)
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade)
                     )

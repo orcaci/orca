@@ -4,33 +4,23 @@ use sea_orm::entity::prelude::*;
 use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "action_group_kind")]
-pub enum ActionGroupKind {
-    #[sea_orm(string_value = "ActionGroup")]
-    ActionGroup,
-    #[sea_orm(string_value = "Assertion")]
-    Assertion
-}
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
-#[sea_orm(table_name = "action_group")]
+#[sea_orm(table_name = "data_table")]
 pub struct Model {
     #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
     pub id: Uuid,
     pub name: String,
     pub description: Option<String>,
-    #[sea_orm(column_name = "type")]
-    pub type_field: ActionGroupKind,
     #[serde(skip_deserializing)]
     pub app_id: Uuid
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::action::Entity")]
-    Action,
+    // #[sea_orm(has_many = "super::action::Entity")]
+    // Action,
     #[sea_orm(
         belongs_to = "crate::app::app::Entity",
         from = "Column::AppId",
@@ -38,13 +28,13 @@ pub enum Relation {
     )]
     App,
 }
-
-// `Related` trait has to be implemented by hand
-impl Related<super::action::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Action.def()
-    }
-}
+//
+// // `Related` trait has to be implemented by hand
+// impl Related<super::action::Entity> for Entity {
+//     fn to() -> RelationDef {
+//         Relation::Action.def()
+//     }
+// }
 
 impl Related<crate::app::app::Entity> for Entity {
     fn to() -> RelationDef {

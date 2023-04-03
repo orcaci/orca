@@ -10,7 +10,7 @@ pub struct TestStep {
     pub value: Option<String>,
     pub output: Option<String>,
     pub desc: Option<String>,
-    pub exection_order: i32,
+    pub execution_order: i32,
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
