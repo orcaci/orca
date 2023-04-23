@@ -14,6 +14,7 @@ use crate::utils::config::CONFIG;
 pub fn action_config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/action")
+            .route("/batch/", web::post().to(batch_update_action))
             .route("/", web::get().to(get_action))
             .route("/", web::post().to(create_action))
             .route("/{action_id}/", web::put().to(update_action))
@@ -84,6 +85,27 @@ async fn delete_action(path: Path<(Uuid, Uuid, Uuid)>) -> Result<HttpResponse, O
         action::Entity::insert_many(actions).exec(&CONFIG.get().await.db_client).await
                 .expect("TODO: panic message");
         return Ok(HttpResponse::NoContent().finish());
+    }
+    Ok(HttpResponse::NoContent().finish())
+}
+
+
+
+/// batch_update_action - This will update batch Action Group in Application in Orca
+async fn batch_update_action(path: Path<(Uuid, Uuid)>, mut body: web::Json<Vec<action::Model>>) -> Result<HttpResponse, OrcaError> {
+    let (_, group_id) = path.into_inner();
+    let db = &CONFIG.get().await.db_client;
+
+    let actions : Vec<action::ActiveModel> = body.iter_mut().map(|item| {
+        item.id = Uuid::new_v4();
+        item.action_group_id = group_id;
+        let _item =  item.clone().into_active_model();
+        // _item.save(db).await.expect("TODO: panic message");
+        return _item;
+    }).collect();
+
+    for action in actions{
+        action.save(db).await.expect("TODO: panic message");
     }
     Ok(HttpResponse::NoContent().finish())
 }

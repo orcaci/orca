@@ -29,6 +29,8 @@ pub fn app_config(cfg: &mut web::ServiceConfig) {
                 web::scope("/{app_id}")
                     .route("/", web::put().to(create_app))
                     .configure(group::group_config)
+                    .configure(case::test_case_config)
+
                     .configure(datatable::datatable_config)
             )
     );

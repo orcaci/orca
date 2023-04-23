@@ -8,6 +8,7 @@ pub(crate) mod bootstrap;
 pub(crate) mod utils;
 pub(crate) mod route;
 pub(crate) mod server;
+pub(crate) mod error;
 
 
 #[actix_web::main]
