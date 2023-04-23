@@ -1,0 +1,81 @@
+version: '3'
+services:
+  chrome:
+    platform: linux/amd64
+    image: selenium/node-chrome:4.7.1-20221208
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_CONCURRENT_SESSIONS=5
+
+  firefox:
+    platform: linux/amd64
+    image: selenium/node-firefox:4.7.1-20221208
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_CONCURRENT_SESSIONS=5
+
+#  chrome_video:
+#    image: selenium/video:ffmpeg-4.3.1-20221208
+#    volumes:
+#      - /tmp/videos:/videos
+#    depends_on:
+#      - chrome
+#    environment:
+#      - DISPLAY_CONTAINER_NAME=chrome
+#      - FILE_NAME=chrome_video.mp4
+
+  firefox_video:
+    platform: linux/amd64
+    image: selenium/video:ffmpeg-4.3.1-20221208
+    volumes:
+      - /Users/vasanth/Documents/commit/OpenSource/orcan/orca/to/config/video:/videos
+    depends_on:
+      - firefox
+    environment:
+      - DISPLAY_CONTAINER_NAME=firefox
+      - FILE_NAME=firefox_video.mp4
+
+  selenium-hub:
+    platform: linux/amd64
+    image: selenium/hub:4.7.1-20221208
+    container_name: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+
+  ### PostgreSQL ################################################
+  postgres-ser:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=orca
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    container_name: postgres-ser
+
+  ### Redis ################################################
+  redis-ser:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    container_name: redis-ser
+    command: redis-server --save "" --appendonly no
+
+
+volumes:
+  data:

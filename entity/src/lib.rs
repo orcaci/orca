@@ -18,8 +18,11 @@ pub mod prelude;
 // pub mod test_case;
 // pub mod test_step;
 // pub mod user_group;
-pub mod action;
-pub mod case;
+pub mod auth;
+pub mod common;
+pub mod test;
+pub mod app;
+pub mod command;
 
 
 

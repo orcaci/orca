@@ -12,18 +12,24 @@ path = "src/lib.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
-log = "0.4.16"
-serde = { version = "1.0.123", features = ["derive"] }
-serde_json = "1.0.59"
-tokio = "1.17.0"
-thirtyfour = "0.31.0"
-
-entity = { path = "../entity" }
-cerium = { path = "../cerium"}
-
 
 [features]
 api-automation = []
 ui-automation = []
 default = ["ui-automation", "api-automation"]
+
+[dependencies]
+log = "0.4.16"
+serde = { version = "1.0.123", features = ["derive"] }
+serde_json = "1.0.59"
+tokio = "1.17.0"
+thiserror = "1.0.31"
+thirtyfour = "0.31.0"
+
+entity = { path = "../entity" }
+cerium = { path = "../cerium"}
+
+sea-orm = { version = "0.10.6", default-features = true, features = [ "macros", "debug-print", "runtime-async-std-native-tls", "sqlx-postgres"] }
+
+
+

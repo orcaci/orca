@@ -1,25 +1,23 @@
 extern crate cerium;
 
-use serde::{Deserialize, Serialize};
+use log::info;
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct UserNew {
-    pub name: String,
-    pub first_name: String,
-    pub last_name: String,
-}
+use crate::bootstrap::{init_logger, run_app_server, run_migration};
 
-fn main() {
-    let a = cerium::User {
-        name: "".to_string(),
-        first_name: "".to_string(),
-        last_name: "".to_string(),
-    };
-    let b = UserNew {
-        name: "".to_string(),
-        first_name: "".to_string(),
-        last_name: "".to_string(),
-    };
-    println!("Hello, world! {:?}", a);
-    println!("Hello, world! {:?}", b);
+pub(crate) mod bootstrap;
+pub(crate) mod utils;
+pub(crate) mod route;
+pub(crate) mod server;
+pub(crate) mod error;
+
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    init_logger();
+    info!("!!! Starting Orca Application !!!");
+    run_migration().await.expect("Failed to Migrating the Latest Version");
+    info!("Exiting Migrating DDL Command ");
+    info!("Starting Application Server ");
+    run_app_server().await?;
+    Ok(())
 }

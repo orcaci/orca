@@ -1,6 +1,14 @@
 use thirtyfour::{By, WebDriver};
 use cerium::error::CeriumResult;
-use entity::action::{ActionGroup, ActionKind, ActionTarget, ATargetKind};
+// use entity::action::{ActionGroup, ActionKind, ActionTarget, ATargetKind};
+
+use entity::test::ui::action::{action, data, datatable, field, group as action_group, target};
+use entity::prelude::{case, case_block, data_binding};
+use entity::prelude::case_block::{BlockKind, BlockType};
+use entity::prelude::group::ActionGroupKind;
+use entity::prelude::target::ActionTargetKind;
+use entity::test::ui::action::action::ActionKind;
+use entity::test::ui::action::data::ActionDataKind;
 use serde_json::{Result, Value};
 
 
@@ -31,91 +39,17 @@ impl<'uid> UIDriver<'uid> {
             ActionKind::Click => {}
             ActionKind::Enter => {}
             ActionKind::DoubleClick => {}
+            _ => {}
         }
     }
 
     /// target - get the target object by
-    fn target(&self, target: &ActionTarget) -> By {
-        match &target.kind {
-            ATargetKind::Css => By::Css(&target.value),
-            ATargetKind::Id => By::Id(&target.value),
-            ATargetKind::Xpath => By::XPath(&target.value)
+    fn target(&self, target: &ActionTargetKind, value: &String) -> By {
+        match &target {
+            ActionTargetKind::Css => By::Css(value),
+            ActionTargetKind::Id => By::Id(value),
+            ActionTargetKind::Xpath => By::XPath(value)
         }
     }
 
-    /// execute - will execute the command based on the Action object that is passed as args
-    pub fn execute(&self, action_group: &ActionGroup) -> CeriumResult<()> {
-        for action in &action_group.actions {
-            let target = self.target(&action.target);
-
-        }
-        Ok(())
-    }
-
-}
-
-
-
-#[cfg(test)]
-mod tests {
-    use serde_json::json;
-    use thirtyfour::{DesiredCapabilities, WebDriver};
-    use tokio::runtime::Runtime;
-    use entity::action::{Action, ActionGroup};
-    use crate::driver::ui::UIDriver;
-
-    #[test]
-    fn serialize_test() {
-        let data = json!(
-        [
-          {
-            "description": "Click on Submit",
-            "type": "enter",
-            "target": {
-              "type": "css",
-              "value": "#email"
-            },
-            "data": {
-              "type": "static",
-              "value": "mani@gmail.com"
-            }
-          },
-          {
-            "description": "Update user name",
-            "type": "enter",
-            "target": {
-              "type": "id",
-              "value": "password"
-            },
-            "data": {
-              "type": "runtime",
-              "value": "UserPWD"
-            }
-          },
-          {
-            "description": "login",
-            "type": "enter",
-            "target": {
-              "type": "id",
-              "value": "button"
-            }
-          }
-        ]);
-        let action: Vec<Action> = serde_json::from_value(data).expect("Panic from the Test case");
-        let action_group = ActionGroup {
-            actions: action,
-            name: "Login testing for the automation".to_string(),
-            description: None,
-        };
-
-        let mut caps = DesiredCapabilities::firefox();
-        caps.set_headless().expect("TODO: panic message");
-
-        let d = WebDriver::new("", caps);
-        let driver = Runtime::new().unwrap().block_on(d).expect("TODO: panic message");
-        let d = UIDriver::default(&driver);
-        d.execute(&action_group).expect("TODO: panic message");
-
-        println!("{:?}", action_group)
-    }
 }

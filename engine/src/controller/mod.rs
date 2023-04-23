@@ -1,5 +1,3 @@
-
-
-pub struct Controller {
-
-}
+pub mod suite;
+pub mod case;
+pub mod action;
