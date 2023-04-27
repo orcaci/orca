@@ -25,7 +25,7 @@ impl UIHelper {
     }
 
     pub async fn default() -> EngineResult<UIHelper> {
-        let caps = DesiredCapabilities::chrome();
+        let caps = DesiredCapabilities::firefox();
         let driver = WebDriver::new("http://localhost:4444/wd/hub/session",
                                     caps).await.map_err(EngineError::WebdriverError)?;
         Self::new(driver)

@@ -14,7 +14,10 @@ pub struct Model {
     pub description: Option<String>,
     
     #[serde(skip_deserializing)]
-    pub app_id: Uuid
+    pub app_id: Uuid,
+
+    #[sea_orm(ignore)]
+    pub case_execution: Option<serde_json::Value>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

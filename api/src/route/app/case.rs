@@ -19,7 +19,8 @@ pub fn test_case_config(cfg: &mut web::ServiceConfig) {
         web::scope("/case")
             .route("/", web::get().to(get_cases))
             .route("/", web::post().to(create_case))
-            // .route("/{id}", web::get().to(get_profile))
+            .route("/{case_id}/detail/", web::get().to(get_case_info))
+            .route("/{case_id}/item/", web::get().to(get_case_info))
             // .route("/{id}", web::delete().to(get_profile))
             // .route("/{id}/data/", web::post().to(get_profile))
             // .route("/{id}/data/batch/", web::post().to(create_batch_step))
@@ -49,6 +50,25 @@ async fn create_case(path: Path<Uuid>, mut body: web::Json<case::Model>) -> Resu
     let result = _case.insert(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
     Ok(HttpResponse::Ok().json(result))
 }
+
+/// get_case_info - Get Case Info
+async fn get_case_info(path: Path<(Uuid, Uuid)>) -> Result<HttpResponse, OrcaError> {
+    let (_, case_id) = path.into_inner();
+    let cases = case::Entity::find_by_id(case_id)
+        .one(&CONFIG.get().await.db_client).await
+        .expect("TODO: panic message");
+    if let Some(mut case) = cases {
+        let _filter = Condition::all()
+                    .add(case_block::Column::CaseId.eq(case_id));
+        // let mut _case = case.into_active_model();
+        let case_blocks = case_block::Entity::find().filter(_filter)
+            .order_by_asc(case_block::Column::ExecutionOrder).all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+        case.case_execution = Some(serde_json::to_value(case_blocks).expect("TODO: panic message"));
+        return Ok(HttpResponse::Ok().json(case));
+    };
+    Ok(HttpResponse::NoContent().finish())
+}
+
 
 // /// Create batch step for test case
 // async fn create_batch_step(path: Path<i32>, body: web::Json<Vec<test_step::TestStep>>) -> impl Responder {
