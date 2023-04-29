@@ -1,5 +1,6 @@
 use actix_web::{Error, HttpRequest, HttpResponse, Responder, Scope, web};
 use actix_web::web::Path;
+use futures_util::StreamExt;
 use sea_orm::{ActiveModelTrait, Condition, InsertResult, IntoActiveModel};
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
@@ -21,11 +22,7 @@ pub fn test_case_config(cfg: &mut web::ServiceConfig) {
             .route("/", web::post().to(create_case))
             .route("/{case_id}/detail/", web::get().to(get_case_info))
             .route("/{case_id}/item/", web::get().to(get_case_info))
-            // .route("/{id}", web::delete().to(get_profile))
-            // .route("/{id}/data/", web::post().to(get_profile))
-            // .route("/{id}/data/batch/", web::post().to(create_batch_step))
-            // .route("/{id}/data/", web::get().to(get_profile))
-            // .route("/{id}/data/{data_id}", web::delete().to(get_profile))
+            .route("/{case_id}/batch/", web::post().to(update_case_block))
     );
 
 }
@@ -69,35 +66,15 @@ async fn get_case_info(path: Path<(Uuid, Uuid)>) -> Result<HttpResponse, OrcaErr
     Ok(HttpResponse::NoContent().finish())
 }
 
-
-// /// Create batch step for test case
-// async fn create_batch_step(path: Path<i32>, body: web::Json<Vec<test_step::TestStep>>) -> impl Responder {
-//     let id = path.into_inner();
-//     let mut request_ctx = RequestContext::default();
-//     let db = request_ctx.database();
-//     let mut _steps: Vec<test_step::ActiveModel> = vec![];
-//     for step in body.iter() {
-//         let _step = test_step::ActiveModel {
-//             command: Set(step.command.to_owned()),
-//             target: Set(step.target.to_owned()),
-//             value: Set(step.value.to_owned()),
-//             output: Set(step.output.to_owned()),
-//             desc: Set(step.desc.to_owned()),
-//             test_case_id: Set(id),
-//             exection_order: Set(step.exection_order.to_owned()),
-//             ..Default::default()
-//         };
-//         _steps.push(_step);
-//     }
-//
-//     let res = test_step::Entity::insert_many(_steps).exec(&db.conn).await;
-//     let _f = match res {
-//         Ok(file) => file,
-//         Err(error) => panic!("Error while inserting: {:?}", error),
-//     };
-//     generate_success_response(None, None, None)
-// }
-// /// Get the Single profile Info with the data
-// async fn get_profile() -> impl Responder {
-//     "Got Profile By ID"
-// }
+/// update_case_block - update Case Block
+async fn update_case_block(path: Path<(Uuid, Uuid)>, mut body: web::Json<Vec<case_block::Model>>) -> Result<HttpResponse, OrcaError> {
+    let (_, case_id) = path.into_inner();
+    let case_blocks : Vec<case_block::ActiveModel> = body.into_iter().map(|mut block| {
+        block.case_id = case_id.clone();
+        block.into_active_model()
+    }).collect();
+    let blocks = case_block::Entity::insert_many(case_blocks)
+        .exec(&CONFIG.get().await.db_client).await
+        .expect("TODO: panic message");
+    Ok(HttpResponse::NoContent().finish())
+}
