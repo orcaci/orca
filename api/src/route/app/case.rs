@@ -69,7 +69,7 @@ async fn get_case_info(path: Path<(Uuid, Uuid)>) -> Result<HttpResponse, OrcaErr
 /// update_case_block - update Case Block
 async fn update_case_block(path: Path<(Uuid, Uuid)>, mut body: web::Json<Vec<case_block::Model>>) -> Result<HttpResponse, OrcaError> {
     let (_, case_id) = path.into_inner();
-    let case_blocks : Vec<case_block::ActiveModel> = body.into_iter().map(|mut block| {
+    let case_blocks : Vec<case_block::ActiveModel> = body.clone().into_iter().map(|mut block| {
         block.case_id = case_id.clone();
         block.into_active_model()
     }).collect();
