@@ -35,6 +35,7 @@ pub enum BlockType {
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Uuid,
+    #[serde(skip_deserializing)]
     pub execution_order: i32,
     pub kind: BlockKind,
     #[sea_orm(column_name = "type")]

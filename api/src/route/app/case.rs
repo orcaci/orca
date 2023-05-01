@@ -1,18 +1,27 @@
 use actix_web::{Error, HttpRequest, HttpResponse, Responder, Scope, web};
 use actix_web::web::Path;
 use futures_util::StreamExt;
+use log::debug;
 use sea_orm::{ActiveModelTrait, Condition, InsertResult, IntoActiveModel};
+use sea_orm::ActiveValue::Set;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
 use sea_orm::prelude::Uuid;
 use sea_orm::QueryFilter;
 use sea_orm::QueryOrder;
+use serde::{Deserialize};
 
 // use crate::core::utils::request::generate_success_response;
 use entity::{prelude::*};
 
 use crate::error::OrcaError;
 use crate::utils::config::CONFIG;
+
+#[derive(Debug, Deserialize)]
+pub struct QueryParams {
+    index: Option<i32>,
+    parent: Option<Uuid>,
+}
 
 /// profile_config - this will register all the endpoint in profile route
 pub fn test_case_config(cfg: &mut web::ServiceConfig) {
@@ -22,7 +31,11 @@ pub fn test_case_config(cfg: &mut web::ServiceConfig) {
             .route("/", web::post().to(create_case))
             .route("/{case_id}/detail/", web::get().to(get_case_info))
             .route("/{case_id}/item/", web::get().to(get_case_info))
-            .route("/{case_id}/batch/", web::post().to(update_case_block))
+            .route("/{case_id}/batch/", web::post().to(batch_update_case_block))
+            .route("/{case_id}/insert/{index}/", web::post().to(push_into_index))
+
+            .route("/{case_id}/block/{case_block_id}/", web::post().to(update_case_block))
+            .route("/{case_id}/insert/", web::post().to(push_block))
     );
 
 }
@@ -66,8 +79,8 @@ async fn get_case_info(path: Path<(Uuid, Uuid)>) -> Result<HttpResponse, OrcaErr
     Ok(HttpResponse::NoContent().finish())
 }
 
-/// update_case_block - update Case Block
-async fn update_case_block(path: Path<(Uuid, Uuid)>, mut body: web::Json<Vec<case_block::Model>>) -> Result<HttpResponse, OrcaError> {
+/// batch_update_case_block - update Case Block
+async fn batch_update_case_block(path: Path<(Uuid, Uuid)>, mut body: web::Json<Vec<case_block::Model>>) -> Result<HttpResponse, OrcaError> {
     let (_, case_id) = path.into_inner();
     let case_blocks : Vec<case_block::ActiveModel> = body.clone().into_iter().map(|mut block| {
         block.case_id = case_id.clone();
@@ -76,5 +89,109 @@ async fn update_case_block(path: Path<(Uuid, Uuid)>, mut body: web::Json<Vec<cas
     let blocks = case_block::Entity::insert_many(case_blocks)
         .exec(&CONFIG.get().await.db_client).await
         .expect("TODO: panic message");
+    Ok(HttpResponse::NoContent().finish())
+}
+
+/// push_into_index - This will Append New Block to the code for spe
+async fn push_into_index(path: Path<(Uuid, Uuid, i32)>, mut body: web::Json<case_block::Model>, param: web::Query<QueryParams>) -> Result<HttpResponse, OrcaError> {
+    let (_, case_id, index) = path.into_inner();
+
+    let mut _filter = Condition::all()
+        .add(case_block::Column::CaseId.eq(case_id));
+    if param.parent.is_some() {
+        _filter = _filter.add(case_block::Column::ParentId.eq(param.parent.unwrap()));
+    }
+
+    let _index : i32 = match param.index {
+        Some(x) => x,
+        _ => {
+            let mut i = 1;
+            let blocks =  case_block::Entity::find().filter(_filter.clone())
+                .all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+            if let Some(b) = blocks.last() {
+                i = b.execution_order + 1;
+            }
+            i
+        }
+    };
+    _filter = _filter.add(case_block::Column::ExecutionOrder.gte(index));
+
+
+    let blocks =  case_block::Entity::find().filter(_filter)
+        .all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+    for block in blocks {
+        let new_order = block.execution_order + 1;
+        let mut action_model = block.into_active_model();
+        action_model.execution_order = Set(new_order);
+        action_model.save(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+    }
+    body.id = Uuid::new_v4();
+    body.case_id = case_id;
+    let _case = body.clone().into_active_model();
+    debug!("{:?}", _case);
+    let result = _case.insert(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+    Ok(HttpResponse::NoContent().finish())
+}
+
+
+/// push_block - This will Append New Block to the code for spe
+async fn push_block(path: Path<(Uuid, Uuid)>, mut body: web::Json<case_block::Model>, param: web::Query<QueryParams>) -> Result<HttpResponse, OrcaError> {
+    let (_, case_id) = path.into_inner();
+
+    let mut _filter = Condition::all()
+        .add(case_block::Column::CaseId.eq(case_id));
+    if param.parent.is_some() {
+        _filter = _filter.add(case_block::Column::ParentId.eq(param.parent.unwrap()));
+    }
+
+    debug!("{:?}", param);
+    let _index : i32 = match param.index {
+        Some(x) => x,
+        _ => {
+            let mut i = 1;
+            let blocks =  case_block::Entity::find().filter(_filter.clone())
+                .all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+            if let Some(b) = blocks.last() {
+                i = b.execution_order + 1;
+            }
+            i
+        }
+    };
+    _filter = _filter.add(case_block::Column::ExecutionOrder.gte(_index));
+
+
+    let blocks =  case_block::Entity::find().filter(_filter)
+        .all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+    for block in blocks {
+        let new_order = block.execution_order + 1;
+        let mut action_model = block.into_active_model();
+        action_model.execution_order = Set(new_order);
+        action_model.save(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+    }
+    body.id = Uuid::new_v4();
+    body.case_id = case_id;
+    body.execution_order = _index;
+    let _case = body.clone().into_active_model();
+    debug!("{:?}", _case);
+    let result = _case.insert(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+    Ok(HttpResponse::NoContent().finish())
+}
+
+/// update_case_block - this will update the single case block
+async fn update_case_block(path: Path<(Uuid, Uuid, Uuid)>, body: web::Json<case_block::Model>) -> Result<HttpResponse, OrcaError> {
+    let (_, _, case_block_id) = path.into_inner();
+    let case_block = case_block::Entity::find_by_id(case_block_id)
+        .one(&CONFIG.get().await.db_client).await
+        .expect("TODO: panic message");
+    if let Some(_case_block) = case_block {
+        let mut _block: case_block::ActiveModel = _case_block.into();
+        _block.kind = Set(body.kind.to_owned());
+        // _block.execution_order = Set(body.execution_order.to_owned());
+        _block.type_field = Set(body.type_field.to_owned());
+        _block.reference = Set(body.reference.to_owned());
+        _block.parent_id = Set(body.parent_id.to_owned());
+        let _ = _block.save(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+        return Ok(HttpResponse::NoContent().finish());
+    }
     Ok(HttpResponse::NoContent().finish())
 }
