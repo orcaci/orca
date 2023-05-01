@@ -2,7 +2,7 @@ use actix_web::{Error, HttpRequest, HttpResponse, Responder, Scope, web};
 use actix_web::web::Path;
 use futures_util::StreamExt;
 use log::debug;
-use sea_orm::{ActiveModelTrait, Condition, InsertResult, IntoActiveModel};
+use sea_orm::{ActiveModelTrait, Condition, InsertResult, IntoActiveModel, QuerySelect};
 use sea_orm::ActiveValue::Set;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
@@ -30,9 +30,7 @@ pub fn test_case_config(cfg: &mut web::ServiceConfig) {
             .route("/", web::get().to(get_cases))
             .route("/", web::post().to(create_case))
             .route("/{case_id}/detail/", web::get().to(get_case_info))
-            .route("/{case_id}/item/", web::get().to(get_case_info))
             .route("/{case_id}/batch/", web::post().to(batch_update_case_block))
-            .route("/{case_id}/insert/{index}/", web::post().to(push_into_index))
 
             .route("/{case_id}/block/{case_block_id}/", web::post().to(update_case_block))
             .route("/{case_id}/insert/", web::post().to(push_block))
@@ -143,19 +141,19 @@ async fn push_block(path: Path<(Uuid, Uuid)>, mut body: web::Json<case_block::Mo
     if param.parent.is_some() {
         _filter = _filter.add(case_block::Column::ParentId.eq(param.parent.unwrap()));
     }
-
-    debug!("{:?}", param);
+    let blocks =  case_block::Entity::find().filter(_filter.clone())
+        .order_by_desc(case_block::Column::ExecutionOrder).limit(1)
+        .all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+    let mut last_index = 1;
+    if let Some(b) = blocks.last() {
+        last_index = b.execution_order + 1;
+    }
     let _index : i32 = match param.index {
-        Some(x) => x,
-        _ => {
-            let mut i = 1;
-            let blocks =  case_block::Entity::find().filter(_filter.clone())
-                .all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
-            if let Some(b) = blocks.last() {
-                i = b.execution_order + 1;
-            }
+        Some(x) => {
+            let i = if x > last_index { last_index } else {x};
             i
-        }
+        },
+        _ => last_index
     };
     _filter = _filter.add(case_block::Column::ExecutionOrder.gte(_index));
 
