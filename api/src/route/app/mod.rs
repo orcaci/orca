@@ -30,6 +30,7 @@ pub fn app_config(cfg: &mut web::ServiceConfig) {
                     .route("/", web::put().to(create_app))
                     .configure(group::group_config)
                     .configure(case::test_case_config)
+                    .configure(profile::profile_config)
 
                     .configure(datatable::datatable_config)
             )

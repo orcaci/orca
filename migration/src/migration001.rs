@@ -3,6 +3,7 @@ use entity::app::app;
 use entity::command;
 use entity::prelude::{case, case_block, data_binding};
 use entity::test::ui::action::{action, data, datatable, field, group as action_group, target};
+use entity::test::ui::profile::{profile, data as profile_data};
 
 
 #[derive(DeriveMigrationName)]
@@ -159,6 +160,44 @@ impl MigrationTrait for Migration {
                          ForeignKey::create()
                             .from(field::Entity, field::Column::TableId)
                             .to(datatable::Entity, datatable::Column::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
+                    )
+                    .to_owned(),
+            ).await?;
+
+
+        manager.create_table(Table::create()
+                    .table(profile::Entity)
+                    .if_not_exists()
+                    .col(ColumnDef::new(profile::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(profile::Column::Name).string().not_null())
+                    .col(ColumnDef::new(profile::Column::Description).string())
+                    .col(ColumnDef::new(profile::Column::AppId).uuid().not_null())
+                    .foreign_key(
+                         ForeignKey::create()
+                            .from(profile::Entity, profile::Column::AppId)
+                            .to(app::Entity, app::Column::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade)
+                    )
+                    .to_owned(),
+            ).await?;
+
+
+        manager.create_table(Table::create()
+                    .table(profile_data::Entity)
+                    .if_not_exists()
+                    .col(ColumnDef::new(profile_data::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(profile_data::Column::Key).string().not_null())
+                    .col(ColumnDef::new(profile_data::Column::Value).string().not_null())
+                    .col(ColumnDef::new(profile_data::Column::ValueType).string().not_null())
+                    .col(ColumnDef::new(profile_data::Column::Description).string())
+                    .col(ColumnDef::new(profile_data::Column::ProfileId).uuid().not_null())
+                    .foreign_key(
+                         ForeignKey::create()
+                            .from(profile_data::Entity, profile_data::Column::ProfileId)
+                            .to(profile::Entity, profile::Column::Id)
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade)
                     )
