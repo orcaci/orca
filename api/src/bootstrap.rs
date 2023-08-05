@@ -70,7 +70,7 @@ pub(crate) async fn run_app_server() -> std::io::Result<()> {
             )
     })
     .workers(5)
-    .bind("127.0.0.1:8080")?
+    .bind("127.0.0.1:10000")?
     .run()
     .await
 }
