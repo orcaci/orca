@@ -1,0 +1,16 @@
+name: Pull Request Stats
+
+on:
+  schedule:
+    - cron:  '20 * * * *'
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run pull request stats
+        uses: flowwer-dev/pull-request-stats@master
+        with:
+          repositories: 'orcaci/orca,orcaci/orcaui'
+          webhook: ${{ secrets.WEBHOOK_URL }}
+          # webhook: ${{ secrets.WEBHOOK_URL }} You may want to store this value as a secret.
