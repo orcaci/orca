@@ -12,5 +12,9 @@ jobs:
         uses: flowwer-dev/pull-request-stats@master
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-          repositories: 'orcaci/orca,orcaci/orcaui'
+          # repositories: 'orcaci/orca,orcaci/orcaui'
           webhook: ${{ secrets.WEBHOOK_URL }}
+          period: 7
+          charts: true
+          disableLinks: true
+          organization: 'orcaci'
