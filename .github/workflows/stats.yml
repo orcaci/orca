@@ -11,7 +11,7 @@ jobs:
       - name: Run pull request stats
         uses: flowwer-dev/pull-request-stats@master
         with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          token: "${{ secrets.TOKEN }}"
           # repositories: 'orcaci/orca,orcaci/orcaui'
           webhook: ${{ secrets.WEBHOOK_URL }}
           period: 7
