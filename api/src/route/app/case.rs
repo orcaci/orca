@@ -4,7 +4,7 @@ use actix_web::{HttpResponse, web};
 use actix_web::web::Path;
 use futures_util::StreamExt;
 use log::{debug, info};
-use sea_orm::{ActiveModelTrait, Condition, IntoActiveModel, QuerySelect};
+use sea_orm::{ActiveModelTrait, Condition, InsertResult, IntoActiveModel, QuerySelect};
 use sea_orm::ActiveValue::Set;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
