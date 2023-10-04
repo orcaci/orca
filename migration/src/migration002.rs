@@ -1,18 +1,19 @@
 use std::vec;
+
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::ActiveValue::Set;
-use entity::app::app;
-use entity::test::ui::action::{action, data, datatable, field, group as action_group, target};
 
-use entity::prelude::{case, case_block, data_binding};
+use entity::app::app;
+use entity::prelude::{case, case_block};
 use entity::prelude::case_block::{BlockKind, BlockType};
 use entity::prelude::group::ActionGroupKind;
 use entity::prelude::target::ActionTargetKind;
+use entity::test::ui::action::{action, group as action_group};
 use entity::test::ui::action::action::ActionKind;
 use entity::test::ui::action::data::ActionDataKind;
+
 use crate::sea_orm::{ActiveModelTrait, EntityTrait, InsertResult};
 use crate::sea_orm::prelude::Uuid;
-
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -57,7 +58,7 @@ impl MigrationTrait for Migration {
                 data_kind: Set(Some(ActionDataKind::Static)),
                 data_value: Set(Some("Ana de Armas".to_string())),
                 target_kind: Set(Some(ActionTargetKind::Id)),
-                target_value: Set(Some("id=searchInput".to_string())),
+                target_value: Set(Some("searchInput".to_string())),
                 execution_order: Set(2),
                 action_group_id: Set(app_g.clone().id),
                 ..Default::default()
@@ -67,7 +68,7 @@ impl MigrationTrait for Migration {
                 description: Set(Some("Search".to_string())),
                 kind: Set(ActionKind::Click),
                 target_kind: Set(Some(ActionTargetKind::Xpath)),
-                target_value: Set(Some("xpath=//form[@id='search-form']/fieldset/button/i".to_string())),
+                target_value: Set(Some("//form[@id='search-form']/fieldset/button/i".to_string())),
                 execution_order: Set(3),
                 action_group_id: Set(app_g.clone().id),
                 ..Default::default()
@@ -135,10 +136,6 @@ impl MigrationTrait for Migration {
                 ..Default::default()
             }.insert(db).await?,
         ];
-
-
-
-
         Ok(())
     }
 

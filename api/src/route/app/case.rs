@@ -1,17 +1,20 @@
-use actix_web::{Error, HttpRequest, HttpResponse, Responder, Scope, web};
+use std::str::FromStr;
+
+use actix_web::{HttpResponse, web};
 use actix_web::web::Path;
 use futures_util::StreamExt;
-use log::debug;
-use sea_orm::{ActiveModelTrait, Condition, InsertResult, IntoActiveModel, QuerySelect};
+use log::{debug, info};
+use sea_orm::{ActiveModelTrait, Condition, IntoActiveModel, QuerySelect};
 use sea_orm::ActiveValue::Set;
 use sea_orm::ColumnTrait;
 use sea_orm::EntityTrait;
 use sea_orm::prelude::Uuid;
 use sea_orm::QueryFilter;
 use sea_orm::QueryOrder;
-use serde::{Deserialize};
+use serde::Deserialize;
 
-// use crate::core::utils::request::generate_success_response;
+use engine::controller::case::CaseController;
+use engine::server::driver::UIHelper;
 use entity::{prelude::*};
 
 use crate::error::OrcaError;
@@ -34,6 +37,8 @@ pub fn test_case_config(cfg: &mut web::ServiceConfig) {
 
             .route("/{case_id}/block/{case_block_id}/", web::post().to(update_case_block))
             .route("/{case_id}/insert/", web::post().to(push_block))
+
+            .route("/{case_id}/run/", web::post().to(run))
     );
 
 }
@@ -191,5 +196,20 @@ async fn update_case_block(path: Path<(Uuid, Uuid, Uuid)>, body: web::Json<case_
         let _ = _block.save(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
         return Ok(HttpResponse::NoContent().finish());
     }
+    Ok(HttpResponse::NoContent().finish())
+}
+
+async fn run(path: Path<(Uuid, Uuid)>) -> Result<HttpResponse, OrcaError> {
+    let (_, case_id) = path.into_inner();
+    let case = case::Entity::find_by_id(case_id)
+        .one(&CONFIG.get().await.db_client).await
+        .expect("TODO: panic message");
+
+    let ui_driver = UIHelper::default().await.expect("error");
+    info!("got the driver");
+    let controller = CaseController::new(&CONFIG.get().await.db_client, &ui_driver);
+    info!("got the controller");
+    controller.process(&case.unwrap()).await.expect("error");
+    ui_driver.driver.quit().await.expect("TODO: panic message");
     Ok(HttpResponse::NoContent().finish())
 }

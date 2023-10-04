@@ -1,8 +1,7 @@
 use std::error::Error;
 
 use actix_web::{HttpResponse, web};
-use sea_orm::{ActiveModelTrait, EntityTrait, IntoActiveModel, QueryOrder, Value};
-use sea_orm::ActiveValue::Set;
+use sea_orm::{ActiveModelTrait, EntityTrait, IntoActiveModel, QueryOrder};
 use sea_orm::prelude::Uuid;
 
 use cerium::error::web::OrcaError;
