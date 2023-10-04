@@ -26,8 +26,8 @@ pub enum BlockType {
     DataTable,
     #[sea_orm(string_value = "ActionGroup")]
     ActionGroup,
-    #[sea_orm(string_value = "ValidationGroup")]
-    ValidationGroup,
+    #[sea_orm(string_value = "Assertion")]
+    Assertion,
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
@@ -35,12 +35,16 @@ pub enum BlockType {
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Uuid,
+    #[serde(skip_deserializing)]
     pub execution_order: i32,
     pub kind: BlockKind,
     #[sea_orm(column_name = "type")]
     pub type_field: BlockType,
-    pub reference: String,
+    pub reference: Option<Uuid>,
     pub parent_id: Option<Uuid>,
+
+    #[serde(skip_deserializing)]
+    pub case_id: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -51,7 +55,7 @@ pub enum Relation {
     SelfReferencing,
     #[sea_orm(
         belongs_to = "super::case::Entity",
-        from = "Column::ParentId",
+        from = "Column::CaseId",
         to = "super::case::Column::Id"
     )]
     Case,

@@ -18,13 +18,13 @@ pub struct Connection {
 }
 
 impl Environment {
-    pub fn new() -> Result<Self, ConfigError> {
+    pub fn new() -> Self {
         let run_mode = env::var("RUN_MODE").unwrap_or_else(|_| "development".into());
         let result_config = CConfig::builder()
             .add_source(File::with_name("../config/default"))
             .add_source(File::with_name(&format!("../config/{}", run_mode)).required(false))
             .build();
-        let _new = result_config?;
-        _new.try_deserialize()
+        let _new = result_config.expect("Error from Environment");
+        _new.try_deserialize().expect("Error from Environment")
     }
 }

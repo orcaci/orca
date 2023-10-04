@@ -20,6 +20,7 @@ async_once = "0.2.6"
 log = "0.4.16"
 env_logger = "0.10.0"
 config = "0.13.3"
+chrono = "0.4.23"
 jsonwebtoken = "8"
 thiserror = "1.0.31"
 serde = { version = "1.0.147", features = ["derive"] }

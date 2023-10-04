@@ -1,8 +1,7 @@
 use std::error::Error;
 
 use actix_web::{HttpResponse, web};
-use sea_orm::{ActiveModelTrait, EntityTrait, IntoActiveModel, QueryOrder, Value};
-use sea_orm::ActiveValue::Set;
+use sea_orm::{ActiveModelTrait, EntityTrait, IntoActiveModel, QueryOrder};
 use sea_orm::prelude::Uuid;
 
 use cerium::error::web::OrcaError;
@@ -16,7 +15,7 @@ pub(crate) mod case;
 pub(crate) mod suit;
 pub(crate) mod profile;
 pub(crate) mod object_repo;
-
+pub(crate) mod datatable;
 
 
 /// app_config - this will register all the endpoint in App route
@@ -29,6 +28,10 @@ pub fn app_config(cfg: &mut web::ServiceConfig) {
                 web::scope("/{app_id}")
                     .route("/", web::put().to(create_app))
                     .configure(group::group_config)
+                    .configure(case::test_case_config)
+                    .configure(profile::profile_config)
+
+                    .configure(datatable::datatable_config)
             )
     );
 

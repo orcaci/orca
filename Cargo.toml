@@ -6,5 +6,5 @@
 ## See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members=["cerium", "web", "api", "engine", "entity", "migration"]
+members=["cerium", "api", "engine", "entity", "migration"]
 default-members=["cerium"]
