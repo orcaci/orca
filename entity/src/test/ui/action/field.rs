@@ -4,7 +4,6 @@ use sea_orm::entity::prelude::*;
 use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
 #[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "table_kind")]
 pub enum ActionDataKind {

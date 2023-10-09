@@ -1,10 +1,11 @@
 use sea_orm_migration::prelude::*;
+
 use entity::app::app;
 use entity::command;
 use entity::prelude::{case, case_block, data_binding};
 use entity::test::ui::action::{action, data, datatable, field, group as action_group, target};
-use entity::test::ui::profile::{profile, data as profile_data};
-
+use entity::test::ui::profile::{data as profile_data, profile};
+use entity::test::ui::suit::{suite, suite_block};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -203,6 +204,41 @@ impl MigrationTrait for Migration {
                     )
                     .to_owned(),
             ).await?;
+
+        manager.create_table(Table::create()
+                                 .table(suite::Entity)
+                                 .if_not_exists()
+                                 .col(ColumnDef::new(suite::Column::Id).uuid().not_null().primary_key())
+                                 .col(ColumnDef::new(suite::Column::Name).string().not_null())
+                                 .col(ColumnDef::new(suite::Column::Description).string())
+                                 .col(ColumnDef::new(suite::Column::AppId).uuid().not_null())
+                                 .foreign_key(
+                                     ForeignKey::create()
+                                         .from(suite::Entity, suite::Column::AppId)
+                                         .to(app::Entity, app::Column::Id)
+                                         .on_delete(ForeignKeyAction::Cascade)
+                                         .on_update(ForeignKeyAction::Cascade)
+                                 )
+                                 .to_owned(),
+        ).await?;
+
+        manager.create_table(Table::create()
+                                 .table(suite_block::Entity)
+                                 .if_not_exists()
+                                 .col(ColumnDef::new(suite_block::Column::Id).uuid().not_null().primary_key())
+                                 .col(ColumnDef::new(suite_block::Column::ExecutionOrder).integer().not_null())
+                                 .col(ColumnDef::new(suite_block::Column::TypeField).string().not_null())
+                                 .col(ColumnDef::new(suite_block::Column::Reference).uuid())
+                                 .col(ColumnDef::new(suite_block::Column::SuiteId).uuid().not_null())
+                                 .foreign_key(
+                                     ForeignKey::create()
+                                         .from(suite_block::Entity, suite_block::Column::SuiteId)
+                                         .to(case::Entity, case::Column::Id)
+                                         .on_delete(ForeignKeyAction::Cascade)
+                                         .on_update(ForeignKeyAction::Cascade)
+                                 )
+                                 .to_owned(),
+        ).await?;
 
         // manager.create_table(Table::create()
         //             .table(target::Entity)

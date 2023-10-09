@@ -3,7 +3,7 @@
 
 use async_once::AsyncOnce;
 use lazy_static::lazy_static;
-use sea_orm::{Database, DatabaseConnection, DbErr};
+use sea_orm::{Database, DatabaseConnection};
 
 lazy_static! {
     pub(crate) static ref CONFIG: AsyncOnce<Config> = AsyncOnce::new(async {

@@ -22,8 +22,8 @@ use crate::utils::config::CONFIG;
 
 #[derive(Debug, Deserialize)]
 pub struct QueryParams {
-    index: Option<i32>,
-    parent: Option<Uuid>,
+    pub index: Option<i32>,
+    pub parent: Option<Uuid>,
 }
 
 /// profile_config - this will register all the endpoint in profile route

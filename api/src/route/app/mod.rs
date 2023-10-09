@@ -30,6 +30,7 @@ pub fn app_config(cfg: &mut web::ServiceConfig) {
                     .configure(group::group_config)
                     .configure(case::test_case_config)
                     .configure(profile::profile_config)
+                    .configure(suit::test_suit_config)
 
                     .configure(datatable::datatable_config)
             )

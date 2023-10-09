@@ -11,8 +11,8 @@
 
 pub use super::test::ui::{
     action::{
-        target::Entity as ActionTarget,
-        group::Entity as ActionGroup
+        group::Entity as ActionGroup,
+        target::Entity as ActionTarget
     },
     case::{
         case::Entity as Case,
@@ -20,9 +20,8 @@ pub use super::test::ui::{
         data_binding::Entity as DataBinding
     }
 };
-
 pub use super::test::ui::{
-    action::{target, group},
+    action::{group, target},
     case::{case, case_block, data_binding}
 };
 

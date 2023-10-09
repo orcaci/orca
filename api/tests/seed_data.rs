@@ -1,6 +1,5 @@
 use sea_orm::{ActiveModelTrait, Database, DatabaseConnection, EntityTrait, ModelTrait, Set};
 use sea_orm::prelude::Uuid;
-use serde_json::json;
 
 use entity::prelude::*;
 use entity::prelude::case_block::{BlockKind, BlockType};

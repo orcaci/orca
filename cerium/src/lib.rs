@@ -1,8 +1,7 @@
-use lazy_static::lazy_static;
-use crate::config::Config;
-use crate::env::Environment;
-
 use async_once::AsyncOnce;
+use lazy_static::lazy_static;
+
+use crate::config::Config;
 
 pub mod client;
 pub mod config;

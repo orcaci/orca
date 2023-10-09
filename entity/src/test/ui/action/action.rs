@@ -3,6 +3,7 @@
 use sea_orm::entity::prelude::*;
 use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
+
 use crate::prelude::target::ActionTargetKind;
 use crate::test::ui::action::data::ActionDataKind;
 

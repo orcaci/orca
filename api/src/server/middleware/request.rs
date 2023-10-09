@@ -1,11 +1,8 @@
 use std::future::{ready, Ready};
 use std::time::Instant;
 
-use actix_http::header::{HeaderName, HeaderValue};
 use actix_http::HttpMessage;
-use actix_web::{dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform}, Error, web};
-use actix_web::error::ErrorUnauthorized;
-use actix_web::http::header;
+use actix_web::{dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform}, Error};
 use futures::future::LocalBoxFuture;
 use log::info;
 

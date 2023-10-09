@@ -1,4 +1,3 @@
-
 use actix_web::{HttpResponse, web};
 
 pub(crate) mod ws;

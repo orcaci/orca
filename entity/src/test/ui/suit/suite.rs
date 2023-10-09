@@ -5,35 +5,41 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
-#[sea_orm(table_name = "data_table")]
+#[sea_orm(table_name = "suite")]
 pub struct Model {
     #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
     pub id: Uuid,
     pub name: String,
     pub description: Option<String>,
+
     #[serde(skip_deserializing)]
-    pub app_id: Uuid
+    pub app_id: Uuid,
+
+    #[sea_orm(ignore)]
+    pub suite_execution: Option<serde_json::Value>,
+
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    // #[sea_orm(has_many = "super::action::Entity")]
-    // Action,
+    #[sea_orm(has_many = "super::suite_block::Entity")]
+    SuiteBlock,
+
     #[sea_orm(
-        belongs_to = "crate::app::app::Entity",
-        from = "Column::AppId",
-        to = "crate::app::app::Column::Id"
+    belongs_to = "crate::app::app::Entity",
+    from = "Column::AppId",
+    to = "crate::app::app::Column::Id"
     )]
     App,
 }
-//
-// // `Related` trait has to be implemented by hand
-// impl Related<super::action::Entity> for Entity {
-//     fn to() -> RelationDef {
-//         Relation::Action.def()
-//     }
-// }
+
+// `Related` trait has to be implemented by hand
+impl Related<super::suite_block::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::SuiteBlock.def()
+    }
+}
 
 impl Related<crate::app::app::Entity> for Entity {
     fn to() -> RelationDef {

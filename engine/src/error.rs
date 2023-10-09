@@ -1,7 +1,5 @@
 use std::fmt;
-use std::fmt::{Formatter};
-
-use serde::{Serialize};
+use std::fmt::Formatter;
 
 use thiserror::Error;
 

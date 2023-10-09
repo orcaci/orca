@@ -1,7 +1,7 @@
-
-use config::{Config as CConfig, ConfigError, File};
-use serde::Deserialize;
 use std::env;
+
+use config::{Config as CConfig, File};
+use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]

@@ -97,7 +97,7 @@ impl MigrationTrait for Migration {
                 data_kind: Set(Some(ActionDataKind::Static)),
                 data_value: Set(Some("Ana de Armas".to_string())),
                 target_kind: Set(Some(ActionTargetKind::Xpath)),
-                target_value: Set(Some("xpath=//h1[@id='firstHeading']/span".to_string())),
+                target_value: Set(Some("//h1[@id='firstHeading']/span".to_string())),
                 execution_order: Set(1),
                 action_group_id: Set(assert_g_m.clone().id),
                 ..Default::default()
