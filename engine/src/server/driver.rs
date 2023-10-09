@@ -1,4 +1,5 @@
 use thirtyfour::{By, DesiredCapabilities, WebDriver, WebElement};
+
 use crate::error::{EngineError, EngineResult};
 
 pub struct UIHelper {

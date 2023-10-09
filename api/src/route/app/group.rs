@@ -1,19 +1,16 @@
-
 use actix_web::{HttpResponse, web};
 use actix_web::web::Path;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait, EntityTrait, IntoActiveModel, NotSet, QueryFilter, QueryOrder, TransactionTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, EntityTrait, IntoActiveModel, QueryFilter, QueryOrder};
 use sea_orm::ActiveValue::Set;
 use sea_orm::prelude::Uuid;
-use serde_json::Value;
 
 use cerium::error::web::OrcaError;
 use entity::prelude::group;
 use entity::prelude::group::ActionGroupKind;
+use entity::test::ui::action::action as action_model;
 
 use crate::route::app::action;
 use crate::utils::config::CONFIG;
-
-use entity::test::ui::action::{action as action_model};
 
 /// group_config - this will register all the endpoint in ACTION GROUP route
 pub fn group_config(cfg: &mut web::ServiceConfig) {

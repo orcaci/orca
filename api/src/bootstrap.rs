@@ -4,14 +4,12 @@
 
 use std::io::Write;
 
-use actix_web::{App, HttpRequest, HttpServer, Responder, web};
+use actix_web::{App, HttpServer, web};
 use actix_web::middleware::{Compress, Logger};
 use chrono::Local;
 use env_logger::Builder;
 use env_logger::fmt::Color;
-use futures::executor;
 use log::LevelFilter;
-use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use sea_orm::DbErr;
 
 use migration::MigratorTrait;

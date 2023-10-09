@@ -5,13 +5,11 @@
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
+
     use log::info;
     use sea_orm::Database;
     use sea_orm::prelude::Uuid;
-    use serde_json::json;
-    use thirtyfour::{DesiredCapabilities, WebDriver};
-    use tokio::runtime::Runtime;
-    use cerium::CONFIG;
+
     use cerium::utils::init_logger;
     use engine::controller::case::CaseController;
     use engine::server::driver::UIHelper;

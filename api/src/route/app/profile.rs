@@ -6,7 +6,7 @@ use sea_orm::prelude::Uuid;
 
 use cerium::error::web::OrcaError;
 use entity::test::ui::action::action as action_model;
-use entity::test::ui::profile::{profile, data as profile_data};
+use entity::test::ui::profile::{data as profile_data, profile};
 
 use crate::route::app::action;
 use crate::utils::config::CONFIG;

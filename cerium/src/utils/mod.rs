@@ -1,8 +1,9 @@
-use env_logger::Builder;
 use std::io::Write;
+
+use chrono::Local;
+use env_logger::Builder;
 use env_logger::fmt::Color;
 use log::LevelFilter;
-use chrono::Local;
 
 pub mod uuid;
 

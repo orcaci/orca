@@ -1,9 +1,7 @@
 use std::fmt;
-use std::fmt::{Formatter};
+use std::fmt::Formatter;
 
 use jsonwebtoken::errors::Error;
-use serde::{Serialize};
-
 use thiserror::Error;
 
 pub type CeriumResult<T> = Result<T, CeriumError>;

@@ -1,10 +1,10 @@
 use std::fmt;
-use std::fmt::{Formatter};
+use std::fmt::Formatter;
 
-use actix_web::{Error as ActixError, HttpResponse, ResponseError};
+use actix_web::{HttpResponse, ResponseError};
 use http::StatusCode;
 use jsonwebtoken::errors::Error;
-use serde::{Serialize};
+use serde::Serialize;
 use thiserror::Error;
 
 pub type OrcaResult = Result<HttpResponse, OrcaError>;
