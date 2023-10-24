@@ -2,6 +2,7 @@ use actix_web::{HttpResponse, web};
 
 pub(crate) mod ws;
 pub(crate) mod app;
+pub(crate) mod file;
 
 // pub(crate) mod admin;
 // pub(crate) mod ws;
