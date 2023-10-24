@@ -60,7 +60,7 @@ async fn get_suite_info(path: Path<(Uuid, Uuid)>) -> Result<HttpResponse, OrcaEr
         let _filter = Condition::all()
             .add(suite_block::Column::SuiteId.eq(suite_id));
         let suite_blocks = suite_block::Entity::find().filter(_filter)
-            .order_by_asc(case_block::Column::ExecutionOrder).all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
+            .order_by_asc(suite_block::Column::ExecutionOrder).all(&CONFIG.get().await.db_client).await.expect("TODO: panic message");
         suite.suite_execution = Some(serde_json::to_value(suite_blocks).expect("TODO: panic message"));
         return Ok(HttpResponse::Ok().json(suite));
     };

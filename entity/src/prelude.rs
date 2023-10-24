@@ -9,6 +9,7 @@
 // pub use super::user_group::Entity as UserGroup;
 
 
+pub use super::common::attachment;
 pub use super::test::ui::{
     action::{
         group::Entity as ActionGroup,

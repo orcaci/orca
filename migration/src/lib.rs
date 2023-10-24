@@ -2,6 +2,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod migration001;
 mod migration002;
+mod migration003;
 
 pub struct Migrator;
 
