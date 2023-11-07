@@ -10,6 +10,7 @@ pub struct Migrator;
 impl MigratorTrait for Migrator {
     fn migrations() -> Vec<Box<dyn MigrationTrait>> {
         vec![Box::new(migration001::Migration),
-             Box::new(migration002::Migration)]
+             Box::new(migration002::Migration),
+             Box::new(migration003::Migration)]
     }
 }

@@ -3,3 +3,4 @@
 /dev
 /target
 **/target**
+**.env

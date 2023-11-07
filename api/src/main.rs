@@ -13,6 +13,7 @@ pub(crate) mod error;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+
     init_logger();
     info!("!!! Starting Orca Application !!!");
     run_migration().await.expect("Failed to Migrating the Latest Version");
