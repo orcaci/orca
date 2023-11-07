@@ -35,12 +35,13 @@ pub struct Model {
     pub category: StorageCategory,
     pub reference_id: Option<Uuid>,
     pub path: String,
+    pub name: String,
+    pub desc: Option<String>,
     pub attachment: Option<Vec<u8>>
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {
+pub enum Relation {}
 
-}
 
 impl ActiveModelBehavior for ActiveModel {}

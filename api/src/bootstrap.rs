@@ -7,6 +7,7 @@ use std::io::Write;
 use actix_web::{App, HttpServer, web};
 use actix_web::middleware::{Compress, Logger};
 use chrono::Local;
+use dotenv::dotenv;
 use env_logger::Builder;
 use env_logger::fmt::Color;
 use log::LevelFilter;
@@ -21,6 +22,7 @@ use crate::utils::config::CONFIG;
 
 /// init_logger - function will initialize log Handler for the application
 pub(crate) fn init_logger() {
+    dotenv().ok();
     Builder::new()
         .format(|buf, record| {
             let mut timestamp_style = buf.style();

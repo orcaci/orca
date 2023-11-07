@@ -37,7 +37,8 @@ impl Config {
     /// db_uri will give the default uri if there is not config setup
     async fn db_client(mut uri: Option<String>) -> DatabaseConnection {
         if uri.is_none(){
-            uri = Some("postgres://root:root@localhost:5432/orca".to_string())
+            uri = Some(std::env::var("DATABASE_URL").expect("DATABASE_URL must be set."));
+
         }
         Database::connect(uri.unwrap()).await.expect("Error unable to connect DB")
     }
