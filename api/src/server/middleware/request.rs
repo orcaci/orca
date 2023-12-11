@@ -1,13 +1,16 @@
 use std::future::{ready, Ready};
+use std::sync::Arc;
 use std::time::Instant;
 
 use actix_http::HttpMessage;
 use actix_web::{dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform}, Error};
 use futures::future::LocalBoxFuture;
 use log::info;
+use sea_orm::TransactionTrait;
 
 use cerium::error::web::OrcaError;
 use cerium::utils::uuid::request_uuid;
+use migration::async_trait::async_trait;
 
 use crate::server::context::request::RequestContext;
 use crate::utils::config::CONFIG;
@@ -43,6 +46,7 @@ pub struct RequestHandlerMiddleware<S> {
     service: S,
 }
 
+#[async_trait]
 impl<S, B> Service<ServiceRequest> for RequestHandlerMiddleware<S>
 where
     S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
@@ -55,10 +59,11 @@ where
 
     forward_ready!(service);
 
-    fn call(&self, mut req: ServiceRequest) -> Self::Future {
+    fn call(&self, req: ServiceRequest) -> Self::Future {
         let request_id = request_uuid();
         let start_time = Instant::now();
         info!("Starting the Request {}", &request_id.clone());
+
         // let authorization = req.headers().get(header::AUTHORIZATION);
         // if authorization.is_none() {
         //     return Box::pin(async { Err(ErrorUnauthorized("err")) });
@@ -68,10 +73,14 @@ where
         req.extensions_mut().insert(rc);
         let fut = self.service.call(req);
         Box::pin(async move {
-            let trx = &CONFIG.get().await.db_client;
+            let db = &CONFIG.get().await.db_client;
+            let trx = db.begin().await.expect("Error form trx");
+            // ext.insert(trx);
+            // req.extensions_mut().insert(trx);
             let mut _response = fut.await;
             // res.headers_mut().insert(HeaderName::from_static(REQUEST_ID_HEADER),
             //                          HeaderValue::from_str(&request_id).unwrap());
+            // trx.commit().await.expect("error");
             info!("Completed Request after - {:?}", start_time.elapsed());
             // rc.end_request();
             _response

@@ -6,6 +6,7 @@ use entity::prelude::{case, case_block, data_binding};
 use entity::test::ui::action::{action, data, datatable, field, group as action_group, target};
 use entity::test::ui::profile::{data as profile_data, profile};
 use entity::test::ui::suit::{suite, suite_block};
+use crate::sea_orm::{ConnectionTrait, Statement};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -134,9 +135,10 @@ impl MigrationTrait for Migration {
         manager.create_table(Table::create()
                     .table(datatable::Entity)
                     .if_not_exists()
-                    .col(ColumnDef::new(datatable::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(datatable::Column::Id).integer().not_null().primary_key().auto_increment())
                     .col(ColumnDef::new(datatable::Column::Name).string().not_null())
-                    .col(ColumnDef::new(datatable::Column::Description).string().not_null())
+                    .col(ColumnDef::new(datatable::Column::TableName).string().not_null())
+                    .col(ColumnDef::new(datatable::Column::Description).string())
                     .col(ColumnDef::new(datatable::Column::AppId).uuid().not_null())
                     .foreign_key(
                          ForeignKey::create()
@@ -152,11 +154,11 @@ impl MigrationTrait for Migration {
         manager.create_table(Table::create()
                     .table(field::Entity)
                     .if_not_exists()
-                    .col(ColumnDef::new(field::Column::Id).uuid().not_null().primary_key())
+                    .col(ColumnDef::new(field::Column::FieldId).string().not_null())
+                    .col(ColumnDef::new(field::Column::TableId).integer().not_null())
                     .col(ColumnDef::new(field::Column::Name).string().not_null())
                     .col(ColumnDef::new(field::Column::Kind).string().not_null())
-                    .col(ColumnDef::new(field::Column::Option).string())
-                    .col(ColumnDef::new(field::Column::TableId).uuid().not_null())
+                    .col(ColumnDef::new(field::Column::Option).json())
                     .foreign_key(
                          ForeignKey::create()
                             .from(field::Entity, field::Column::TableId)
@@ -166,6 +168,12 @@ impl MigrationTrait for Migration {
                     )
                     .to_owned(),
             ).await?;
+        manager.get_connection().execute(
+            Statement::from_string(
+                manager.get_database_backend(),
+                "alter table field add constraint com_key_id primary key (field_id, table_id)".parse().unwrap())
+        )
+        .await?;
 
 
         manager.create_table(Table::create()

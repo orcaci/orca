@@ -9,11 +9,16 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
-    pub id: Uuid,
+    pub id: i32,
     pub name: String,
+    #[serde(skip_deserializing)]
+    pub table_name: String,
     pub description: Option<String>,
     #[serde(skip_deserializing)]
-    pub app_id: Uuid
+    pub app_id: Uuid,
+
+    #[sea_orm(ignore)]
+    pub fields: Option<Vec<super::field::Model>>
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -26,18 +31,21 @@ pub enum Relation {
         to = "crate::app::app::Column::Id"
     )]
     App,
+    #[sea_orm(has_many = "super::field::Entity")]
+    Field,
 }
-//
-// // `Related` trait has to be implemented by hand
-// impl Related<super::action::Entity> for Entity {
-//     fn to() -> RelationDef {
-//         Relation::Action.def()
-//     }
-// }
 
 impl Related<crate::app::app::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::App.def()
+    }
+}
+
+
+// `Related` trait has to be implemented by hand
+impl Related<super::field::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Field.def()
     }
 }
 

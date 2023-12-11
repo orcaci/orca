@@ -31,7 +31,7 @@ pub enum StorageCategory {
 #[sea_orm(table_name = "attachment")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub id: Uuid,
+    pub id: i32,
     pub category: StorageCategory,
     pub reference_id: Option<Uuid>,
     pub path: String,

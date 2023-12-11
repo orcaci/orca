@@ -33,7 +33,7 @@ impl MigrationTrait for Migration {
         manager.create_table(Table::create()
                 .table(attachment::Entity)
                 .if_not_exists()
-                .col(ColumnDef::new(attachment::Column::Id).uuid().not_null().primary_key())
+                .col(ColumnDef::new(attachment::Column::Id).integer().not_null().primary_key().auto_increment())
                 .col(ColumnDef::new(attachment::Column::Name).string())
                 .col(ColumnDef::new(attachment::Column::Desc).string().not_null())
                 .col(ColumnDef::new(attachment::Column::Category).string().not_null())

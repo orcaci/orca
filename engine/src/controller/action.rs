@@ -12,66 +12,139 @@ use crate::server::driver::UIHelper;
 
 pub struct ActionController<'ccl>{
     db: &'ccl DatabaseConnection,
-    drive: &'ccl UIHelper
+    driver: &'ccl UIHelper
 }
 
 impl<'ccl> ActionController<'ccl> {
     /// new - this will create new Action Controller for the application
-    pub fn new(db: &'ccl DatabaseConnection, drive: &'ccl UIHelper) -> ActionController<'ccl> {
-        Self{db, drive}
+    /// Creates a new instance of `ActionController` with the provided `db` and `drive` references.
+    ///
+    /// # Arguments
+    ///
+    /// * `db` - A reference to a `DatabaseConnection` object.
+    /// * `drive` - A reference to a `UIHelper` object.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let db = DatabaseConnection::new();
+    /// let driver = UIHelper::new();
+    /// let controller = ActionController::new(&db, &driver);
+    /// ```
+    pub fn new(db: &'ccl DatabaseConnection, driver: &'ccl UIHelper) -> ActionController<'ccl> {
+        Self{db, driver}
     }
     
+    /// Asynchronous method that handles the logic for executing the "Open" action in a test case.
+    ///
+    /// # Arguments
+    ///
+    /// * `self` - A reference to the `ActionController` struct.
+    /// * `action` - A reference to an `action::Model` object representing the action to be executed.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// let action = action::Model::new();
+    /// let controller = ActionController::new(&db, &driver);
+    /// controller.command_open(&action).await;
+    /// ```
+    ///
+    /// # Returns
+    ///
+    /// * `Result<(), EngineError>` - If the `data_value` field is `None`, it returns an `Err` with an `EngineError::Forbidden` variant. If the `data_value` field is not `None`, it opens the URL using the `drive` object and returns `Ok(())`.
     async fn command_open(&self, action: &action::Model) -> EngineResult<()> {
-        let a = match action.to_owned().data_value  {
+        let _action = match action.to_owned().data_value  {
             None => Err(EngineError::Forbidden),
-            Some(url) => self.drive.open(url.as_str()).await
+            Some(url) => self.driver.open(url.as_str()).await
         };
         Ok(())
     }
     
+    /// Asynchronously enters data into a target element on a web page using a WebDriver.
+    ///
+    /// # Arguments
+    ///
+    /// * `action` - An `action::Model` object that contains the necessary information for the action, including the data value to be entered, the target value of the element, and the target kind (CSS, ID, or XPath).
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// let action = action::Model {
+    ///     data_value: Some("example data".to_string()),
+    ///     target_value: Some("example target".to_string()),
+    ///     target_kind: Some(ActionTargetKind::Css),
+    /// };
+    /// ui_helper.command_enter(&action).await;
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an `EngineError` if any of the required parameters (`action.data_value`, `action.target_value`, `action.target_kind`) are missing.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` if the action of entering data into the target element is successful.
     async fn command_enter(&self, action: &action::Model) -> EngineResult<()> {
-        let data_value = action.to_owned().data_value
-            .ok_or_else(|| EngineError::MissingParameter("action.data_value".to_string(), "".to_string()))?;
-        let target_value = action.to_owned().target_value
-            .ok_or_else(|| EngineError::MissingParameter("action.target_value".to_string(), "".to_string()))?;
-        let target_kind = action.to_owned().target_kind
-            .ok_or_else(|| EngineError::MissingParameter("action.target_kind".to_string(), "".to_string()))?;
+        let data_value = action.data_value.clone().ok_or_else(|| EngineError::MissingParameter("action.data_value".to_string(), "".to_string()))?;
+        let target_value = action.target_value.clone().ok_or_else(|| EngineError::MissingParameter("action.target_value".to_string(), "".to_string()))?;
+        let target_kind = action.target_kind.clone().ok_or_else(|| EngineError::MissingParameter("action.target_kind".to_string(), "".to_string()))?;
         let by_kind = match target_kind {
             ActionTargetKind::Css => By::Css(target_value.as_str()),
             ActionTargetKind::Id => By::Id(target_value.as_str()),
             ActionTargetKind::Xpath => By::XPath(target_value.as_str())
         };
-        self.drive.find(by_kind).await?.send_keys(data_value).await?;
+        self.driver.find(by_kind).await?.send_keys(data_value).await?;
         Ok(())
     }
     
+    /// Performs a click action on a web element based on the provided target value and target kind.
+    ///
+    /// # Arguments
+    ///
+    /// * `action` - An instance of the `action::Model` struct that contains the target value and target kind.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// let action = action::Model {
+    ///     data_value: Some("button".to_string()),
+    ///     target_kind: Some(ActionTargetKind::Css),
+    /// };
+    ///
+    /// ui_helper.command_click(&action);
+    /// ```
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` if the click action is performed successfully.
     async fn command_click(&self, action: &action::Model) -> EngineResult<()> {
-        let target_value = action.to_owned().target_value
+        let target_value = action.data_value.clone()
             .ok_or_else(|| EngineError::MissingParameter("action.target_value".to_string(), "".to_string()))?;
-        let target_kind = action.to_owned().target_kind
+        let target_kind = action.target_kind.clone()
             .ok_or_else(|| EngineError::MissingParameter("action.target_kind".to_string(), "".to_string()))?;
         let by_kind = match target_kind {
             ActionTargetKind::Css => By::Css(target_value.as_str()),
             ActionTargetKind::Id => By::Id(target_value.as_str()),
             ActionTargetKind::Xpath => By::XPath(target_value.as_str())
         };
-        self.drive.find(by_kind).await?.click().await?;
+        self.driver.find(by_kind).await?.click().await?;
         Ok(())
     }
     
     async fn command_verify_text(&self, action: &action::Model) -> EngineResult<()> {
-        let data_value = action.to_owned().data_value
+        let data_value = action.data_value.clone()
             .ok_or_else(|| EngineError::MissingParameter("action.data_value".to_string(), "".to_string()))?;
-        let target_value = action.to_owned().target_value
+        let target_value = action.target_value.clone()
             .ok_or_else(|| EngineError::MissingParameter("action.target_value".to_string(), "".to_string()))?;
-        let target_kind = action.to_owned().target_kind
+        let target_kind = action.target_kind.clone()
             .ok_or_else(|| EngineError::MissingParameter("action.target_kind".to_string(), "".to_string()))?;
         let by_kind = match target_kind {
             ActionTargetKind::Css => By::Css(target_value.as_str()),
             ActionTargetKind::Id => By::Id(target_value.as_str()),
             ActionTargetKind::Xpath => By::XPath(target_value.as_str())
         };
-        let text = self.drive.find(by_kind).await?.inner_html().await?;
+        let text = self.driver.find(by_kind).await?.inner_html().await?;
         if text != data_value {
             info!("Verify text is failed {}", data_value);
             return Err(EngineError::MissingParameter("action.data_value".to_string(), data_value));

@@ -5,13 +5,13 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "table_kind")]
+#[sea_orm(rs_type = "String", db_type = "String(Some(5))", enum_name = "table_kind")]
 pub enum ActionDataKind {
-    #[sea_orm(string_value = "String")]
+    #[sea_orm(string_value = "S")]
     String,
-    #[sea_orm(string_value = "Int")]
+    #[sea_orm(string_value = "I")]
     Int,
-    #[sea_orm(string_value = "Bool")]
+    #[sea_orm(string_value = "B")]
     Bool
 }
 
@@ -20,12 +20,23 @@ pub enum ActionDataKind {
 pub struct Model {
     #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
-    pub id: Uuid,
+    pub field_id: String,
+    #[sea_orm(primary_key)]
+    #[serde(skip_deserializing)]
+    pub table_id: i32,
     pub name: String,
     pub kind: ActionDataKind,
-    pub option: Option<String>,
-    #[serde(skip_deserializing)]
-    pub table_id: Uuid
+    pub option: Option<serde_json::Value>
+    // #[serde(skip_deserializing)]
+    // #[sea_orm(primary_key)]
+    // pub id: i32,
+    // pub name: String,
+    // #[serde(skip_deserializing)]
+    // pub field_id: String,
+    // pub kind: ActionDataKind,
+    // pub option: Option<serde_json::Value>,
+    // #[serde(skip_deserializing)]
+    // pub table_id: i32
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
