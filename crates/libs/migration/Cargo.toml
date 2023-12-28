@@ -1,0 +1,32 @@
+[package]
+name = "migration"
+version = "0.1.0"
+publish = false
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "migration"
+path = "src/lib.rs"
+
+[dependencies]
+async-std = { version = "^1", features = ["attributes", "tokio1"] }
+entity.workspace=true
+sea-orm.workspace=true
+sea-query.workspace=true
+sea-orm-migration.workspace=true
+#[dependencies.sea-orm-migration]
+##version = "0.10.7"
+#version = "0.12.3"
+#features = [
+#  # Enable at least one `ASYNC_RUNTIME` and `DATABASE_DRIVER` feature if you want to run migration via CLI.
+#  # View the list of supported features at https://www.sea-ql.org/SeaORM/docs/install-and-config/database-and-async-runtime.
+#  # e.g.
+#  # "runtime-tokio-rustls",  # `ASYNC_RUNTIME` feature
+#   "sqlx-postgres",
+#]

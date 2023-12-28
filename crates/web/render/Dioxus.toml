@@ -1,0 +1,11 @@
+[application]
+name = "render"
+# Currently supported platforms: web, desktop
+default_platform = "web"
+
+[web.app]
+title = "Hello"
+
+[web.watcher]
+
+[web.resource.dev]
