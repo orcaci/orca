@@ -8,7 +8,6 @@ members=[
     "crates/libs/migration",
     "crates/services/engine",
     "crates/services/api",
-    "crates/web/render"
 ]
 
 [workspace.package]
