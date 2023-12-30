@@ -39,8 +39,8 @@ async fn create_action(Extension(session): Extension<OrcaSession>, Path((_app_id
 async fn batch_update_action(Extension(session): Extension<OrcaSession>,
                              Path((_app_id, group_id)): Path<(Uuid, Uuid)>,
                              Json(body): Json<Vec<Model>>) -> InternalResult<impl IntoResponse> {
-    ActionService::new(session).batch_update_action(group_id, body).await?;
-    Ok(Json(json!({"status": "success"})))
+    let response = ActionService::new(session).batch_update_action(group_id, body).await?;
+    Ok(Json(response))
 }
 
 /// update_action - this will create new Application in Orca

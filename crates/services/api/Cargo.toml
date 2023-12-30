@@ -29,12 +29,13 @@ chrono.workspace=true
 sea-orm.workspace=true
 sea-query.workspace=true
 sea-orm-migration.workspace=true
+axum.workspace=true
 
 cerium.workspace=true
+engine.workspace=true
 migration.workspace=true
 entity.workspace=true
 thiserror.workspace=true
 
 tokio = { version = "1.0", features = ["full"] }
-axum = "0.7.2"
 

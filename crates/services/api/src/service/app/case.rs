@@ -3,6 +3,8 @@ use sea_orm::ActiveValue::Set;
 use sea_query::{Condition, Expr};
 use tracing::{debug, info};
 use uuid::Uuid;
+use cerium::client::driver::web::WebDriver;
+use engine::controller::case::CaseController;
 
 use entity::prelude::case::{Column, Entity, Model};
 use entity::prelude::case_block::{ActiveModel as BlockActiveModel, Column as BlockColumn, Entity as BlockEntity, Model as BlockModel};
@@ -89,12 +91,12 @@ impl CaseService {
             return Err(OrcaRepoError::ModelNotFound("Test Case".to_string(), case_id.to_string()))?;
         }
 
-        // let ui_driver = UIHelper::default().await.expect("error");
-        // info!("got the driver");
-        // let controller = CaseController::new(&CONFIG.get().await.db_client, &ui_driver);
-        // info!("got the controller");
-        // controller.process(&case.unwrap()).await.expect("error");
-        // ui_driver.driver.quit().await.expect("TODO: panic message");
+        let ui_driver = WebDriver::default().await.expect("error");
+        info!("got the driver");
+        let controller = CaseController::new(self.trx(), ui_driver.clone());
+        info!("got the controller");
+        controller.process(&case.unwrap()).await.expect("error");
+        ui_driver.driver.quit().await.expect("TODO: panic message");
         Ok(())
     }
 

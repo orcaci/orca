@@ -1,51 +1,53 @@
-use log::{error, info};
-use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
+use sea_orm::{ColumnTrait, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use sea_orm::prelude::Uuid;
+use tracing::{error, info};
 
+use cerium::client::driver::web::WebDriver;
+use entity::prelude::case::Entity;
 use entity::prelude::case_block;
 use entity::prelude::case_block::{BlockKind, BlockType};
 use entity::test::ui::case::case;
 
 use crate::controller::action::ActionController;
-use crate::server::driver::UIHelper;
+use crate::error::EngineResult;
 
 pub struct CaseController<'ccl>{
-    db: &'ccl DatabaseConnection,
-    drive: &'ccl UIHelper
+    db: &'ccl DatabaseTransaction,
+    drive: WebDriver
 }
 
 impl<'ccl> CaseController<'ccl> {
-    pub fn new(db: &'ccl DatabaseConnection, drive: &'ccl UIHelper) -> CaseController<'ccl> {
+    pub fn new(db: &'ccl DatabaseTransaction, drive: WebDriver) -> CaseController<'ccl> {
         Self{db, drive }
     }
     /// run_case - will execute the test case by the case ID
-    pub async fn run_case(&self, id: Uuid) -> Result<(), sea_orm::DbErr> {
-        let case_res = case::Entity::find_by_id(id).all(self.db).await?;
-        if case_res.is_empty() {
+    pub async fn run_case(&self, id: Uuid) -> EngineResult<()> {
+        let case_res = Entity::find_by_id(id).one(self.db).await?;
+        if case_res.is_none() {
             error!("Unable to find the Case - {:?}", id.clone());
             return Ok(());
         }
-        let case: &case::Model = &case_res[0];
+        let case: &case::Model = &case_res.unwrap();
         info!("Start Processing Case - [[ {name} || {id} ]]", name=case.name, id=case.id);
         self.process(case).await?;
         Ok(())
     }
 
     /// process will get the block and execute in the batch based on the kind of the block
-    pub async fn process(&self, case: &case::Model) -> Result<(), sea_orm::DbErr> {
+    pub async fn process(&self, case: &case::Model) -> EngineResult<()> {
         let mut block_page = case_block::Entity::find()
             .filter(case_block::Column::CaseId.eq(case.id))
             .order_by_asc(case_block::Column::ExecutionOrder).paginate(self.db, 10);
         while let Some(blocks) = block_page.fetch_and_next().await? {
             for block in blocks.into_iter() {
-                self.switch_block(&block).await
+                self.switch_block(&block).await?;
             }
         }
         Ok(())
     }
 
     /// switch_block - function to switch the block based on the type and kind of the block
-    async fn switch_block(&self, block: &case_block::Model){
+    async fn switch_block(&self, block: &case_block::Model) -> EngineResult<()>{
         let result = match block.kind {
             BlockKind::Loop => {
                 match block.type_field {
@@ -68,7 +70,8 @@ impl<'ccl> CaseController<'ccl> {
                     _ => todo!("Need to raise a error from here since non other supported")
                 }
             },
-        }.await;
+        }.await?;
+        Ok(())
     }
 
     async fn process_in_memory_loop(&self, block: &case_block::Model) -> () {
@@ -83,10 +86,10 @@ impl<'ccl> CaseController<'ccl> {
 
     }
 
-    async fn process_action_group(&self, block: &case_block::Model) -> () {
+    async fn process_action_group(&self, block: &case_block::Model) -> EngineResult<()> {
         info!("Starting processing {block_id}", block_id=block.id);
-        ActionController::new(self.db, self.drive).execute(block.reference.unwrap()).await
-            .expect("failed on error")
+        Ok(ActionController::new(self.db, self.drive.clone())
+            .execute(block.reference.unwrap()).await?)
     }
 }
 

@@ -28,7 +28,6 @@ pub enum ActionKind {
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
 #[sea_orm(table_name = "action")]
 pub struct Model {
-    #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
     pub id: Uuid,
     pub execution_order: i32,
@@ -40,7 +39,6 @@ pub struct Model {
     pub target_kind: Option<ActionTargetKind>,
     pub target_value: Option<String>,
 
-    #[serde(skip_deserializing)]
     pub action_group_id: Uuid,
 
     #[sea_orm(ignore)]

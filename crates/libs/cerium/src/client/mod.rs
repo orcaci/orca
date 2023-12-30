@@ -4,6 +4,7 @@ use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 
 pub mod cache;
 pub mod db;
+pub mod driver;
 
 
 #[derive(Debug, Clone)]
@@ -35,8 +36,7 @@ impl Client {
             .acquire_timeout(Duration::from_secs(8))
             .idle_timeout(Duration::from_secs(8))
             .max_lifetime(Duration::from_secs(8))
-            .sqlx_logging(true)
-            .sqlx_logging_level(log::LevelFilter::Info);
+            .sqlx_logging(true);
         Database::connect(opt).await.expect("Error unable to connect DB")
         // Database::connect(uri.unwrap()).await.expect("Error unable to connect DB")
     }

@@ -1,11 +1,11 @@
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, QueryFilter, QueryOrder, TryIntoModel};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, NotSet, QueryFilter, QueryOrder, TryIntoModel};
 use sea_orm::ActiveValue::Set;
 use sea_orm::prelude::Uuid;
 use sea_query::Expr;
 use tracing::info;
 
 use entity::test::ui::action::action;
-use entity::test::ui::action::action::{ActiveModel, Model};
+use entity::test::ui::action::action::{ActiveModel, Entity, Model};
 
 use crate::error::{InternalResult, OrcaRepoError};
 use crate::server::session::OrcaSession;
@@ -72,15 +72,15 @@ impl ActionService {
     }
 
     /// batch_update_action - This will update batch Action Group in Application in Orca
-    pub async fn batch_update_action(&self, group_id: Uuid, mut actions: Vec<Model>) -> InternalResult<()> {
-        let actions : Vec<ActiveModel> = actions.iter_mut().map(|item| {
-            item.id = Uuid::new_v4();
-            item.action_group_id = group_id;
-            let _item =  item.clone().into_active_model();
-            return _item;
-        }).collect();
-        action::Entity::insert_many(actions).exec(self.trx()).await?;
-        Ok(())
+    pub async fn batch_update_action(&self, group_id: Uuid, mut actions: Vec<Model>) -> InternalResult<Vec<Model>> {
+        let mut result: Vec<Model> = vec![];
+        for item in actions {
+            let mut _item =  item.into_active_model().reset_all();
+            info!("For Input update for {:?}", _item);
+            let item =_item.save(self.trx()).await?.try_into_model()?;
+            result.push( item);
+        }
+        Ok(result)
     }
 
 }

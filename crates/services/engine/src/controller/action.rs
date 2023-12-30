@@ -1,18 +1,20 @@
-use log::info;
-use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, ModelTrait, PaginatorTrait, QueryFilter, QueryOrder};
+use std::fs;
+use std::io::Write;
+use sea_orm::{ColumnTrait, DatabaseConnection, DatabaseTransaction, EntityTrait, ModelTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use sea_orm::prelude::Uuid;
+use tracing::info;
 use thirtyfour::By;
+use cerium::client::driver::web::WebDriver;
 
 use entity::prelude::target::ActionTargetKind;
 use entity::test::ui::action::action;
 use entity::test::ui::action::action::ActionKind;
 
 use crate::error::{EngineError, EngineResult};
-use crate::server::driver::UIHelper;
 
 pub struct ActionController<'ccl>{
-    db: &'ccl DatabaseConnection,
-    driver: &'ccl UIHelper
+    db: &'ccl DatabaseTransaction,
+    driver: WebDriver
 }
 
 impl<'ccl> ActionController<'ccl> {
@@ -27,15 +29,16 @@ impl<'ccl> ActionController<'ccl> {
     /// # Example
     ///
     /// ```
-    /// use sea_orm::DatabaseConnection;
+    /// use sea_orm::{DatabaseConnection, DatabaseTransaction};
+    /// use cerium::client::driver::web::WebDriver;
     /// use engine::controller::action::ActionController;
     /// use engine::server::driver::UIHelper;
     ///
-    /// let db = DatabaseConnection::new();
-    /// let driver = UIHelper::default();
-    /// let controller = ActionController::new(&db, &driver);
+    /// let db = DatabaseTransaction::new();
+    /// let driver = WebDriver::default();
+    /// let controller = ActionController::new(&db, driver);
     /// ```
-    pub fn new(db: &'ccl DatabaseConnection, driver: &'ccl UIHelper) -> ActionController<'ccl> {
+    pub fn new(db: &'ccl DatabaseTransaction, driver: WebDriver) -> ActionController<'ccl> {
         Self{db, driver}
     }
     
@@ -49,15 +52,15 @@ impl<'ccl> ActionController<'ccl> {
     /// # Example
     ///
     /// ```rust
-    /// use sea_orm::DatabaseConnection;
+    /// use sea_orm::{DatabaseConnection, DatabaseTransaction};
+    /// use cerium::client::driver::web::WebDriver;
     /// use engine::controller::action::ActionController;
-    /// use engine::server::driver::UIHelper;
     /// use entity::test::ui::action::action::Model;
     ///
-    /// let db = DatabaseConnection::new();
-    /// let driver = UIHelper::default();
+    /// let db = DatabaseTransaction::new();
+    /// let driver = WebDriver::default();
     /// let action = Model::new();
-    /// let controller = ActionController::new(&db, &driver);
+    /// let controller = ActionController::new(&db, driver);
     /// controller.command_open(&action).await;
     /// ```
     ///
@@ -65,11 +68,10 @@ impl<'ccl> ActionController<'ccl> {
     ///
     /// * `Result<(), EngineError>` - If the `data_value` field is `None`, it returns an `Err` with an `EngineError::Forbidden` variant. If the `data_value` field is not `None`, it opens the URL using the `drive` object and returns `Ok(())`.
     pub async fn command_open(&self, action: &action::Model) -> EngineResult<()> {
-        let _action = match action.to_owned().data_value  {
-            None => Err(EngineError::Forbidden),
-            Some(url) => self.driver.open(url.as_str()).await
-        };
-        Ok(())
+        match action.data_value.clone() {
+            Some(value) => Ok(self.driver.open(value.as_str()).await?),
+            None => Err(EngineError::MissingParameter("url".to_string(), "".to_string()))
+        }
     }
     
     /// Asynchronously enters data into a target element on a web page using a WebDriver.
@@ -130,10 +132,10 @@ impl<'ccl> ActionController<'ccl> {
     ///
     /// Returns `Ok(())` if the click action is performed successfully.
     async fn command_click(&self, action: &action::Model) -> EngineResult<()> {
-        let target_value = action.data_value.clone()
-            .ok_or_else(|| EngineError::MissingParameter("action.target_value".to_string(), "".to_string()))?;
+        let target_value = action.target_value.clone()
+            .ok_or_else(|| EngineError::MissingParameter("command_click.action.target_value".to_string(), "".to_string()))?;
         let target_kind = action.target_kind.clone()
-            .ok_or_else(|| EngineError::MissingParameter("action.target_kind".to_string(), "".to_string()))?;
+            .ok_or_else(|| EngineError::MissingParameter("command_click.action.target_kind".to_string(), "".to_string()))?;
         let by_kind = match target_kind {
             ActionTargetKind::Css => By::Css(target_value.as_str()),
             ActionTargetKind::Id => By::Id(target_value.as_str()),
@@ -147,7 +149,7 @@ impl<'ccl> ActionController<'ccl> {
         let data_value = action.data_value.clone()
             .ok_or_else(|| EngineError::MissingParameter("action.data_value".to_string(), "".to_string()))?;
         let target_value = action.target_value.clone()
-            .ok_or_else(|| EngineError::MissingParameter("action.target_value".to_string(), "".to_string()))?;
+            .ok_or_else(|| EngineError::MissingParameter("command_verify_text.action.target_value".to_string(), "".to_string()))?;
         let target_kind = action.target_kind.clone()
             .ok_or_else(|| EngineError::MissingParameter("action.target_kind".to_string(), "".to_string()))?;
         let by_kind = match target_kind {
@@ -155,7 +157,9 @@ impl<'ccl> ActionController<'ccl> {
             ActionTargetKind::Id => By::Id(target_value.as_str()),
             ActionTargetKind::Xpath => By::XPath(target_value.as_str())
         };
-        let text = self.driver.find(by_kind).await?.inner_html().await?;
+        let we = self.driver.find(by_kind).await?;
+        let text = we.inner_html().await?;
+        info!(text);
         if text != data_value {
             info!("Verify text is failed {}", data_value);
             return Err(EngineError::MissingParameter("action.data_value".to_string(), data_value));
@@ -165,7 +169,7 @@ impl<'ccl> ActionController<'ccl> {
     }
     
     pub async fn step_executor(&self, action: &action::Model) -> EngineResult<()> {
-        let set_response = match action.kind { 
+        let set_response = match action.kind.clone() {
             ActionKind::Open => self.command_open(action).await?,
             ActionKind::Enter => self.command_enter(action).await?,
             ActionKind::Click => self.command_click(action).await?,
@@ -176,6 +180,13 @@ impl<'ccl> ActionController<'ccl> {
         };
         Ok(())
     }
+
+    async fn take_screenshot(&self, id: String) -> EngineResult<()> {
+        let result = self.driver.take_screenshot().await?;
+        let mut file = fs::File::create(format!("evidence_{id}.png")).expect("error");
+        file.write_all(&*result).expect("error");
+        Ok(())
+    }
     
     /// run_case - will execute the test case by the case ID
     pub async fn execute(&self, id: Uuid) -> EngineResult<()> {
@@ -183,11 +194,12 @@ impl<'ccl> ActionController<'ccl> {
         let mut action_page = action::Entity::find()
             .filter(action::Column::ActionGroupId.eq(id))
             .order_by_asc(action::Column::ExecutionOrder).paginate(self.db, 50);
-        while let Some(actions) = action_page.fetch_and_next().await
-            .map_err(EngineError::DatabaseError)? {
+        while let Some(actions) = action_page.fetch_and_next().await? {
             for action in actions.into_iter() {
                 info!("Executing step == [id] {:?}, [desc] {:?}", action.id, action.description);
                 self.step_executor(&action).await?;
+                self.take_screenshot(action.id.to_string()).await?;
+                info!("Done step == [id] {:?}, [desc] {:?}", action.id, action.description);
             }
         }
         Ok(())

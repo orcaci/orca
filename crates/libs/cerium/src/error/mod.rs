@@ -3,37 +3,25 @@ use axum::Json;
 use axum::response::{IntoResponse, Response};
 use sea_orm::DbErr;
 use serde_json::{Error as SerdeJsonError, json};
+use thirtyfour::error::WebDriverError;
+use thiserror::Error;
 
-pub use cerium::{CeriumError as OtherCeriumError, CeriumResult, ErrorResponse};
+// pub use cerium::{CeriumError as OtherCeriumError, CeriumResult, ErrorResponse};
+pub type CeriumResult<T> = Result<T, CeriumError>;
 
 pub mod web;
 pub mod cerium;
 
-// pub type OrcaResult = InternalResult<impl IntoResponse>;
-
-pub type InternalResult<T> = Result<T, CeriumError>;
-
 /// Our app's top level error type.
+#[derive(Error, Debug)]
 pub enum CeriumError {
     /// Something went wrong when calling the user repo.
-    DataBaseError(DbErr),
-    SerializerError(SerdeJsonError)
-}
-
-/// This makes it possible to use `?` to automatically convert a `DbErr`
-/// into an `CeriumError`.
-impl From<DbErr> for CeriumError {
-    fn from(inner: DbErr) -> Self {
-        CeriumError::DataBaseError(inner)
-    }
-}
-
-/// This makes it possible to use `?` to automatically convert a `DbErr`
-/// into an `CeriumError`.
-impl From<SerdeJsonError> for CeriumError {
-    fn from(inner: SerdeJsonError) -> Self {
-        CeriumError::SerializerError(inner)
-    }
+    #[error("Got A Database Error: {0}")]
+    DataBaseError(#[from] DbErr),
+    #[error("Error While Serializer: {0}")]
+    SerializerError(#[from] SerdeJsonError),
+    #[error("Webdriver error: {0}")]
+    WebdriverError(#[from] WebDriverError),
 }
 
 impl IntoResponse for CeriumError {

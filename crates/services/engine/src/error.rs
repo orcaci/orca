@@ -2,6 +2,7 @@ use sea_orm::DbErr;
 use serde_json::Error as SerdeJsonError;
 use thirtyfour::error::WebDriverError;
 use thiserror::Error;
+use cerium::error::CeriumError;
 
 pub type EngineResult<T> = Result<T, EngineError>;
 
@@ -18,6 +19,8 @@ pub enum EngineError {
     #[error("Database error: {0}")]
     DatabaseError(#[from] DbErr),
     #[error("Json Serialization error: {0}")]
-    SerializerError(#[from] SerdeJsonError)
+    SerializerError(#[from] SerdeJsonError),
+    #[error("CeriumError: {0}")]
+    CeriumError(#[from] CeriumError)
 }
 
