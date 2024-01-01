@@ -5,7 +5,11 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "action_data_kind")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(15))",
+    enum_name = "action_data_kind"
+)]
 pub enum ActionDataKind {
     #[sea_orm(string_value = "Runtime")]
     Runtime,
@@ -20,7 +24,7 @@ pub struct Model {
     pub id: Uuid,
     pub kind: ActionDataKind,
     pub value: String,
-    pub action_id: Uuid
+    pub action_id: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -31,7 +35,6 @@ pub enum Relation {
         to = "super::action::Column::Id"
     )]
     Action,
-
 }
 
 // `Related` trait has to be implemented by hand

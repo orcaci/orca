@@ -8,7 +8,11 @@ use crate::prelude::target::ActionTargetKind;
 use crate::test::ui::action::data::ActionDataKind;
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "action_kind")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(15))",
+    enum_name = "action_kind"
+)]
 pub enum ActionKind {
     #[sea_orm(string_value = "Click")]
     Click,
@@ -44,7 +48,7 @@ pub struct Model {
     #[sea_orm(ignore)]
     pub data: Option<super::target::Model>,
     #[sea_orm(ignore)]
-    pub target: Option<super::target::Model>
+    pub target: Option<super::target::Model>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

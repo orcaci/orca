@@ -18,7 +18,6 @@ pub struct Model {
 
     #[sea_orm(ignore)]
     pub suite_execution: Option<serde_json::Value>,
-
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -27,9 +26,9 @@ pub enum Relation {
     SuiteBlock,
 
     #[sea_orm(
-    belongs_to = "crate::app::app::Entity",
-    from = "Column::AppId",
-    to = "crate::app::app::Column::Id"
+        belongs_to = "crate::app::app::Entity",
+        from = "Column::AppId",
+        to = "crate::app::app::Column::Id"
     )]
     App,
 }

@@ -1,5 +1,3 @@
-
-
 // pub struct Step {
 //     pub description: Option<String>,
 //     #[serde(rename(serialize = "type"))]

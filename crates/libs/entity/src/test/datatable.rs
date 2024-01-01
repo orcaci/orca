@@ -18,7 +18,7 @@ pub struct Model {
     pub app_id: Uuid,
 
     #[sea_orm(ignore)]
-    pub fields: Option<Vec<super::field::Model>>
+    pub fields: Option<Vec<super::field::Model>>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -40,7 +40,6 @@ impl Related<crate::app::app::Entity> for Entity {
         Relation::App.def()
     }
 }
-
 
 // `Related` trait has to be implemented by hand
 impl Related<super::field::Entity> for Entity {

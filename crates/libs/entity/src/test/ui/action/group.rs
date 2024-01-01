@@ -5,12 +5,16 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "action_group_kind")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(15))",
+    enum_name = "action_group_kind"
+)]
 pub enum ActionGroupKind {
     #[sea_orm(string_value = "ActionGroup")]
     ActionGroup,
     #[sea_orm(string_value = "Assertion")]
-    Assertion
+    Assertion,
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
@@ -24,7 +28,7 @@ pub struct Model {
     #[sea_orm(column_name = "type")]
     pub type_field: ActionGroupKind,
     #[serde(skip_deserializing)]
-    pub app_id: Uuid
+    pub app_id: Uuid,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

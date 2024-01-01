@@ -11,7 +11,7 @@ pub struct Model {
     pub id: i32,
     pub kind: String,
     pub table_name: String,
-    pub command: Option<String>
+    pub command: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

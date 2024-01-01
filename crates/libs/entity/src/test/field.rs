@@ -5,7 +5,11 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(5))", enum_name = "table_kind")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(5))",
+    enum_name = "table_kind"
+)]
 pub enum FieldDataKind {
     #[sea_orm(string_value = "S")]
     #[serde(rename = "S")]
@@ -15,7 +19,7 @@ pub enum FieldDataKind {
     Int,
     #[sea_orm(string_value = "B")]
     #[serde(rename = "B")]
-    Bool
+    Bool,
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
@@ -29,7 +33,7 @@ pub struct Model {
     pub table_id: i32,
     pub name: String,
     pub kind: FieldDataKind,
-    pub option: Option<serde_json::Value>
+    pub option: Option<serde_json::Value>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

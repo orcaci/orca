@@ -1,10 +1,12 @@
-use sea_orm::{ActiveModelTrait, DatabaseTransaction, EntityTrait, NotSet, QuerySelect, TryIntoModel};
-use tracing::info;
-use entity::admin::user;
-use entity::admin::user::{ActiveModel, Model};
 use crate::error::{InternalResult, OrcaRepoError};
 use crate::route::Pagination;
 use crate::server::session::OrcaSession;
+use entity::admin::user;
+use entity::admin::user::{ActiveModel, Model};
+use sea_orm::{
+    ActiveModelTrait, DatabaseTransaction, EntityTrait, NotSet, QuerySelect, TryIntoModel,
+};
+use tracing::info;
 
 pub(crate) struct UserService(OrcaSession);
 
@@ -25,15 +27,20 @@ impl UserService {
 
     pub async fn list_users(&self, page: Pagination) -> InternalResult<Vec<Model>> {
         let users = user::Entity::find()
-            .offset((page.offset() - 1) * page.limit()).limit(page.limit())
-            .all(self.trx()).await?;
+            .offset((page.offset() - 1) * page.limit())
+            .limit(page.limit())
+            .all(self.trx())
+            .await?;
         Ok(users)
     }
 
     pub async fn get_user_by_id(&self, id: i32) -> InternalResult<Model> {
         let user = user::Entity::find_by_id(id).one(self.trx()).await?;
-        if user.is_none(){
-            return Err(OrcaRepoError::ModelNotFound("User".to_string(), id.to_string()))?;
+        if user.is_none() {
+            return Err(OrcaRepoError::ModelNotFound(
+                "User".to_string(),
+                id.to_string(),
+            ))?;
         }
         return Ok(user.unwrap());
     }
@@ -46,10 +53,15 @@ impl UserService {
     pub async fn delete_user_by_id(&self, id: i32) -> InternalResult<()> {
         let result = user::Entity::delete_by_id(id).exec(self.trx()).await?;
         if result.rows_affected == 0 {
-            return Err(OrcaRepoError::ModelNotFound("User".to_string(), id.to_string()))?;
+            return Err(OrcaRepoError::ModelNotFound(
+                "User".to_string(),
+                id.to_string(),
+            ))?;
         }
-        info!("User Got deleted - {:?}, status - {:?}", id, result.rows_affected);
+        info!(
+            "User Got deleted - {:?}, status - {:?}",
+            id, result.rows_affected
+        );
         return Ok(());
     }
-
 }

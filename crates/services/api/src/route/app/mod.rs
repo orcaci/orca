@@ -1,8 +1,8 @@
-use axum::{Extension, Json, Router};
 use axum::extract::Path;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, put};
+use axum::{Extension, Json, Router};
 use uuid::Uuid;
 
 use entity::app::app::Model;
@@ -18,12 +18,11 @@ use crate::server::session::OrcaSession;
 use crate::service::app::AppService;
 
 pub(crate) mod action;
+pub(crate) mod case;
+pub(crate) mod datatable;
 pub(crate) mod group;
 pub(crate) mod profile;
-pub(crate) mod datatable;
 pub(crate) mod suit;
-pub(crate) mod case;
-
 
 pub fn app_route() -> Router {
     Router::new()
@@ -34,30 +33,14 @@ pub fn app_route() -> Router {
                 .route("/", put(update_app))
                 .nest(
                     "/group",
-                    group_route()
-                        .merge(
-                            Router::new().nest("/:group_id/action", action_route())
-                        )
+                    group_route().merge(Router::new().nest("/:group_id/action", action_route())),
                 )
-                .nest(
-                    "/profile",
-                    profile_route()
-                )
-                .nest(
-                    "/datatable",
-                    datatable_route()
-                )
-                .nest(
-                    "/case",
-                    test_case_route()
-                )
-                .nest(
-                    "/suite",
-                    suite_route()
-                )
+                .nest("/profile", profile_route())
+                .nest("/datatable", datatable_route())
+                .nest("/case", test_case_route())
+                .nest("/suite", suite_route()),
         )
 }
-
 
 /// get_app - list all the Application in the Orca Application
 async fn get_app(Extension(session): Extension<OrcaSession>) -> InternalResult<impl IntoResponse> {
@@ -66,17 +49,20 @@ async fn get_app(Extension(session): Extension<OrcaSession>) -> InternalResult<i
     Ok(Json(result))
 }
 
-
 /// create_app - this will create new Application in Orca
-async fn create_app(Extension(session): Extension<OrcaSession>,
-                    Json(body): Json<Model>) -> InternalResult<impl IntoResponse> {
+async fn create_app(
+    Extension(session): Extension<OrcaSession>,
+    Json(body): Json<Model>,
+) -> InternalResult<impl IntoResponse> {
     let result = AppService::new(session).create_app(body).await?;
     Ok((StatusCode::CREATED, Json(result)))
 }
 
 /// update_app - this will update Application in Orca
-async fn update_app(Extension(session): Extension<OrcaSession>,
-                    Path(_app_id): Path<Uuid>,
-                    Json(body): Json<Model>) -> InternalResult<impl IntoResponse> {
+async fn update_app(
+    Extension(session): Extension<OrcaSession>,
+    Path(_app_id): Path<Uuid>,
+    Json(body): Json<Model>,
+) -> InternalResult<impl IntoResponse> {
     Ok(Json(body))
 }

@@ -4,5 +4,4 @@ pub trait OrcaModel: ActiveModelBehavior {
     fn new() -> Self {
         <Self as ActiveModelTrait>::default()
     }
-
 }

@@ -1,7 +1,3 @@
-
-
 pub trait DatabaseTrait {
-    fn create() {
-
-    }
+    fn create() {}
 }

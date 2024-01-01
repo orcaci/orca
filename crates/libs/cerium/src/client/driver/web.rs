@@ -1,8 +1,7 @@
-use thirtyfour::{WebDriver as TFWebDriver};
+use thirtyfour::WebDriver as TFWebDriver;
 
-
-use thirtyfour::{By, DesiredCapabilities, WebElement};
 use crate::error::CeriumResult;
+use thirtyfour::{By, DesiredCapabilities, WebElement};
 
 #[derive(Clone)]
 pub struct WebDriver {
@@ -27,7 +26,7 @@ impl WebDriver {
     /// **NOTE:** If the webdriver appears to hang or give no response, please check that the
     ///     capabilities object is of the correct type for that webdriver.
     pub fn new(driver: TFWebDriver) -> CeriumResult<Self> {
-        let helper = WebDriver{driver};
+        let helper = WebDriver { driver };
         Ok(helper)
     }
 
@@ -36,7 +35,6 @@ impl WebDriver {
         let driver = TFWebDriver::new("http://localhost:4444/wd/hub/session", caps).await?;
         Self::new(driver)
     }
-
 
     pub async fn open(&self, url: &str) -> CeriumResult<()> {
         Ok(self.driver.goto(url).await?)
@@ -52,7 +50,6 @@ impl WebDriver {
     pub async fn find(&self, by: impl Into<By>) -> CeriumResult<WebElement> {
         Ok(self.driver.find(by).await?)
     }
-
 
     /// take_screenshot - will take screenshot and send png back to the requester
     pub async fn take_screenshot(&self) -> CeriumResult<Vec<u8>> {

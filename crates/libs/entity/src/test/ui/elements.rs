@@ -7,7 +7,11 @@ use serde::{Deserialize, Serialize};
 use crate::prelude::target::ActionTargetKind;
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(5))", enum_name = "element_create_type")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(5))",
+    enum_name = "element_create_type"
+)]
 pub enum ElementCreateType {
     #[sea_orm(string_value = "M")]
     Manual,
@@ -29,7 +33,6 @@ pub struct Model {
     pub screen_id: i64,
 }
 
-
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
@@ -46,10 +49,5 @@ impl Related<super::screen::Entity> for Entity {
         Relation::Screen.def()
     }
 }
-
-
-
-
-
 
 impl ActiveModelBehavior for ActiveModel {}

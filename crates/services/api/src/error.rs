@@ -4,9 +4,8 @@ use axum::response::{IntoResponse, Response};
 use sea_orm::DbErr;
 use serde_json::{Error as SerdeJsonError, json};
 use thiserror::Error;
-use crate::error::OrcaError::RepoError;
 
-// pub type OrcaResult = InternalResult<impl IntoResponse>;
+use crate::error::OrcaError::RepoError;
 
 pub type InternalResult<T> = Result<T, OrcaError>;
 
@@ -26,7 +25,7 @@ pub enum OrcaError {
     /// Something went wrong when calling the user repo.
     DataBaseError(DbErr),
     RepoError(OrcaRepoError),
-    SerializerError(SerdeJsonError)
+    SerializerError(SerdeJsonError),
 }
 
 /// This makes it possible to use `?` to automatically convert a `DbErr`
@@ -56,16 +55,13 @@ impl From<SerdeJsonError> for OrcaError {
 impl IntoResponse for OrcaError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
-            OrcaError::DataBaseError(err) =>{
-                (StatusCode::INTERNAL_SERVER_ERROR, err.to_string())
-            }
-            OrcaError::SerializerError(err) => {
-                (StatusCode::INTERNAL_SERVER_ERROR, err.to_string())
-            }
-            RepoError(err) => {
-                (StatusCode::NOT_FOUND, err.to_string())
-            }
-            _ => (StatusCode::INTERNAL_SERVER_ERROR, "Internal Error Not Specify".to_string())
+            OrcaError::DataBaseError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+            OrcaError::SerializerError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+            RepoError(err) => (StatusCode::NOT_FOUND, err.to_string()),
+            _ => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Internal Error Not Specify".to_string(),
+            ),
         };
 
         let body = Json(json!({

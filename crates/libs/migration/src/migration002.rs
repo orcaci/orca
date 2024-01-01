@@ -4,16 +4,16 @@ use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::ActiveValue::Set;
 
 use entity::app::app;
-use entity::prelude::{case, case_block};
 use entity::prelude::case_block::{BlockKind, BlockType};
 use entity::prelude::group::ActionGroupKind;
 use entity::prelude::target::ActionTargetKind;
-use entity::test::ui::action::{action, group as action_group};
+use entity::prelude::{case, case_block};
 use entity::test::ui::action::action::ActionKind;
 use entity::test::ui::action::data::ActionDataKind;
+use entity::test::ui::action::{action, group as action_group};
 
-use crate::sea_orm::{ActiveModelTrait, EntityTrait, InsertResult};
 use crate::sea_orm::prelude::Uuid;
+use crate::sea_orm::{ActiveModelTrait, EntityTrait, InsertResult};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -33,8 +33,11 @@ impl MigrationTrait for Migration {
         let action_g_am = action_group::ActiveModel {
             id: Set(Uuid::new_v4()),
             name: Set("Wikipedia Searching".to_string()),
-            description: Set(Option::from("This is Seeding application \
-            the will be created on application start".to_string())),
+            description: Set(Option::from(
+                "This is Seeding application \
+            the will be created on application start"
+                    .to_string(),
+            )),
             type_field: Set(ActionGroupKind::ActionGroup),
             app_id: Set(app.id.clone()),
         };
@@ -50,7 +53,9 @@ impl MigrationTrait for Migration {
                 execution_order: Set(1),
                 action_group_id: Set(app_g.clone().id),
                 ..Default::default()
-            }.insert(db).await?,
+            }
+            .insert(db)
+            .await?,
             action::ActiveModel {
                 id: Set(Uuid::new_v4()),
                 description: Set(Some("Search for Ana de Armas".to_string())),
@@ -62,51 +67,56 @@ impl MigrationTrait for Migration {
                 execution_order: Set(2),
                 action_group_id: Set(app_g.clone().id),
                 ..Default::default()
-            }.insert(db).await?,
+            }
+            .insert(db)
+            .await?,
             action::ActiveModel {
                 id: Set(Uuid::new_v4()),
                 description: Set(Some("Search".to_string())),
                 kind: Set(ActionKind::Click),
                 target_kind: Set(Some(ActionTargetKind::Xpath)),
-                target_value: Set(Some("//form[@id='search-form']/fieldset/button/i".to_string())),
+                target_value: Set(Some(
+                    "//form[@id='search-form']/fieldset/button/i".to_string(),
+                )),
                 execution_order: Set(3),
                 action_group_id: Set(app_g.clone().id),
                 ..Default::default()
-            }.insert(db).await?
+            }
+            .insert(db)
+            .await?,
         ];
         // let _action_m: InsertResult<action::ActiveModel> =
         //     action::Entity::insert_many(action_ms).exec(db).await?;
         /// check assert
-
         let assert_g_am = action_group::ActiveModel {
             id: Set(Uuid::new_v4()),
             name: Set("Wikipedia Assert".to_string()),
-            description: Set(Option::from("This is Seeding application \
-            the will be created on application start".to_string())),
+            description: Set(Option::from(
+                "This is Seeding application \
+            the will be created on application start"
+                    .to_string(),
+            )),
             type_field: Set(ActionGroupKind::Assertion),
             app_id: Set(app.clone().id),
         };
         let assert_g_m: action_group::Model = assert_g_am.insert(db).await?;
 
-
-        let assert_action_ms = vec![
-            action::ActiveModel {
-                id: Set(Uuid::new_v4()),
-                description: Set(Option::from("Verify the title".to_string())),
-                kind: Set(ActionKind::VerifyText),
-                data_kind: Set(Some(ActionDataKind::Static)),
-                data_value: Set(Some("Ana de Armas".to_string())),
-                target_kind: Set(Some(ActionTargetKind::Xpath)),
-                target_value: Set(Some("//*[@id='search-form']/fieldset/button".to_string())),
-                execution_order: Set(1),
-                action_group_id: Set(assert_g_m.clone().id),
-                ..Default::default()
-            }
-        ];
+        let assert_action_ms = vec![action::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            description: Set(Option::from("Verify the title".to_string())),
+            kind: Set(ActionKind::VerifyText),
+            data_kind: Set(Some(ActionDataKind::Static)),
+            data_value: Set(Some("Ana de Armas".to_string())),
+            target_kind: Set(Some(ActionTargetKind::Xpath)),
+            target_value: Set(Some("//*[@id='search-form']/fieldset/button".to_string())),
+            execution_order: Set(1),
+            action_group_id: Set(assert_g_m.clone().id),
+            ..Default::default()
+        }];
         let _assert_action_m: InsertResult<action::ActiveModel> =
-            action::Entity::insert_many(assert_action_ms).exec(db).await?;
-
-
+            action::Entity::insert_many(assert_action_ms)
+                .exec(db)
+                .await?;
 
         let case_am = case::ActiveModel {
             id: Set(Uuid::new_v4()),
@@ -117,7 +127,7 @@ impl MigrationTrait for Migration {
         let case_m: case::Model = case_am.insert(db).await?;
 
         let case_blocks = vec![
-            case_block::ActiveModel{
+            case_block::ActiveModel {
                 id: Set(Uuid::new_v4()),
                 execution_order: Set(1),
                 kind: Set(BlockKind::Reference),
@@ -125,8 +135,10 @@ impl MigrationTrait for Migration {
                 reference: Set(Some(app_g.clone().id)),
                 case_id: Set(case_m.clone().id),
                 ..Default::default()
-            }.insert(db).await?,
-            case_block::ActiveModel{
+            }
+            .insert(db)
+            .await?,
+            case_block::ActiveModel {
                 id: Set(Uuid::new_v4()),
                 execution_order: Set(2),
                 kind: Set(BlockKind::Reference),
@@ -134,7 +146,9 @@ impl MigrationTrait for Migration {
                 reference: Set(Some(assert_g_m.clone().id)),
                 case_id: Set(case_m.clone().id),
                 ..Default::default()
-            }.insert(db).await?,
+            }
+            .insert(db)
+            .await?,
         ];
         Ok(())
     }

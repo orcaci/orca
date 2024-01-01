@@ -5,7 +5,11 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "block_kind")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(15))",
+    enum_name = "block_kind"
+)]
 pub enum BlockKind {
     #[sea_orm(string_value = "Loop")]
     Loop,
@@ -18,7 +22,11 @@ pub enum BlockKind {
 }
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "suit_block_type")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(15))",
+    enum_name = "suit_block_type"
+)]
 pub enum SuiteBlockType {
     #[sea_orm(string_value = "TestCase")]
     TestCase,
@@ -44,9 +52,9 @@ pub enum Relation {
     // #[sea_orm(belongs_to = "Entity", from = "Column::Id", to = "Column::ParentId")]
     // SelfReferencing,
     #[sea_orm(
-    belongs_to = "super::suite::Entity",
-    from = "Column::SuiteId",
-    to = "super::suite::Column::Id"
+        belongs_to = "super::suite::Entity",
+        from = "Column::SuiteId",
+        to = "super::suite::Column::Id"
     )]
     Suite,
 }

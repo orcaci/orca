@@ -15,7 +15,11 @@ pub struct ErrorResponse {
 
 impl ErrorResponse {
     pub fn new(error: &str, message: String) -> Self {
-        Self { code: "".to_string(), error: error.to_string(), message }
+        Self {
+            code: "".to_string(),
+            error: error.to_string(),
+            message,
+        }
     }
 }
 
@@ -48,9 +52,6 @@ impl CeriumError {
         }
     }
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        f.write_fmt(format_args!(
-            "An error occurred: \"{}\"",
-            self.to_string()
-        ))
+        f.write_fmt(format_args!("An error occurred: \"{}\"", self.to_string()))
     }
 }

@@ -1,17 +1,16 @@
+use crate::route::public::local_route;
 use axum::Router;
 use serde::Deserialize;
-use crate::route::public::local_route;
 
-pub(crate) mod public;
 pub(crate) mod admin;
 pub(crate) mod app;
+pub(crate) mod public;
 
 fn v1_route() -> Router {
     Router::new()
         .nest("/user", admin::user::user_route())
         .nest("/app", app::app_route())
 }
-
 
 pub fn handle_router() -> Router {
     let api_routes = Router::new().nest("/v1", v1_route());
@@ -34,14 +33,13 @@ impl Pagination {
     pub fn limit(&self) -> u64 {
         self.limit
     }
-
 }
 
 impl Default for Pagination {
     fn default() -> Self {
         Self {
             offset: 1,
-            limit: 10
+            limit: 10,
         }
     }
 }

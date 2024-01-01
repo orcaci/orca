@@ -1,27 +1,30 @@
-use std::sync::{Arc, Mutex};
-use axum::{Router, serve};
+use crate::client::Client;
 use axum::http::{HeaderName, Method};
+use axum::{serve, Router};
 use chrono::Duration;
 use sea_orm::DatabaseConnection;
+use std::sync::{Arc, Mutex};
 use tokio::net::TcpListener;
-use tower_http::{compression::CompressionLayer, cors::{Any, CorsLayer}};
 use tower_http::catch_panic::CatchPanicLayer;
 use tower_http::classify::ServerErrorsFailureClass;
 use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
 use tower_http::trace::TraceLayer;
+use tower_http::{
+    compression::CompressionLayer,
+    cors::{Any, CorsLayer},
+};
 use tracing::{error, info, Level, Span};
 use tracing_subscriber::fmt;
 use tracing_subscriber::layer::SubscriberExt;
-use crate::client::Client;
 
 use crate::server::request_id::OrcaRequestId;
 
-mod utils;
 mod request_id;
+mod utils;
 
 #[derive(Clone)]
 pub struct AppState {
-    pub db: Arc<Mutex<DatabaseConnection>>
+    pub db: Arc<Mutex<DatabaseConnection>>,
 }
 
 pub struct App {
@@ -29,7 +32,7 @@ pub struct App {
     port: i32,
     log_level: Level,
     router: Router,
-    cli: Client
+    cli: Client,
 }
 
 impl App {
@@ -39,18 +42,18 @@ impl App {
             port: 80,
             log_level: Level::INFO,
             router: Default::default(),
-            cli
+            cli,
         }
     }
 
     pub fn set_logger(&self, filter: Level) {
-
         fmt()
             // .with(tracing_subscriber::fmt::layer())
             // .with_target(true)
             // .with_timer(tracing_subscriber::fmt::time::uptime())
             // .with_level(true)
-            .with_max_level(filter).init()
+            .with_max_level(filter)
+            .init()
     }
 
     pub fn set_port(&mut self, port: i32) {
@@ -59,13 +62,11 @@ impl App {
 
     fn app_state(&mut self) -> AppState {
         AppState {
-            db: Arc::new(Mutex::new(self.cli.clone().db))
+            db: Arc::new(Mutex::new(self.cli.clone().db)),
         }
     }
 
-
     pub fn set_router(&mut self, router: Router) {
-
         let x_request_id = HeaderName::from_static("x-request-id");
         let cors = CorsLayer::new()
             .allow_methods([Method::GET, Method::POST])
@@ -85,10 +86,10 @@ impl App {
     }
 
     pub async fn run(self) {
-        let listener = TcpListener::bind(format!("0.0.0.0:{:?}", self.port)).await.unwrap();
+        let listener = TcpListener::bind(format!("0.0.0.0:{:?}", self.port))
+            .await
+            .unwrap();
         info!("🚀 Starting Server ");
         serve(listener, self.router).await.unwrap();
     }
 }
-
-

@@ -5,7 +5,11 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "block_kind")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(15))",
+    enum_name = "block_kind"
+)]
 pub enum BlockKind {
     #[sea_orm(string_value = "Loop")]
     Loop,
@@ -18,7 +22,11 @@ pub enum BlockKind {
 }
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(15))", enum_name = "block_type")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(15))",
+    enum_name = "block_type"
+)]
 pub enum BlockType {
     #[sea_orm(string_value = "InMemory")]
     InMemory,
@@ -75,7 +83,6 @@ impl Related<super::case::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-
 
 pub struct SelfReferencingLink;
 

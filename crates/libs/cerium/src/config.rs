@@ -1,6 +1,4 @@
-use std::time::Duration;
-
-use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use sea_orm::DatabaseConnection;
 
 use crate::env::Environment;
 
@@ -8,13 +6,13 @@ use crate::env::Environment;
 #[allow(unused)]
 pub struct Config {
     pub env: Environment,
-    pub db: Option<DatabaseConnection>
+    pub db: Option<DatabaseConnection>,
 }
 
 impl Config {
     pub fn new() -> Self {
         let env = Environment::new();
-        let config = Config{ env, db: None };
+        let config = Config { env, db: None };
         config
     }
 }

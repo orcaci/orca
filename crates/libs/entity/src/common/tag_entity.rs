@@ -5,7 +5,11 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(5))", enum_name = "tag_entity_type")]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "String(Some(5))",
+    enum_name = "tag_entity_type"
+)]
 pub enum EntityType {
     #[sea_orm(string_value = "AG")]
     ActionGroup,
@@ -27,6 +31,5 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
-
 
 impl ActiveModelBehavior for ActiveModel {}

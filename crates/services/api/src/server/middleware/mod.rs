@@ -1,27 +1,29 @@
 use std::sync::Arc;
 use std::task::{Context, Poll};
 
+use crate::server::session::OrcaSession;
 use axum::{async_trait, extract::Request, response::Response};
 use futures::executor::block_on;
 use futures_util::future::BoxFuture;
 use sea_orm::{DatabaseConnection, TransactionTrait};
 use tower::{Layer, Service};
 use tracing::info;
-use crate::server::session::OrcaSession;
 
 pub mod orca;
 
-
 #[derive(Clone)]
 pub struct OrcaLayer {
-    pub db: Arc<DatabaseConnection>
+    pub db: Arc<DatabaseConnection>,
 }
 
 impl<S> Layer<S> for OrcaLayer {
     type Service = OrcaMiddleware<S>;
 
     fn layer(&self, inner: S) -> Self::Service {
-        OrcaMiddleware { db: self.db.clone(), inner }
+        OrcaMiddleware {
+            db: self.db.clone(),
+            inner,
+        }
     }
 }
 

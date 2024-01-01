@@ -1,6 +1,3 @@
-
-
-
 pub fn replace_special_chars(input: &str, replace_with: char) -> String {
     let mut result = String::with_capacity(input.len());
 

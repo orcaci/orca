@@ -2,18 +2,12 @@
 
 pub use super::common::attachment;
 pub use super::test::ui::{
-    action::{
-        group::Entity as ActionGroup,
-        target::Entity as ActionTarget
-    },
-    case::{
-        case::Entity as Case,
-        case_block::Entity as CaseBlock,
-        data_binding::Entity as DataBinding
-    }
+    action::{group, target},
+    case::{case, case_block, data_binding},
 };
 pub use super::test::ui::{
-    action::{group, target},
-    case::{case, case_block, data_binding}
+    action::{group::Entity as ActionGroup, target::Entity as ActionTarget},
+    case::{
+        case::Entity as Case, case_block::Entity as CaseBlock, data_binding::Entity as DataBinding,
+    },
 };
-
