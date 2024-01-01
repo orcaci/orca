@@ -1,0 +1,51 @@
+[package]
+name = "cerium"
+version = "0.1.0"
+description = "Cerium - is core libirary for the orca application"
+authors = ["Vasanth Kumar <itsparser@gmail.com>"]
+publish = false
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[test]]
+name = "tests"
+path = "tests"
+
+[lib]
+name = "cerium"
+crate-type = ["lib"]
+
+[features]
+default = []
+#actix = ["dep:actix-web"]
+#axum = ["dep:axum"]
+
+[dependencies]
+entity.workspace=true
+
+tracing.workspace=true
+tracing-subscriber.workspace=true
+tokio.workspace=true
+axum.workspace=true
+axum-extra.workspace=true
+tower.workspace=true
+tower-http.workspace=true
+config.workspace=true
+sea-orm.workspace=true
+sea-query.workspace=true
+thirtyfour.workspace=true
+chrono.workspace=true
+jsonwebtoken.workspace=true
+thiserror.workspace=true
+serde.workspace=true
+serde_json.workspace=true
+
+lazy_static = "1.4.0"
+async_once = "0.2.6"
+rand = { version = "0.8.5", default-features = false, features = ["std"] }
+
+

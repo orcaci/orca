@@ -6,3 +6,7 @@
 **to/
 **data
 .vscode
+
+## Ignore File for backend service
+.cargo/config.toml
+

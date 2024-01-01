@@ -1,0 +1,40 @@
+[package]
+name = "engine"
+version = "0.1.0"
+description = "Engine Have all the common code for the Orca"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+
+[lib]
+name = "engine"
+path = "src/lib.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[features]
+api-automation = []
+ui-automation = []
+default = ["ui-automation", "api-automation"]
+
+[dependencies]
+cerium.workspace = true
+entity.workspace = true
+
+
+sea-orm.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace=true
+tracing-subscriber.workspace=true
+
+
+thirtyfour.workspace = true

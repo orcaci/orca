@@ -1,0 +1,19 @@
+# Cargo config file.
+# See: https://doc.rust-lang.org/cargo/reference/config.html
+
+# Environments variables set for all `cargo ...` commands.
+[env]
+
+DEBUG=false
+
+# Scope down tracing, to filter out external lib tracing.
+RUST_LOG="cerium=debug,entity=debug,migration=info,api=debug"
+
+## -- Database Url
+DATABASE_URI="postgres://root:root@localhost:5432/orca"
+SELENIUM_URI="http://localhost:4444/wd/hub/session"
+
+# -- Encryption salt used for JWT token and other secret keys
+ENCRYPTION_SALT="strongencryption"
+
+
