@@ -11,7 +11,7 @@ pub struct Config {
 
 impl Config {
     pub fn new() -> Self {
-        let env = Environment::new();
+        let env = Environment::default();
         let config = Config { env, db: None };
         config
     }

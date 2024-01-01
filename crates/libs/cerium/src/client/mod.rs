@@ -25,7 +25,7 @@ impl Client {
     /// db_uri will give the default uri if there is not config setup
     async fn db_client(mut uri: Option<String>) -> DatabaseConnection {
         if uri.is_none() {
-            uri = Some(std::env::var("DATABASE_URL").expect("DATABASE_URL must be set."));
+            uri = Some(std::env::var("DATABASE_URI").expect("DATABASE_URL must be set."));
         }
         let mut opt = ConnectOptions::new(uri.unwrap());
         opt.max_connections(10)

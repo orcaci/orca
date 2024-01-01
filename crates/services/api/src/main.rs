@@ -1,9 +1,11 @@
+use std::env;
 use std::sync::Arc;
 
 use sea_orm::{DatabaseConnection, DbErr};
 use tracing::Level;
 
 use cerium::client::Client;
+use cerium::env::Environment;
 use cerium::server::App;
 use migration::MigratorTrait;
 
@@ -22,14 +24,17 @@ pub(crate) async fn run_migration(db: &DatabaseConnection) -> Result<(), DbErr> 
         .expect("TODO: panic message");
     Ok(())
 }
+pub(crate) async fn get_config() -> Client {
+    let env  = Environment::default();
+    Client::new(
+        Some(env.database_uri),
+        Some(env.redis_uri),
+    ).await
+}
 
 #[tokio::main]
 async fn main() {
-    let cli = Client::new(
-        Some("postgres://root:root@localhost:5432/orca".to_string()),
-        None,
-    )
-    .await;
+    let cli = get_config().await;
     let mut app = App::new("OrcaWeb", cli.clone());
     app.set_logger(Level::DEBUG);
     app.set_port(8080);

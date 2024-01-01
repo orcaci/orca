@@ -7,24 +7,21 @@ use serde::Deserialize;
 #[allow(unused)]
 pub struct Environment {
     pub debug: bool,
-    pub connection: Connection,
+    pub database_uri: String,
+    pub redis_uri: String,
+    pub selenium_uri: String,
+    pub encryption_salt: String
 }
 
-#[derive(Debug, Deserialize, Clone)]
-#[allow(unused)]
-pub struct Connection {
-    pub database: String,
-    pub selenium: String,
-}
 
 impl Environment {
-    pub fn new() -> Self {
-        let run_mode = env::var("RUN_MODE").unwrap_or_else(|_| "development".into());
-        let result_config = CConfig::builder()
-            .add_source(File::with_name("./config/default"))
-            .add_source(File::with_name(&format!("./config/{}", run_mode)).required(false))
-            .build();
-        let _new = result_config.expect("Error from Environment");
-        _new.try_deserialize().expect("Error from Environment")
+    pub fn default() -> Self {
+        Environment {
+            debug: env::var("DEBUG").unwrap_or("false".to_string()).parse().unwrap(),
+            database_uri: env::var("DATABASE_URI").unwrap_or("".to_string()),
+            redis_uri: env::var("REDIS_URI").unwrap_or("".to_string()),
+            selenium_uri: env::var("SELENIUM_URI").unwrap_or("".to_string()),
+            encryption_salt: env::var("ENCRYPTION_SALT").unwrap_or("".to_string()),
+        }
     }
 }
