@@ -1,22 +1,21 @@
-use crate::client::Client;
-use axum::http::{HeaderName, Method};
-use axum::{serve, Router};
-use chrono::Duration;
-use sea_orm::DatabaseConnection;
 use std::sync::{Arc, Mutex};
+
+use axum::{Router, serve};
+use axum::http::{HeaderName, Method};
+use sea_orm::DatabaseConnection;
 use tokio::net::TcpListener;
-use tower_http::catch_panic::CatchPanicLayer;
-use tower_http::classify::ServerErrorsFailureClass;
-use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
-use tower_http::trace::TraceLayer;
 use tower_http::{
     compression::CompressionLayer,
     cors::{Any, CorsLayer},
 };
-use tracing::{error, info, Level, Span};
+use tower_http::catch_panic::CatchPanicLayer;
+use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
+use tower_http::trace::TraceLayer;
+use tracing::{info, Level};
 use tracing_subscriber::fmt;
 use tracing_subscriber::layer::SubscriberExt;
 
+use crate::client::Client;
 use crate::server::request_id::OrcaRequestId;
 
 mod request_id;

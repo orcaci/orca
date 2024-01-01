@@ -1,14 +1,15 @@
-use cerium::client::driver::web::WebDriver;
-use sea_orm::prelude::Uuid;
-use sea_orm::{
-    ColumnTrait, DatabaseConnection, DatabaseTransaction, EntityTrait, ModelTrait, PaginatorTrait,
-    QueryFilter, QueryOrder,
-};
 use std::fs;
 use std::io::Write;
+
+use sea_orm::{
+    ColumnTrait, DatabaseTransaction, EntityTrait, ModelTrait, PaginatorTrait,
+    QueryFilter, QueryOrder,
+};
+use sea_orm::prelude::Uuid;
 use thirtyfour::By;
 use tracing::info;
 
+use cerium::client::driver::web::WebDriver;
 use entity::prelude::target::ActionTargetKind;
 use entity::test::ui::action::action;
 use entity::test::ui::action::action::ActionKind;

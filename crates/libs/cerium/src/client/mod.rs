@@ -12,7 +12,7 @@ pub struct Client {
 }
 
 impl Client {
-    pub async fn new(db_uri: Option<String>, redis_uri: Option<String>) -> Self {
+    pub async fn new(db_uri: Option<String>, _redis_uri: Option<String>) -> Self {
         Client {
             db: Self::db_client(db_uri).await,
         }
