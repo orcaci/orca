@@ -2,8 +2,8 @@
 name: "[ FR ] - { Feature request }"
 about: Suggest an idea for this project
 title: ''
-labels: Request for action
-assignees: itsparser
+labels: enhancement, Request for action
+assignees: ''
 
 ---
 
