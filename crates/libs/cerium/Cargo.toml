@@ -43,9 +43,11 @@ jsonwebtoken.workspace=true
 thiserror.workspace=true
 serde.workspace=true
 serde_json.workspace=true
+rust-s3.workspace=true
 
 lazy_static = "1.4.0"
 async_once = "0.2.6"
 rand = { version = "0.8.5", default-features = false, features = ["std"] }
+log = "0.4.20"
 
 

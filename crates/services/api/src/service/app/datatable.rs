@@ -1,5 +1,4 @@
 use chrono::Utc;
-use futures_util::StreamExt;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, ConnectionTrait, DatabaseBackend, DatabaseTransaction,
     EntityTrait, IntoActiveModel, JsonValue, ModelTrait, NotSet, QueryFilter, QueryOrder
@@ -92,7 +91,7 @@ impl DatatableService {
     /// create_new_field - this will create new Field in Data Application in Orca
     pub async fn create_new_field(
         &self,
-        mut table_id: i32,
+        table_id: i32,
         mut field: FieldModel,
     ) -> InternalResult<FieldModel> {
         let table = self.get_datatable(table_id).await?;
@@ -151,7 +150,7 @@ impl DatatableService {
     pub async fn batch_update_data(
         &self,
         table_id: i32,
-        mut table_datas: Vec<TableDataRequest>,
+        table_datas: Vec<TableDataRequest>,
     ) -> InternalResult<()> {
         let table = self.get_datatable(table_id).await?;
         // let result = table_datas.iter_mut().map(|item| {

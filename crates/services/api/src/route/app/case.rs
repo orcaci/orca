@@ -6,6 +6,7 @@ use axum::{Extension, Json, Router};
 use entity::prelude::case::Model;
 use entity::prelude::case_block::Model as BlockModel;
 use uuid::Uuid;
+use cerium::client::Client;
 
 use crate::error::InternalResult;
 use crate::server::session::OrcaSession;
@@ -32,28 +33,31 @@ pub(crate) fn test_case_route() -> Router {
 /// list_cases - list all the Case that is Bind with Current Application
 async fn list_cases(
     Extension(session): Extension<OrcaSession>,
+    Extension(cli): Extension<Client>,
     Path(app_id): Path<Uuid>,
 ) -> InternalResult<impl IntoResponse> {
-    let result = CaseService::new(session, app_id).list_cases().await?;
+    let result = CaseService::new(session, cli, app_id).list_cases().await?;
     Ok(Json(result))
 }
 
 /// create_case - This will New Test Case for the specific Application in Orca
 async fn create_case(
     Extension(session): Extension<OrcaSession>,
+    Extension(cli): Extension<Client>,
     Path(app_id): Path<Uuid>,
     Json(body): Json<Model>,
 ) -> InternalResult<impl IntoResponse> {
-    let result = CaseService::new(session, app_id).create_case(body).await?;
+    let result = CaseService::new(session, cli, app_id).create_case(body).await?;
     Ok((StatusCode::CREATED, Json(result)))
 }
 
 /// get_case_info - Get Case Info and the batch information with the list of block
 async fn get_case_info(
     Extension(session): Extension<OrcaSession>,
+    Extension(cli): Extension<Client>,
     Path((app_id, case_id)): Path<(Uuid, Uuid)>,
 ) -> InternalResult<impl IntoResponse> {
-    let result = CaseService::new(session, app_id)
+    let result = CaseService::new(session, cli, app_id)
         .get_case_info(case_id)
         .await?;
     Ok(Json(result))
@@ -62,19 +66,21 @@ async fn get_case_info(
 /// dry_run - Dry run the Test case
 async fn dry_run(
     Extension(session): Extension<OrcaSession>,
+    Extension(cli): Extension<Client>,
     Path((app_id, case_id)): Path<(Uuid, Uuid)>,
 ) -> InternalResult<impl IntoResponse> {
-    let result = CaseService::new(session, app_id).run(case_id).await?;
+    let result = CaseService::new(session, cli, app_id).run(case_id).await?;
     Ok(Json(result))
 }
 
 /// update_block - update test case Block
 async fn update_block(
     Extension(session): Extension<OrcaSession>,
+    Extension(cli): Extension<Client>,
     Path((app_id, case_id)): Path<(Uuid, Uuid)>,
     Json(body): Json<Vec<BlockModel>>,
 ) -> InternalResult<impl IntoResponse> {
-    let result = CaseService::new(session, app_id)
+    let result = CaseService::new(session, cli, app_id)
         .batch_update_case_block(case_id, body)
         .await?;
     Ok(Json(result))
@@ -83,10 +89,11 @@ async fn update_block(
 /// insert_block - This will Append New Block to the code for spe
 async fn insert_block(
     Extension(session): Extension<OrcaSession>,
+    Extension(cli): Extension<Client>,
     Path((app_id, case_id)): Path<(Uuid, Uuid)>,
     Json(body): Json<BlockModel>,
 ) -> InternalResult<impl IntoResponse> {
-    let result = CaseService::new(session, app_id)
+    let result = CaseService::new(session, cli, app_id)
         .push_block(case_id, body, None, None)
         .await?;
     Ok(Json(result))

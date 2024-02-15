@@ -1,6 +1,4 @@
-use std::fs;
-use std::io::Write;
-
+use s3::Region;
 use sea_orm::{
     ColumnTrait, DatabaseTransaction, EntityTrait, ModelTrait, PaginatorTrait,
     QueryFilter, QueryOrder,
@@ -9,7 +7,9 @@ use sea_orm::prelude::Uuid;
 use thirtyfour::By;
 use tracing::info;
 
+use cerium::client::Client;
 use cerium::client::driver::web::WebDriver;
+use cerium::client::storage::s3::S3Client;
 use entity::prelude::target::ActionTargetKind;
 use entity::test::ui::action::action;
 use entity::test::ui::action::action::ActionKind;
@@ -19,6 +19,8 @@ use crate::error::{EngineError, EngineResult};
 pub struct ActionController<'ccl> {
     db: &'ccl DatabaseTransaction,
     driver: WebDriver,
+    client: Client,
+    storage_cli: S3Client
 }
 
 impl<'ccl> ActionController<'ccl> {
@@ -42,8 +44,9 @@ impl<'ccl> ActionController<'ccl> {
     /// let driver = WebDriver::default();
     /// let controller = ActionController::new(&db, driver);
     /// ```
-    pub fn new(db: &'ccl DatabaseTransaction, driver: WebDriver) -> ActionController<'ccl> {
-        Self { db, driver }
+    pub fn new(db: &'ccl DatabaseTransaction, driver: WebDriver, client: Client) -> ActionController<'ccl> {
+        let storage_cli = client.storage_cli.clone();
+        Self { db, driver, client, storage_cli }
     }
 
     /// Asynchronous method that handles the logic for executing the "Open" action in a test case.
@@ -216,9 +219,9 @@ impl<'ccl> ActionController<'ccl> {
     }
 
     async fn take_screenshot(&self, id: String) -> EngineResult<()> {
-        let result = self.driver.take_screenshot().await?;
-        let mut file = fs::File::create(format!("evidence_{id}.png")).expect("error");
-        file.write_all(&*result).expect("error");
+
+        let content = self.driver.take_screenshot().await?;
+        let result = self.storage_cli.create("orca", format!("{id}.png").as_str(), content.as_slice()).await;
         Ok(())
     }
 

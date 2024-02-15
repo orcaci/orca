@@ -33,17 +33,19 @@ impl MigrationTrait for Migration {
                             .boolean()
                             .not_null(),
                     )
+                    .col(
+                        ColumnDef::new(history::Column::Status)
+                            .string()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(history::Column::Args).json())
                     .col(ColumnDef::new(history::Column::Reference).uuid())
                     .col(
-                        ColumnDef::new(history::Column::TriggeredOn)
-                            .integer()
-                            .not_null(),
+                        ColumnDef::new(history::Column::TriggeredOn).date_time().null(),
                     )
                     .col(
                         ColumnDef::new(history::Column::TriggeredBy)
-                            .date_time()
-                            .not_null(),
+                            .integer(),
                     )
                     .to_owned(),
             )

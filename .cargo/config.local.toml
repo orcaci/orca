@@ -13,6 +13,9 @@ RUST_LOG="cerium=debug,entity=debug,migration=info,api=debug"
 DATABASE_URI="postgres://root:root@localhost:5432/orca"
 SELENIUM_URI="http://localhost:4444/wd/hub/session"
 
+MINIO_ACCESS_KEY = "minioadmin"
+MINIO_ACCESS_SECRET = "minioadmin"
+
 # -- Encryption salt used for JWT token and other secret keys
 ENCRYPTION_SALT="strongencryption"
 

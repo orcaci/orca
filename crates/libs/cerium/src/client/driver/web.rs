@@ -1,4 +1,4 @@
-use thirtyfour::WebDriver as TFWebDriver;
+use thirtyfour::{CapabilitiesHelper, WebDriver as TFWebDriver};
 
 use crate::error::CeriumResult;
 use thirtyfour::{By, DesiredCapabilities, WebElement};
@@ -31,7 +31,8 @@ impl WebDriver {
     }
 
     pub async fn default() -> CeriumResult<Self> {
-        let caps = DesiredCapabilities::firefox();
+        let mut caps = DesiredCapabilities::firefox();
+        caps.add("se:recordVideo", true)?;
         let driver = TFWebDriver::new("http://localhost:4444/wd/hub/session", caps).await?;
         Self::new(driver)
     }
@@ -39,6 +40,11 @@ impl WebDriver {
     pub async fn open(&self, url: &str) -> CeriumResult<()> {
         Ok(self.driver.goto(url).await?)
     }
+
+    pub async fn quit(self) -> CeriumResult<()> {
+        Ok(self.driver.quit().await?)
+    }
+
 
     pub async fn create_window(&self, name: &str) -> CeriumResult<()> {
         let win_handler = self.driver.new_window().await?;

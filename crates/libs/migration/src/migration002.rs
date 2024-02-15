@@ -76,7 +76,7 @@ impl MigrationTrait for Migration {
                 kind: Set(ActionKind::Click),
                 target_kind: Set(Some(ActionTargetKind::Xpath)),
                 target_value: Set(Some(
-                    "//form[@id='search-form']/fieldset/button/i".to_string(),
+                    "//*[@id='search-form']/fieldset/button".to_string(),
                 )),
                 execution_order: Set(3),
                 action_group_id: Set(app_g.clone().id),
@@ -108,7 +108,7 @@ impl MigrationTrait for Migration {
             data_kind: Set(Some(ActionDataKind::Static)),
             data_value: Set(Some("Ana de Armas".to_string())),
             target_kind: Set(Some(ActionTargetKind::Xpath)),
-            target_value: Set(Some("//*[@id='search-form']/fieldset/button".to_string())),
+            target_value: Set(Some("//h1[@id='firstHeading']/span".to_string())),
             execution_order: Set(1),
             action_group_id: Set(assert_g_m.clone().id),
             ..Default::default()
@@ -125,6 +125,9 @@ impl MigrationTrait for Migration {
             app_id: Set(app.clone().id),
         };
         let case_m: case::Model = case_am.insert(db).await?;
+        let uuid1 = Uuid::new_v4();
+        let uuid2 =  Uuid::new_v4();
+        let uuid3 =  Uuid::new_v4();
 
         let case_blocks = vec![
             case_block::ActiveModel {
@@ -149,6 +152,51 @@ impl MigrationTrait for Migration {
             }
             .insert(db)
             .await?,
+            case_block::ActiveModel {
+                id: Set(uuid1.clone()),
+                execution_order: Set(3),
+                kind: Set(BlockKind::SelfReference),
+                type_field: Set(BlockType::Condition),
+                case_id: Set(case_m.clone().id),
+                ..Default::default()
+            }
+                .insert(db)
+                .await?,
+            case_block::ActiveModel {
+                id: Set(uuid2.clone()),
+                execution_order: Set(1),
+                kind: Set(BlockKind::SelfReference),
+                type_field: Set(BlockType::YesCase),
+                parent_id: Set(Some(uuid1.clone())),
+                case_id: Set(case_m.clone().id),
+                ..Default::default()
+            }
+                .insert(db)
+                .await?,
+            case_block::ActiveModel {
+                id: Set(uuid3.clone()),
+                execution_order: Set(2),
+                kind: Set(BlockKind::SelfReference),
+                type_field: Set(BlockType::NoCase),
+                parent_id: Set(Some(uuid1.clone())),
+                case_id: Set(case_m.clone().id),
+                ..Default::default()
+            }
+                .insert(db)
+                .await?,
+
+            case_block::ActiveModel {
+                id: Set(Uuid::new_v4()),
+                execution_order: Set(1),
+                kind: Set(BlockKind::Reference),
+                type_field: Set(BlockType::ActionGroup),
+                reference: Set(Some(app_g.clone().id)),
+                parent_id: Set(Some(uuid2.clone())),
+                case_id: Set(case_m.clone().id),
+                ..Default::default()
+            }
+                .insert(db)
+                .await?,
         ];
         Ok(())
     }

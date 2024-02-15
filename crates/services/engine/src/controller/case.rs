@@ -3,6 +3,7 @@ use sea_orm::{
     ColumnTrait, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder,
 };
 use tracing::{error, info};
+use cerium::client::Client;
 
 use cerium::client::driver::web::WebDriver;
 use entity::prelude::case::Entity;
@@ -15,12 +16,13 @@ use crate::error::EngineResult;
 
 pub struct CaseController<'ccl> {
     db: &'ccl DatabaseTransaction,
+    cli: Client,
     drive: WebDriver,
 }
 
 impl<'ccl> CaseController<'ccl> {
-    pub fn new(db: &'ccl DatabaseTransaction, drive: WebDriver) -> CaseController<'ccl> {
-        Self { db, drive }
+    pub fn new(db: &'ccl DatabaseTransaction, drive: WebDriver, cli: Client) -> CaseController<'ccl> {
+        Self { db, drive, cli}
     }
     /// run_case - will execute the test case by the case ID
     pub async fn run_case(&self, id: Uuid) -> EngineResult<()> {
@@ -56,13 +58,16 @@ impl<'ccl> CaseController<'ccl> {
     /// switch_block - function to switch the block based on the type and kind of the block
     async fn switch_block(&self, block: &case_block::Model) -> EngineResult<()> {
         let result = match block.kind {
-            BlockKind::Loop => match block.type_field {
-                BlockType::InMemory => self.process_action_group(block),
-                BlockType::DataTable => self.process_action_group(block),
-                _ => todo!("Need to raise a error from here since non other supported"),
-            },
-            BlockKind::Condition => match block.type_field {
-                BlockType::InMemory => self.process_action_group(block),
+            // BlockKind::Loop => match block.type_field {
+            //     BlockType::InMemory => self.process_action_group(block),
+            //     BlockType::DataTable => self.process_action_group(block),
+            //     _ => todo!("Need to raise a error from here since non other supported"),
+            // },
+            BlockKind::SelfReference => match block.type_field {
+                BlockType::Condition => self.process_action_group(block),
+                BlockType::YesCase => self.process_action_group(block),
+                BlockType::NoCase => self.process_action_group(block),
+                BlockType::Loop => self.process_action_group(block),
                 _ => todo!("Need to raise a error from here since non other supported"),
             },
             BlockKind::Reference => match block.type_field {
@@ -85,8 +90,8 @@ impl<'ccl> CaseController<'ccl> {
 
     async fn process_action_group(&self, block: &case_block::Model) -> EngineResult<()> {
         info!("Starting processing {block_id}", block_id = block.id);
-        Ok(ActionController::new(self.db, self.drive.clone())
-            .execute(block.reference.unwrap())
-            .await?)
+        let controller = ActionController::new(self.db, self.drive.clone(), self.cli.clone());
+        let result = controller.execute(block.reference.unwrap_or_default()).await?;
+        Ok(result)
     }
 }

@@ -1,11 +1,10 @@
+use axum::{Extension, Json, Router};
 use axum::extract::Path;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
-use axum::{Extension, Json, Router};
 use sea_orm::prelude::Uuid;
 use serde_json::{json, Value};
-use tracing::debug;
 
 use entity::test::datatable::Model;
 use entity::test::field::Model as FieldModel;

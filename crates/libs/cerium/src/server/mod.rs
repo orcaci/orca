@@ -1,19 +1,18 @@
 use std::sync::{Arc, Mutex};
 
-use axum::{Router, serve};
 use axum::http::{HeaderName, Method};
+use axum::{serve, Router};
 use sea_orm::DatabaseConnection;
 use tokio::net::TcpListener;
+use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
+use tower_http::trace::TraceLayer;
 use tower_http::{
+    catch_panic::CatchPanicLayer,
     compression::CompressionLayer,
     cors::{Any, CorsLayer},
 };
-use tower_http::catch_panic::CatchPanicLayer;
-use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
-use tower_http::trace::TraceLayer;
 use tracing::{info, Level};
 use tracing_subscriber::fmt;
-use tracing_subscriber::layer::SubscriberExt;
 
 use crate::client::Client;
 use crate::server::request_id::OrcaRequestId;
@@ -21,6 +20,16 @@ use crate::server::request_id::OrcaRequestId;
 mod request_id;
 mod utils;
 
+/// Represents the application state, containing a database connection wrapped in an `Arc<Mutex>`.
+/// This struct is cloneable.
+///
+/// # Fields
+///
+/// - `db`: An `Arc<Mutex<DatabaseConnection>>` representing the database connection.
+///
+/// # Example
+///
+///
 #[derive(Clone)]
 pub struct AppState {
     pub db: Arc<Mutex<DatabaseConnection>>,
@@ -45,14 +54,26 @@ impl App {
         }
     }
 
+    /// Sets the logger with the specified log level filter.
+    ///
+    /// # Arguments
+    ///
+    /// - `filter`: A `Level` enum representing the log level filter.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use tracing::Level;
+    ///
+    /// let app = App::new("my_app", client);
+    /// app.set_logger(Level::INFO);
+    ///
     pub fn set_logger(&self, filter: Level) {
-        fmt()
-            // .with(tracing_subscriber::fmt::layer())
-            // .with_target(true)
-            // .with_timer(tracing_subscriber::fmt::time::uptime())
-            // .with_level(true)
-            .with_max_level(filter)
-            .init()
+        fmt().with_max_level(filter).init()
+        // .with(tracing_subscriber::fmt::layer())
+        // .with_target(true)
+        // .with_timer(tracing_subscriber::fmt::time::uptime())
+        // .with_level(true)
     }
 
     pub fn set_port(&mut self, port: i32) {
