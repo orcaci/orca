@@ -1,8 +1,22 @@
 version: '3'
 services:
+  minio:
+    container_name: minio-ser
+    restart: on-failure
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
+      - MINIO_DEFAULT_BUCKETS=orca
+    command: server /data --console-address ":9001"
+    volumes:
+      - './data/minio_data:/data'
+
   chrome:
     platform: linux/amd64
-    image: selenium/node-chrome:4.7.1-20221208
+    image: selenium/node-chrome:nightly
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -13,8 +27,9 @@ services:
       - SE_NODE_MAX_CONCURRENT_SESSIONS=5
 
   firefox:
+    container_name: firefox
     platform: linux/amd64
-    image: selenium/node-firefox:4.7.1-20221208
+    image: selenium/node-firefox:nightly
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -22,8 +37,32 @@ services:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_CONCURRENT_SESSIONS=1
+      - SE_NODE_MAX_SESSIONS=5
+
+  firefox_video:
+    platform: linux/amd64
+    image: selenium/video:nightly
+    depends_on:
+      - firefox
+      - minio
+    environment:
+      - DISPLAY_CONTAINER_NAME=firefox
+      - SE_VIDEO_FILE_NAME=auto
+      - SE_VIDEO_UPLOAD_ENABLED=true
+      - SE_VIDEO_INTERNAL_UPLOAD=true
       - SE_NODE_MAX_CONCURRENT_SESSIONS=5
       - SE_NODE_MAX_SESSIONS=5
+      - SE_UPLOAD_DESTINATION_PREFIX=s3://orca/session
+      - RCLONE_CONFIG_S3_TYPE=s3
+      - RCLONE_CONFIG_S3_PROVIDER=Minio
+      - RCLONE_CONFIG_S3_ENV_AUTH=false
+      - RCLONE_CONFIG_S3_REGION=us-east-1
+#      - RCLONE_CONFIG_S3_LOCATION_CONSTRAINT=asia-southeast1
+      - RCLONE_CONFIG_S3_ACL=private
+      - RCLONE_CONFIG_S3_ACCESS_KEY_ID=minioadmin
+      - RCLONE_CONFIG_S3_SECRET_ACCESS_KEY=minioadmin
+      - RCLONE_CONFIG_S3_ENDPOINT=http://minio-ser:9000
 
 #  chrome_video:
 #    image: selenium/video:ffmpeg-4.3.1-20221208
@@ -48,7 +87,7 @@ services:
 
   selenium-hub:
     platform: linux/amd64
-    image: selenium/hub:4.7.1-20221208
+    image: selenium/hub:nightly
     container_name: selenium-hub
     ports:
       - "4442:4442"
@@ -64,7 +103,7 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=orca
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - ./data:/var/lib/postgresql/data
     container_name: postgres-ser

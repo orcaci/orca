@@ -12,6 +12,7 @@ use crate::route::app::action::action_route;
 use crate::route::app::case::test_case_route;
 use crate::route::app::datatable::datatable_route;
 use crate::route::app::group::group_route;
+use crate::route::app::history::history_route;
 use crate::route::app::profile::profile_route;
 use crate::route::app::suit::suite_route;
 use crate::server::session::OrcaSession;
@@ -23,6 +24,7 @@ pub(crate) mod datatable;
 pub(crate) mod group;
 pub(crate) mod profile;
 pub(crate) mod suit;
+pub(crate) mod history;
 
 pub fn app_route() -> Router {
     Router::new()
@@ -38,7 +40,8 @@ pub fn app_route() -> Router {
                 .nest("/profile", profile_route())
                 .nest("/datatable", datatable_route())
                 .nest("/case", test_case_route())
-                .nest("/suite", suite_route()),
+                .nest("/suite", suite_route())
+                .nest("/history", history_route())
         )
 }
 

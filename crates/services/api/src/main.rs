@@ -1,4 +1,4 @@
-use std::env;
+use axum::Extension;
 use std::sync::Arc;
 
 use sea_orm::{DatabaseConnection, DbErr};
@@ -25,11 +25,8 @@ pub(crate) async fn run_migration(db: &DatabaseConnection) -> Result<(), DbErr> 
     Ok(())
 }
 pub(crate) async fn get_config() -> Client {
-    let env  = Environment::default();
-    Client::new(
-        Some(env.database_uri),
-        Some(env.redis_uri),
-    ).await
+    let env = Environment::default();
+    Client::new(Some(env.database_uri), Some(env.redis_uri)).await
 }
 
 #[tokio::main]
@@ -40,9 +37,11 @@ async fn main() {
     app.set_port(8080);
 
     run_migration(cli.db()).await.expect("TODO: panic message");
-    let routers = handle_router().layer(OrcaLayer {
-        db: Arc::new(cli.db.clone()),
-    });
+    let routers = handle_router()
+        .layer(Extension(cli.clone()))
+        .layer(OrcaLayer {
+            db: Arc::new(cli.db.clone()),
+        });
     app.set_router(routers);
     app.run().await;
 }

@@ -14,6 +14,7 @@ impl MigratorTrait for Migrator {
             Box::new(migration001::Migration),
             Box::new(migration002::Migration),
             Box::new(migration003::Migration),
+            Box::new(migration004::Migration),
         ]
     }
 }

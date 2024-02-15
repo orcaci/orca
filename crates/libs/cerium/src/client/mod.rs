@@ -1,21 +1,33 @@
 use std::time::Duration;
 
+use crate::client::storage::s3::S3Client;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 
 pub mod cache;
 pub mod db;
 pub mod driver;
+pub mod storage;
 
 #[derive(Debug, Clone)]
 pub struct Client {
     pub db: DatabaseConnection,
+    pub storage_cli: S3Client,
 }
 
 impl Client {
     pub async fn new(db_uri: Option<String>, _redis_uri: Option<String>) -> Self {
         Client {
             db: Self::db_client(db_uri).await,
+            storage_cli: Self::storage_client().await,
         }
+    }
+    async fn storage_client() -> S3Client {
+        return S3Client::new(
+            &std::env::var("STORAGE_ACCESS_KEY").expect("STORAGE_ACCESS_KEY must be set."),
+            &std::env::var("STORAGE_ACCESS_SECRET").expect("STORAGE_ACCESS_SECRET must be set."),
+            &std::env::var("STORAGE_BASE_URL").expect("STORAGE_BASE_URL must be set."),
+        )
+        .expect("Error While create Storage Client");
     }
 
     pub fn db(&self) -> &DatabaseConnection {

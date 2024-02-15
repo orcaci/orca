@@ -1,6 +1,8 @@
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
+use s3::creds::error::CredentialsError;
+use s3::error::S3Error;
 use sea_orm::DbErr;
 use serde_json::{json, Error as SerdeJsonError};
 use thirtyfour::error::WebDriverError;
@@ -22,6 +24,12 @@ pub enum CeriumError {
     SerializerError(#[from] SerdeJsonError),
     #[error("Webdriver error: {0}")]
     WebdriverError(#[from] WebDriverError),
+    #[error("CredentialsError error: {0}")]
+    CredentialsError(#[from] CredentialsError),
+    #[error("CredentialsError error: {0}")]
+    S3Error(#[from] S3Error),
+
+
 }
 
 impl IntoResponse for CeriumError {

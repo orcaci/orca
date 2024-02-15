@@ -11,12 +11,10 @@ use serde::{Deserialize, Serialize};
     enum_name = "block_kind"
 )]
 pub enum BlockKind {
-    #[sea_orm(string_value = "Loop")]
-    Loop,
-    #[sea_orm(string_value = "Condition")]
-    Condition,
     #[sea_orm(string_value = "Reference")]
     Reference,
+    #[sea_orm(string_value = "SelfReference")]
+    SelfReference,
     // #[sea_orm(string_value = "ValidationGroup")]
     // ValidationGroup,
 }
@@ -36,6 +34,18 @@ pub enum BlockType {
     ActionGroup,
     #[sea_orm(string_value = "Assertion")]
     Assertion,
+    #[sea_orm(string_value = "Loop")]
+    Loop,
+    #[sea_orm(string_value = "Condition")]
+    Condition,
+    #[sea_orm(string_value = "YesCase")]
+    YesCase,
+    #[sea_orm(string_value = "NoCase")]
+    NoCase,
+    #[sea_orm(string_value = "Parallel")]
+    Parallel,
+    #[sea_orm(string_value = "Block")]
+    Block,
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]

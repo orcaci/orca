@@ -1,38 +1,43 @@
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, QueryFilter,
-    QueryOrder, QuerySelect, TryIntoModel,
-};
+use futures::executor::block_on;
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, ModelTrait, NotSet, QueryFilter, QueryOrder, QuerySelect, TryIntoModel};
 use sea_orm::ActiveValue::Set;
 use sea_query::{Condition, Expr};
 use tracing::{debug, info};
 use uuid::Uuid;
+use cerium::client::Client;
 
 use cerium::client::driver::web::WebDriver;
 use engine::controller::case::CaseController;
 use entity::prelude::case::{Column, Entity, Model};
-use entity::prelude::case_block::{
-    ActiveModel as BlockActiveModel, Column as BlockColumn, Entity as BlockEntity,
-    Model as BlockModel,
-};
+use entity::prelude::case_block::{ActiveModel as BlockActiveModel, Column as BlockColumn, Entity as BlockEntity, Model as BlockModel, SelfReferencingLink};
+use entity::test::history;
+use entity::test::history::{ExecutionKind, ExecutionStatus, ExecutionType};
 
 use crate::error::{InternalResult, OrcaRepoError};
 use crate::server::session::OrcaSession;
+use crate::service::app::history::HistoryService;
 
-pub(crate) struct CaseService(OrcaSession, Uuid);
+pub(crate) struct CaseService(OrcaSession, Client, Uuid);
 
 impl CaseService {
-    pub fn new(session: OrcaSession, app_id: Uuid) -> Self {
-        Self(session, app_id)
+    pub fn new(session: OrcaSession, cli: Client, app_id: Uuid) -> Self {
+        Self(session, cli, app_id)
     }
 
     pub fn trx(&self) -> &DatabaseTransaction {
         self.0.trx()
     }
 
+    pub async fn create_history(&self, case_id: Uuid, desc: Option<String>) -> InternalResult<history::Model> {
+        let history = HistoryService::new(self.0.clone()).create_history(case_id, ExecutionKind::Trigger,
+                                                      ExecutionType::TestCase, desc,  Some(true)).await?;
+        Ok(history)
+    }
+
     /// list all the test suites in the Orca Application
     pub(crate) async fn list_cases(&self) -> InternalResult<Vec<Model>> {
         let cases = Entity::find()
-            .filter(Column::AppId.eq(self.1))
+            .filter(Column::AppId.eq(self.2))
             .order_by_asc(Column::Name)
             .all(self.trx())
             .await?;
@@ -42,7 +47,7 @@ impl CaseService {
     /// create_case - this will create new Application in Orca
     pub async fn create_case(&self, mut app: Model) -> InternalResult<Model> {
         app.id = Uuid::new_v4();
-        app.app_id = self.1;
+        app.app_id = self.2;
         let app = app.into_active_model();
         let result = app.insert(self.trx()).await?;
         Ok(result)
@@ -58,11 +63,25 @@ impl CaseService {
             ))?;
         }
         let mut case = case.unwrap();
+
+        let condition = Condition::all()
+            .add(BlockColumn::CaseId.eq(case_id))
+            .add(BlockColumn::ParentId.is_null());
         let case_blocks = BlockEntity::find()
-            .filter(BlockColumn::CaseId.eq(case_id))
-            .order_by_asc(BlockColumn::ExecutionOrder)
+            // .filter(BlockColumn::CaseId.eq(case_id))
+            .filter(condition)
+            .order_by_asc(BlockColumn::ExecutionOrder).find_with_linked(SelfReferencingLink)
             .all(self.trx())
             .await?;
+        info!("{:#?}", case_blocks);
+
+        // case_blocks.clone().into_iter().for_each(|case| {
+        //     let d = block_on(case.find_linked(SelfReferencingLink).all(self.trx())).expect("erro");
+        //     info!("{:?}", d);
+        //     info!("{:?}", case);
+        //
+        // });
+
         case.case_execution = Some(serde_json::to_value(case_blocks)?);
         Ok(case)
     }
@@ -120,13 +139,16 @@ impl CaseService {
                 case_id.to_string(),
             ))?;
         }
-
-        let ui_driver = WebDriver::default().await.expect("error");
-        info!("got the driver");
-        let controller = CaseController::new(self.trx(), ui_driver.clone());
-        info!("got the controller");
-        controller.process(&case.unwrap()).await.expect("error");
-        ui_driver.driver.quit().await.expect("TODO: panic message");
+        let _case = case.unwrap();
+        let history = self.create_history(case_id, Some(format!("Executing - {case_name}", case_name=_case.name))).await?;
+        let ui_driver = WebDriver::default().await?;
+        let controller = CaseController::new(self.trx(), ui_driver.clone(), self.1.clone());
+        controller.process(&_case).await?;
+        ui_driver.quit().await?;
+        let mut _history = history.into_active_model();
+        _history.status = Set(ExecutionStatus::Completed);
+        _history.description = Set(Some(format!("Executed - {case_name}", case_name=_case.name)));
+        _history.save(self.trx()).await?;
         Ok(())
     }
 

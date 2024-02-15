@@ -7,6 +7,7 @@ mod tests {
     use sea_orm::{Database, TransactionTrait};
     use tracing::{info, Level};
     use tracing_subscriber::fmt;
+    use cerium::client::Client;
 
     use engine::controller::case::CaseController;
 
@@ -14,9 +15,9 @@ mod tests {
     async fn dry_run_test_controller() {
         // init_logger();
         fmt().with_max_level(Level::DEBUG).init();
-        let case_id = "731453aa-95a5-4180-be0d-c211a1e92aad".to_string();
+        let case_id = "8b72b6d1-f3a7-4d3e-9dbb-150b5eb0c060".to_string();
 
-        let uri = Some("postgres://root:root@localhost:5432/orca".to_string());
+        let uri = Some("postgres://root:root@localhost:5433/orca".to_string());
 
         let db = Database::connect(uri.unwrap())
             .await
@@ -25,7 +26,8 @@ mod tests {
         info!("got the db");
         let ui_driver = WebDriver::default().await.expect("error");
         info!("got the driver");
-        let controller = CaseController::new(&trx, ui_driver.clone());
+        let client = Client::new(Some("postgres://root:root@localhost:5433/orca".to_string()), None).await;
+        let controller = CaseController::new(&trx, ui_driver.clone(), client);
         info!("got the controller");
         controller
             .run_case(Uuid::from_str(case_id.as_str()).expect(""))
