@@ -26,7 +26,7 @@ futures-util.workspace=true
 config.workspace=true
 chrono.workspace=true
 
-sea-orm.workspace=true
+sea-orm.workspace =true
 sea-query.workspace=true
 sea-orm-migration.workspace=true
 axum.workspace=true
@@ -40,4 +40,8 @@ thiserror.workspace=true
 async-recursion = "1.0.5"
 
 tokio = { version = "1.0", features = ["full"] }
+
+
+#[patch.crates-io]
+#sea-orm = { git="https://github.com/itsparser/sea-orm", branch = "master" }
 

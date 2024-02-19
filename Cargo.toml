@@ -67,3 +67,5 @@ geckodriver="0.34.0"
 
 [patch.crates-io]
 sea-orm = { git="https://github.com/itsparser/sea-orm", branch = "master" }
+sea-orm-migration = { git="https://github.com/itsparser/sea-orm", branch = "master" }
+
