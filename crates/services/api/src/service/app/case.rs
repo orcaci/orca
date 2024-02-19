@@ -1,11 +1,12 @@
-use futures::executor::block_on;
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, ModelTrait, NotSet, QueryFilter, QueryOrder, QuerySelect, TryIntoModel};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, ModelTrait, QueryFilter, QueryOrder, QuerySelect, TryIntoModel};
 use sea_orm::ActiveValue::Set;
 use sea_query::{Condition, Expr};
 use tracing::{debug, info};
 use uuid::Uuid;
-use cerium::client::Client;
+use async_recursion::async_recursion;
 
+
+use cerium::client::Client;
 use cerium::client::driver::web::WebDriver;
 use engine::controller::case::CaseController;
 use entity::prelude::case::{Column, Entity, Model};
@@ -53,6 +54,51 @@ impl CaseService {
         Ok(result)
     }
 
+    #[async_recursion]
+    pub async fn query_case(&self, case_id: Uuid, parent_id: Option<Uuid>) -> InternalResult<Vec<BlockModel>> {
+        let mut condition = Condition::all()
+            .add(BlockColumn::CaseId.eq(case_id));
+        if parent_id.is_some() {
+            condition = condition.add(BlockColumn::ParentId.eq(parent_id.unwrap()))
+        } else {
+            condition = condition.add(BlockColumn::ParentId.is_null())
+        }
+        let case_blocks = BlockEntity::find()
+            .filter(condition)
+            .order_by_asc(BlockColumn::ExecutionOrder)
+            .find_with_linked(SelfReferencingLink)
+            .all(self.trx())
+            .await?;
+        let mut cases : Vec<BlockModel> = vec![];
+        for (mut case, childs) in case_blocks {
+            let mut childrens: Vec<BlockModel> = vec![];
+            for mut child_case in childs{
+                let child_case_id = child_case.id;
+                let _childrens = self.query_case(case_id, Some(child_case_id)).await?;
+                child_case.children = Some(_childrens);
+                childrens.push(child_case);
+            }
+            case.children = Some(childrens);
+            cases.push(case);
+        }
+        // let cases : Vec<BlockModel> = case_blocks.into_iter().map(|(mut case, childs)| async {
+        //     // for mut child_case in childs {
+        //     //     let child_case_id = child_case.id;
+        //     //     let _childrens = self.query_case(case_id, Some(child_case_id)).await?;
+        //     //     child_case.children = Some(_childrens);
+        //     // }
+        //     let _childs = childs.iter().map(|mut child_case| async {
+        //         let child_case_id = child_case.id;
+        //         let _childrens = self.query_case(case_id, Some(child_case_id)).await?;
+        //         child_case.children = Some(_childrens);
+        //         return child_case;
+        //     }).collect();
+        //     case.children = Some(childs);
+        //     case
+        // }).collect();
+        return Ok(cases);
+    }
+
     /// get_case_info - Get Case Info
     pub async fn get_case_info(&self, case_id: Uuid) -> InternalResult<Model> {
         let case = Entity::find_by_id(case_id).one(self.trx()).await?;
@@ -63,17 +109,27 @@ impl CaseService {
             ))?;
         }
         let mut case = case.unwrap();
+        let cases : Vec<BlockModel> = self.query_case(case_id, None).await?;
 
-        let condition = Condition::all()
-            .add(BlockColumn::CaseId.eq(case_id))
-            .add(BlockColumn::ParentId.is_null());
-        let case_blocks = BlockEntity::find()
-            // .filter(BlockColumn::CaseId.eq(case_id))
-            .filter(condition)
-            .order_by_asc(BlockColumn::ExecutionOrder).find_with_linked(SelfReferencingLink)
-            .all(self.trx())
-            .await?;
-        info!("{:#?}", case_blocks);
+            // let condition = Condition::all()
+        //     .add(BlockColumn::CaseId.eq(case_id))
+        //     .add(BlockColumn::ParentId.is_null());
+        // let case_blocks = BlockEntity::find()
+        //     // .filter(BlockColumn::CaseId.eq(case_id))
+        //     .filter(condition)
+        //     .order_by_asc(BlockColumn::ExecutionOrder)
+        //     .find_with_linked(SelfReferencingLink)
+        //     .all(self.trx())
+        //     .await?;
+        // let cases : Vec<BlockModel> = case_blocks.into_iter().map(|(mut case, childs)| {
+        //     let _childs = childs.into_iter().map(|(case)|{
+        //         let case_id = case.id;
+        //
+        //     });
+        //     case.children = Some(childs);
+        //     case
+        // }).collect();
+        info!("{:#?}", cases);
 
         // case_blocks.clone().into_iter().for_each(|case| {
         //     let d = block_on(case.find_linked(SelfReferencingLink).all(self.trx())).expect("erro");
@@ -82,7 +138,7 @@ impl CaseService {
         //
         // });
 
-        case.case_execution = Some(serde_json::to_value(case_blocks)?);
+        case.case_execution = Some(serde_json::to_value(cases)?);
         Ok(case)
     }
 

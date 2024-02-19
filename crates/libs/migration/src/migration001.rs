@@ -195,6 +195,12 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
+        // manager.alter_table(
+        //     Table::alter().table(case_block::Entity)
+        //         .add_column(ColumnDef::new(case_block::Column::Name).string())
+        //         .to_owned(),
+        // ).await?;
+
         manager
             .create_table(
                 Table::create()
