@@ -5,7 +5,7 @@ use sea_orm::EntityTrait;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
-#[sea_orm(table_name = "user")]
+#[sea_orm(table_name = "role")]
 pub struct Model {
     #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
