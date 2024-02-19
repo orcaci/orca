@@ -56,7 +56,7 @@ pub struct Model {
     #[serde(skip_deserializing)]
     pub execution_order: i32,
     pub kind: BlockKind,
-    pub name: Option<String>,
+    // pub name: Option<String>,
     #[sea_orm(column_name = "type")]
     pub type_field: BlockType,
     pub reference: Option<Uuid>,
