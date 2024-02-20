@@ -27,9 +27,11 @@ Orca follows the Contributor Covenant Code of Conduct. See [CODE\_OF\_CONDUCT.md
 ## **Installation**
 
 1.  Install the Rust compiler and toolchain following the instructions at [https://www.rust-lang.org/](https://www.rust-lang.org/)
-2.  Clone the Orca repository: **git clone https://github.com/[username]/orca.git**
-3.  Change into the Orca directory: **cd orca**
-4.  Build and run Orca: **cargo run**
+2.  Clone the Orca repository: ```git clone https://github.com/[username]/orca.git```
+3.  Change into the Orca directory: ```cd orca```
+4.  Create a new file named **cargo.toml** under .cargo/ directory and copy the contents
+    of **.cargo/config.local.toml**.  ```cp .cargo/config.local.toml .cargo/config.toml```
+5.  Now run start.sh file to run orca. ```bash start.sh```
 
 ## **Usage**
 
