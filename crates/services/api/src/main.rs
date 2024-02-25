@@ -25,8 +25,7 @@ pub(crate) async fn run_migration(db: &DatabaseConnection) -> Result<(), DbErr> 
     Ok(())
 }
 pub(crate) async fn get_config() -> Client {
-    let env = Environment::default();
-    Client::new(Some(env.database_uri), Some(env.redis_uri)).await
+    Client::new(None).await
 }
 
 #[tokio::main]

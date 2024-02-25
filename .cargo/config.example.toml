@@ -18,3 +18,7 @@ MINIO_ACCESS_SECRET = ""
 ENCRYPTION_SALT=""
 
 DEBUG=false
+
+
+# use comma seperated string to mention the CORS origin
+ALLOWED_ORIGINS = ""
