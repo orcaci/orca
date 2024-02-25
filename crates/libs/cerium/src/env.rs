@@ -26,7 +26,7 @@ impl Environment {
             selenium_uri: env::var("SELENIUM_URI").unwrap_or("".to_string()),
             encryption_salt: env::var("ENCRYPTION_SALT").unwrap_or("".to_string()),
             cors_allowed_origin: env::var("ALLOWED_ORIGINS").unwrap_or("".to_string()).split(',')
-                .map(|origin| origin.parse::<HeaderValue>().unwrap()).collect(),
+                .map(|origin| origin.parse::<HeaderValue>().expect("Invalid ALLOWED_ORIGINS format")).collect(),
             storage_access_key: env::var("STORAGE_ACCESS_KEY").unwrap_or("".to_string()),
             storage_access_secret: env::var("STORAGE_ACCESS_SECRET").unwrap_or("".to_string()),
             storage_base_url: env::var("STORAGE_BASE_URL").unwrap_or("".to_string()),

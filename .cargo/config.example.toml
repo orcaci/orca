@@ -20,5 +20,5 @@ ENCRYPTION_SALT=""
 DEBUG=false
 
 
-# use comma seperated string to mention the CORS origin
+# use comma-seperated string to mention the CORS origin
 ALLOWED_ORIGINS = ""
