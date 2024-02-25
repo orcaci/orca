@@ -8,21 +8,22 @@ use crate::error::CeriumResult;
 #[derive(Debug, Clone)]
 pub struct S3Client {
     credentials: Credentials,
-    region: Region
+    region: Region,
 }
-
 
 impl S3Client {
     pub fn new(access_key: &str, secret_key: &str, base_url: &str) -> CeriumResult<Self> {
-        let region = Region::Custom { region: "orca".to_string(), endpoint: base_url.to_string() };
+        let region = Region::Custom {
+            region: "orca".to_string(),
+            endpoint: base_url.to_string(),
+        };
 
         let credentials = Credentials::new(Some(access_key), Some(secret_key), None, None, None)?;
 
         Ok(Self {
             credentials,
-            region
+            region,
         })
-
 
         // let response_data = bucket.put_object(format!("{id}.png").as_str(), content.as_slice()).await.expect("Got error");
         //
@@ -49,17 +50,16 @@ impl S3Client {
 
     pub async fn create(&self, bucket: &str, key: &str, data: &[u8]) -> CeriumResult<()> {
         let _bucket_obj = self.get_bucket(bucket)?;
-        let result  = _bucket_obj.put_object(key, data).await?;
+        let result = _bucket_obj.put_object(key, data).await?;
         Ok(())
     }
 
     pub async fn delete(&self, bucket: &String, key: &String) -> CeriumResult<()> {
         let _bucket_obj = self.get_bucket(bucket)?;
-        let response  = _bucket_obj.delete_object(key).await?;
+        let response = _bucket_obj.delete_object(key).await?;
         info!("Deleted Object for {key} - Response {:?}", response);
         Ok(())
     }
-
 }
 //
 // #[cfg(test)]

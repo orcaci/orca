@@ -1,10 +1,10 @@
 use chrono::Utc;
+use sea_orm::ActiveValue::Set;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, ConnectionTrait, DatabaseBackend, DatabaseTransaction,
-    EntityTrait, IntoActiveModel, JsonValue, ModelTrait, NotSet, QueryFilter, QueryOrder
-    , Statement, TryIntoModel,
+    EntityTrait, IntoActiveModel, JsonValue, ModelTrait, NotSet, QueryFilter, QueryOrder,
+    Statement, TryIntoModel,
 };
-use sea_orm::ActiveValue::Set;
 use sea_orm_migration::SchemaManager;
 use sea_query::{
     Alias, Asterisk, ColumnDef, Condition, Expr, Order, PostgresQueryBuilder, Query, Table,

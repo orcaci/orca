@@ -1,9 +1,9 @@
+use cerium::client::Client;
 use sea_orm::prelude::Uuid;
 use sea_orm::{
     ColumnTrait, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder,
 };
 use tracing::{error, info};
-use cerium::client::Client;
 
 use cerium::client::driver::web::WebDriver;
 use entity::prelude::case::Entity;
@@ -21,8 +21,12 @@ pub struct CaseController<'ccl> {
 }
 
 impl<'ccl> CaseController<'ccl> {
-    pub fn new(db: &'ccl DatabaseTransaction, drive: WebDriver, cli: Client) -> CaseController<'ccl> {
-        Self { db, drive, cli}
+    pub fn new(
+        db: &'ccl DatabaseTransaction,
+        drive: WebDriver,
+        cli: Client,
+    ) -> CaseController<'ccl> {
+        Self { db, drive, cli }
     }
     /// run_case - will execute the test case by the case ID
     pub async fn run_case(&self, id: Uuid) -> EngineResult<()> {
@@ -91,7 +95,9 @@ impl<'ccl> CaseController<'ccl> {
     async fn process_action_group(&self, block: &case_block::Model) -> EngineResult<()> {
         info!("Starting processing {block_id}", block_id = block.id);
         let controller = ActionController::new(self.db, self.drive.clone(), self.cli.clone());
-        let result = controller.execute(block.reference.unwrap_or_default()).await?;
+        let result = controller
+            .execute(block.reference.unwrap_or_default())
+            .await?;
         Ok(result)
     }
 }

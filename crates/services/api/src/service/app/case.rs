@@ -1,16 +1,21 @@
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, ModelTrait, QueryFilter, QueryOrder, QuerySelect, TryIntoModel};
+use async_recursion::async_recursion;
 use sea_orm::ActiveValue::Set;
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, ModelTrait,
+    QueryFilter, QueryOrder, QuerySelect, TryIntoModel,
+};
 use sea_query::{Condition, Expr};
 use tracing::{debug, info};
 use uuid::Uuid;
-use async_recursion::async_recursion;
 
-
-use cerium::client::Client;
 use cerium::client::driver::web::WebDriver;
+use cerium::client::Client;
 use engine::controller::case::CaseController;
 use entity::prelude::case::{Column, Entity, Model};
-use entity::prelude::case_block::{ActiveModel as BlockActiveModel, Column as BlockColumn, Entity as BlockEntity, Model as BlockModel, SelfReferencingLink};
+use entity::prelude::case_block::{
+    ActiveModel as BlockActiveModel, Column as BlockColumn, Entity as BlockEntity,
+    Model as BlockModel, SelfReferencingLink,
+};
 use entity::test::history;
 use entity::test::history::{ExecutionKind, ExecutionStatus, ExecutionType};
 
@@ -29,9 +34,20 @@ impl CaseService {
         self.0.trx()
     }
 
-    pub async fn create_history(&self, case_id: Uuid, desc: Option<String>) -> InternalResult<history::Model> {
-        let history = HistoryService::new(self.0.clone()).create_history(case_id, ExecutionKind::Trigger,
-                                                      ExecutionType::TestCase, desc,  Some(true)).await?;
+    pub async fn create_history(
+        &self,
+        case_id: Uuid,
+        desc: Option<String>,
+    ) -> InternalResult<history::Model> {
+        let history = HistoryService::new(self.0.clone())
+            .create_history(
+                case_id,
+                ExecutionKind::Trigger,
+                ExecutionType::TestCase,
+                desc,
+                Some(true),
+            )
+            .await?;
         Ok(history)
     }
 
@@ -55,9 +71,12 @@ impl CaseService {
     }
 
     #[async_recursion]
-    pub async fn query_case(&self, case_id: Uuid, parent_id: Option<Uuid>) -> InternalResult<Vec<BlockModel>> {
-        let mut condition = Condition::all()
-            .add(BlockColumn::CaseId.eq(case_id));
+    pub async fn query_case(
+        &self,
+        case_id: Uuid,
+        parent_id: Option<Uuid>,
+    ) -> InternalResult<Vec<BlockModel>> {
+        let mut condition = Condition::all().add(BlockColumn::CaseId.eq(case_id));
         if parent_id.is_some() {
             condition = condition.add(BlockColumn::ParentId.eq(parent_id.unwrap()))
         } else {
@@ -69,10 +88,10 @@ impl CaseService {
             .find_with_linked(SelfReferencingLink)
             .all(self.trx())
             .await?;
-        let mut cases : Vec<BlockModel> = vec![];
+        let mut cases: Vec<BlockModel> = vec![];
         for (mut case, childs) in case_blocks {
             let mut childrens: Vec<BlockModel> = vec![];
-            for mut child_case in childs{
+            for mut child_case in childs {
                 let child_case_id = child_case.id;
                 let _childrens = self.query_case(case_id, Some(child_case_id)).await?;
                 child_case.children = Some(_childrens);
@@ -109,9 +128,9 @@ impl CaseService {
             ))?;
         }
         let mut case = case.unwrap();
-        let cases : Vec<BlockModel> = self.query_case(case_id, None).await?;
+        let cases: Vec<BlockModel> = self.query_case(case_id, None).await?;
 
-            // let condition = Condition::all()
+        // let condition = Condition::all()
         //     .add(BlockColumn::CaseId.eq(case_id))
         //     .add(BlockColumn::ParentId.is_null());
         // let case_blocks = BlockEntity::find()
@@ -196,14 +215,22 @@ impl CaseService {
             ))?;
         }
         let _case = case.unwrap();
-        let history = self.create_history(case_id, Some(format!("Executing - {case_name}", case_name=_case.name))).await?;
+        let history = self
+            .create_history(
+                case_id,
+                Some(format!("Executing - {case_name}", case_name = _case.name)),
+            )
+            .await?;
         let ui_driver = WebDriver::default().await?;
         let controller = CaseController::new(self.trx(), ui_driver.clone(), self.1.clone());
         controller.process(&_case).await?;
         ui_driver.quit().await?;
         let mut _history = history.into_active_model();
         _history.status = Set(ExecutionStatus::Completed);
-        _history.description = Set(Some(format!("Executed - {case_name}", case_name=_case.name)));
+        _history.description = Set(Some(format!(
+            "Executed - {case_name}",
+            case_name = _case.name
+        )));
         _history.save(self.trx()).await?;
         Ok(())
     }
