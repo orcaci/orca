@@ -20,4 +20,7 @@ STORAGE_ACCESS_SECRET = "minioadmin"
 # -- Encryption salt used for JWT token and other secret keys
 ENCRYPTION_SALT="strongencryption"
 
+# use comma-seperated string to mention the CORS origin
+ALLOWED_ORIGINS = "http://localhost:3000, http://localhost"
+
 
