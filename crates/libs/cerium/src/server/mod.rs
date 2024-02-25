@@ -90,7 +90,7 @@ impl App {
         let x_request_id = HeaderName::from_static("x-request-id");
         let cors = CorsLayer::new()
             .allow_methods([Method::GET, Method::POST])
-            .allow_origin(&self.cli.env().await.cors_allowed_origin);
+            .allow_origin(self.cli.env().await.cors_allowed_origin.clone());
         let router = router
             // .with_state(self.app_state())
             .layer(SetRequestIdLayer::new(
