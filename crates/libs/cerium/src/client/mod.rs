@@ -11,7 +11,7 @@ pub mod storage;
 
 #[derive(Debug, Clone)]
 pub struct Client {
-    pub env: Environment,
+    env: Environment,
     pub db: DatabaseConnection,
     pub storage_cli: S3Client,
 }
@@ -25,6 +25,9 @@ impl Client {
             env: _env,
             storage_cli,
         }
+    }
+    pub async fn env(&self) -> &Environment {
+        &self.env
     }
     async fn storage_client(environment: &Environment) -> S3Client {
         return S3Client::new(

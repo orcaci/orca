@@ -41,6 +41,6 @@ async fn main() {
         .layer(OrcaLayer {
             db: Arc::new(cli.db.clone()),
         });
-    app.set_router(routers);
+    app.set_router(routers).await;
     app.run().await;
 }
