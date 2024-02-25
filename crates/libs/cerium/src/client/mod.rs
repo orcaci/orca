@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use crate::client::storage::s3::S3Client;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use crate::env::Environment;
 
 pub mod cache;
 pub mod db;
@@ -10,22 +11,29 @@ pub mod storage;
 
 #[derive(Debug, Clone)]
 pub struct Client {
+    env: Environment,
     pub db: DatabaseConnection,
     pub storage_cli: S3Client,
 }
 
 impl Client {
-    pub async fn new(db_uri: Option<String>, _redis_uri: Option<String>) -> Self {
+    pub async fn new(environment: Option<Environment>,) -> Self {
+        let _env = environment.unwrap_or(Environment::default());
+        let storage_cli = Self::storage_client(&_env).await;
         Client {
-            db: Self::db_client(db_uri).await,
-            storage_cli: Self::storage_client().await,
+            db: Self::db_client(Some(_env.database_uri.clone())).await,
+            env: _env,
+            storage_cli,
         }
     }
-    async fn storage_client() -> S3Client {
+    pub async fn env(&self) -> &Environment {
+        &self.env
+    }
+    async fn storage_client(environment: &Environment) -> S3Client {
         return S3Client::new(
-            &std::env::var("STORAGE_ACCESS_KEY").expect("STORAGE_ACCESS_KEY must be set."),
-            &std::env::var("STORAGE_ACCESS_SECRET").expect("STORAGE_ACCESS_SECRET must be set."),
-            &std::env::var("STORAGE_BASE_URL").expect("STORAGE_BASE_URL must be set."),
+            &*environment.storage_access_key.clone(),
+            &*environment.storage_access_secret.clone(),
+            &*environment.storage_base_url.clone()
         )
         .expect("Error While create Storage Client");
     }

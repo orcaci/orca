@@ -1,16 +1,17 @@
 use std::env;
+use axum::http::HeaderValue;
 
-use serde::Deserialize;
-
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Clone)]
 pub struct Environment {
     pub debug: bool,
     pub database_uri: String,
     pub redis_uri: String,
     pub selenium_uri: String,
     pub encryption_salt: String,
-    pub minio_access_key: String,
-    pub minio_access_secret: String,
+    pub storage_access_key: String,
+    pub storage_access_secret: String,
+    pub storage_base_url: String,
+    pub cors_allowed_origin: Vec<HeaderValue>
 }
 
 impl Environment {
@@ -24,8 +25,11 @@ impl Environment {
             redis_uri: env::var("REDIS_URI").unwrap_or("".to_string()),
             selenium_uri: env::var("SELENIUM_URI").unwrap_or("".to_string()),
             encryption_salt: env::var("ENCRYPTION_SALT").unwrap_or("".to_string()),
-            minio_access_key: env::var("MINIO_ACCESS_KEY").unwrap_or("".to_string()),
-            minio_access_secret: env::var("MINIO_ACCESS_SECRET").unwrap_or("".to_string()),
+            cors_allowed_origin: env::var("ALLOWED_ORIGINS").unwrap_or("".to_string()).split(',')
+                .map(|origin| origin.parse::<HeaderValue>().expect("Invalid ALLOWED_ORIGINS format")).collect(),
+            storage_access_key: env::var("STORAGE_ACCESS_KEY").unwrap_or("".to_string()),
+            storage_access_secret: env::var("STORAGE_ACCESS_SECRET").unwrap_or("".to_string()),
+            storage_base_url: env::var("STORAGE_BASE_URL").unwrap_or("".to_string()),
         }
     }
 }

@@ -5,7 +5,6 @@ use sea_orm::{DatabaseConnection, DbErr};
 use tracing::Level;
 
 use cerium::client::Client;
-use cerium::env::Environment;
 use cerium::server::App;
 use migration::MigratorTrait;
 
@@ -25,8 +24,7 @@ pub(crate) async fn run_migration(db: &DatabaseConnection) -> Result<(), DbErr> 
     Ok(())
 }
 pub(crate) async fn get_config() -> Client {
-    let env: Environment = Environment::default();
-    Client::new(Some(env.database_uri), Some(env.redis_uri)).await
+    Client::new(None).await
 }
 
 #[tokio::main]
@@ -42,6 +40,6 @@ async fn main() {
         .layer(OrcaLayer {
             db: Arc::new(cli.db.clone()),
         });
-    app.set_router(routers);
+    app.set_router(routers).await;
     app.run().await;
 }
