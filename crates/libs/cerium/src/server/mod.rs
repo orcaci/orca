@@ -1,6 +1,5 @@
-use std::env;
 use std::sync::{Arc, Mutex};
-use axum::http::{HeaderName, HeaderValue, Method};
+use axum::http::{HeaderName, Method};
 use axum::{serve, Router};
 use sea_orm::DatabaseConnection;
 use tokio::net::TcpListener;
@@ -11,7 +10,6 @@ use tower_http::{
     compression::CompressionLayer,
     cors::{Any, CorsLayer},
 };
-use tower_http::cors::AllowOrigin;
 use tracing::{info, Level};
 use tracing_subscriber::fmt;
 
