@@ -15,7 +15,6 @@ use tracing_subscriber::fmt;
 
 use crate::client::Client;
 use crate::server::request_id::OrcaRequestId;
-use crate::env::Environment;
 
 mod request_id;
 mod utils;
