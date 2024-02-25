@@ -1,6 +1,6 @@
+use std::env;
 use std::sync::{Arc, Mutex};
-
-use axum::http::{HeaderName, Method};
+use axum::http::{HeaderName, HeaderValue, Method};
 use axum::{serve, Router};
 use sea_orm::DatabaseConnection;
 use tokio::net::TcpListener;
@@ -11,11 +11,13 @@ use tower_http::{
     compression::CompressionLayer,
     cors::{Any, CorsLayer},
 };
+use tower_http::cors::AllowOrigin;
 use tracing::{info, Level};
 use tracing_subscriber::fmt;
 
 use crate::client::Client;
 use crate::server::request_id::OrcaRequestId;
+use crate::env::Environment;
 
 mod request_id;
 mod utils;
@@ -90,7 +92,7 @@ impl App {
         let x_request_id = HeaderName::from_static("x-request-id");
         let cors = CorsLayer::new()
             .allow_methods([Method::GET, Method::POST])
-            .allow_origin(Any);
+            .allow_origin(Environment::default().cors_allowed_origin);
         let router = router
             // .with_state(self.app_state())
             .layer(SetRequestIdLayer::new(

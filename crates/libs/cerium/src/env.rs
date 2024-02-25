@@ -1,8 +1,7 @@
 use std::env;
+use axum::http::HeaderValue;
 
-use serde::Deserialize;
-
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Clone)]
 pub struct Environment {
     pub debug: bool,
     pub database_uri: String,
@@ -11,6 +10,7 @@ pub struct Environment {
     pub encryption_salt: String,
     pub minio_access_key: String,
     pub minio_access_secret: String,
+    pub cors_allowed_origin: Vec<HeaderValue>
 }
 
 impl Environment {
@@ -26,6 +26,8 @@ impl Environment {
             encryption_salt: env::var("ENCRYPTION_SALT").unwrap_or("".to_string()),
             minio_access_key: env::var("MINIO_ACCESS_KEY").unwrap_or("".to_string()),
             minio_access_secret: env::var("MINIO_ACCESS_SECRET").unwrap_or("".to_string()),
+            cors_allowed_origin: env::var("ALLOWED_ORIGINS").unwrap_or("".to_string()).split(',')
+                .map(|origin| origin.parse::<HeaderValue>().unwrap()).collect()
         }
     }
 }
