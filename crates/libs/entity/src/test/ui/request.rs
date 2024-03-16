@@ -61,7 +61,7 @@ pub enum ExecutionStatus {
 pub struct Model {
     #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
-    pub id: i64,
+    pub id: i32,
     pub description: Option<String>,
     pub is_dry_run: bool,
     pub ref_id: Uuid,
@@ -73,7 +73,7 @@ pub struct Model {
 
     pub log_id: i32,
     pub created_at: DateTimeWithTimeZone,
-    pub created_by: Option<String>,
+    pub created_by: String,
     pub finished_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }
@@ -88,7 +88,7 @@ pub fn new(
     desc: Option<String>,
 ) -> ActiveModel {
     ActiveModel {
-        id: NotSet,
+        id: Default::default(),
         description: Set(desc),
         is_dry_run: Set(is_dry_run),
         ref_id: Set(ref_id),
@@ -98,7 +98,7 @@ pub fn new(
         args: NotSet,
         log_id: Set(log_id),
         created_at: Set(chrono::Utc::now().into()),
-        created_by: NotSet,
+        created_by: Set("System".to_string()),
         finished_at: Set(chrono::Utc::now().into()),
         updated_at: Set(chrono::Utc::now().into()),
     }

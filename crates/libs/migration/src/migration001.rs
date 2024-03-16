@@ -466,7 +466,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(item_log::Column::Id)
                             .integer()
                             .not_null()
-                            .primary_key(),
+                            .primary_key().auto_increment(),
                     )
                     .col(
                         ColumnDef::new(item_log::Column::RefId)
@@ -475,7 +475,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(item_log::Column::RefType)
-                            .string_len(5)
+                            .string()
                             .not_null(),
                     )
                     .col(
@@ -500,13 +500,12 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(item_log::Column::Status)
-                            .string_len(5)
+                            .string()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(item_log::Column::LogId)
-                            .integer()
-                            .not_null(),
+                            .integer(),
                     )
                     .col(ColumnDef::new(item_log::Column::CreatedBy).string().not_null())
                     .col(ColumnDef::new(item_log::Column::CreatedAt).timestamp_with_time_zone().not_null())
@@ -524,7 +523,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(request::Column::Id)
                             .integer()
                             .not_null()
-                            .primary_key(),
+                            .primary_key().auto_increment(),
                     )
                     .col(
                         ColumnDef::new(request::Column::Description)
@@ -532,11 +531,11 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(request::Column::IsDryRun)
-                            .boolean(),
+                            .boolean().default(false),
                     )
                     .col(
                         ColumnDef::new(request::Column::RefType)
-                            .string_len(5).not_null(),
+                            .string().not_null(),
                     )
                     .col(
                         ColumnDef::new(request::Column::RefId)
@@ -545,7 +544,12 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(request::Column::Kind)
-                            .string_len(10)
+                            .string()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(request::Column::Status)
+                            .string()
                             .not_null(),
                     )
                     .col(
@@ -554,12 +558,12 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(request::Column::LogId)
-                            .integer()
-                            .not_null(),
+                            .integer(),
                     )
-                    .col(ColumnDef::new(item_log::Column::CreatedBy).string().not_null())
-                    .col(ColumnDef::new(item_log::Column::CreatedAt).timestamp_with_time_zone().not_null())
-                    .col(ColumnDef::new(item_log::Column::FinishedAt).timestamp_with_time_zone().not_null())
+                    .col(ColumnDef::new(request::Column::CreatedBy).string().not_null())
+                    .col(ColumnDef::new(request::Column::CreatedAt).timestamp_with_time_zone().not_null())
+                    .col(ColumnDef::new(request::Column::UpdatedAt).timestamp_with_time_zone().not_null())
+                    .col(ColumnDef::new(request::Column::FinishedAt).timestamp_with_time_zone().not_null())
                     .to_owned(),
             )
             .await?;

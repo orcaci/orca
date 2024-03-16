@@ -64,7 +64,7 @@ impl<'ccl> CaseController<'ccl> {
         let log = log_am.clone().try_into_model()?;
         self.process(&case, er, Some(&log)).await?;
 
-        log_am.execution_time = Set((chrono::Utc::now() - start).num_milliseconds());
+        log_am.execution_time = Set((chrono::Utc::now() - start).num_milliseconds() as i32);
         log_am.status = Set(ItemLogStatus::Success);
         log_am.finished_at = Set(chrono::Utc::now().into());
         log_am.save(self.db).await?;

@@ -192,6 +192,7 @@ impl CaseService {
     /// run - this will run the single tes case
     pub async fn run(&self, case_id: Uuid) -> InternalResult<()> {
         let case = Entity::find_by_id(case_id).one(self.trx()).await?;
+        debug!("run {:?}", case);
         if case.is_none() {
             return Err(OrcaRepoError::ModelNotFound(
                 "Test Case".to_string(),
@@ -214,7 +215,9 @@ impl CaseService {
         //     finished_at: None,
         //     updated_at: None,
         // };
+
         let mut er_am = er_am.save(self.trx()).await?;
+        debug!("run 2 {:?}", er_am);
         let ui_driver = WebDriver::default().await?;
         let controller = CaseController::new(self.trx(), ui_driver.clone(), self.1.clone());
         let er = er_am.clone().try_into_model()?;

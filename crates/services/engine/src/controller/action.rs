@@ -279,7 +279,7 @@ impl<'ccl> ActionController<'ccl> {
             "Done step == [id] {:?}, [desc] {:?}",
             action.id, action.description
         );
-        log_am.execution_time = Set((chrono::Utc::now() - start).num_milliseconds());
+        log_am.execution_time = Set((chrono::Utc::now() - start).num_milliseconds() as i32);
         log_am.status = Set(ItemLogStatus::Success);
         log_am.finished_at = Set(chrono::Utc::now().into());
         log_am.save(self.db).await?;
@@ -316,7 +316,7 @@ impl<'ccl> ActionController<'ccl> {
         let log = log_am.clone().try_into_model()?;
         self.execute_action_group(action_group, er, Some(&log)).await?;
 
-        log_am.execution_time = Set((chrono::Utc::now() - start).num_milliseconds());
+        log_am.execution_time = Set((chrono::Utc::now() - start).num_milliseconds() as i32);
         log_am.status = Set(ItemLogStatus::Success);
         log_am.finished_at = Set(chrono::Utc::now().into());
         log_am.save(self.db).await?;
