@@ -4,47 +4,48 @@ import { useEffect, useState } from "react";
 import { useFlowStore } from "stores/flow.store";
 import { shallow } from "zustand/shallow";
 import { useParams } from "react-router-dom";
-import  SearchableDropdown  from "core/components/dropdown/index.jsx";
+import  { SearchableDropdown } from "core/components/dropdown/index.jsx";
 
 export interface WorkflowFormParm {
-  title: string;
+    title: string;
 }
 
-export const WorkflowForm: React.FC<WorkflowFormParm> = ({ title }) => {
-  const [obj, setObject] = useState({} as any);
-  const { appId = "" } = useParams();
-  const [dataSource, setDataSource] = useState([] as any);
-  const [actionGroup, setActionGroup] = useState({});
-  const { nodes, edges, currentNode } = useFlowStore(
-    (state: any) => ({
-      nodes: state.nodes,
-      edges: state.edges,
-      currentNode: state.currentNode
-    }),
-    shallow
-  );
+export const WorkflowForm: React.FC<WorkflowFormParm> = ({title}) => {
+    const [obj, setObject] = useState({} as any);
+    const {appId = ""} = useParams();
+    const [dataSource, setDataSource] = useState([] as any);
+    const [actionGroup, setActionGroup] = useState({});
+    const {nodes, edges, currentNode} = useFlowStore(
+        (state: any) => ({
+            nodes: state.nodes,
+            edges: state.edges,
+            currentNode: state.currentNode
+        }),
+        shallow
+    );
 
-  /**
-   * fetchActionGroups - fetch all ActionGroup from the specify Application
-   */
-  const fetchActionGroups = async () => {
-    await Service.get(`${Endpoint.v1.group.getList(appId)}`)
-      .then((groups) => {
-        setDataSource(groups);
-        setObject(currentNode);
-      })
-      .finally(() => {});
-  };
+    /**
+     * fetchActionGroups - fetch all ActionGroup from the specify Application
+     */
+    const fetchActionGroups = async () => {
+        await Service.get(`${Endpoint.v1.group.getList(appId)}`)
+            .then((groups) => {
+                setDataSource(groups);
+                setObject(currentNode);
+            })
+            .finally(() => {
+            });
+    };
 
-  const onCurrentNode = (node: any) => {
-    setObject(node);
-  };
+    const onCurrentNode = (node: any) => {
+        setObject(node);
+    };
 
-  useEffect(() => {
-    fetchActionGroups();
-    // onCurrentNode(currentNode);
-    // console.log(currentNode);
-  }, []);
+    useEffect(() => {
+        fetchActionGroups();
+        // onCurrentNode(currentNode);
+        // console.log(currentNode);
+    }, []);
 
   return (
     <>

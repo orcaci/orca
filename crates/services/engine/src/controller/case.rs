@@ -1,7 +1,7 @@
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, PaginatorTrait, QueryFilter, QueryOrder, TryIntoModel};
 use sea_orm::ActiveValue::Set;
 use sea_orm::prelude::Uuid;
-use tracing::{error, info};
+use tracing::{debug, info};
 
 use cerium::client::Client;
 use cerium::client::driver::web::WebDriver;
@@ -36,10 +36,7 @@ impl<'ccl> CaseController<'ccl> {
     pub async fn run(&self, id: Uuid, er: &ExecutionRequest, log: Option<&ItemLog>) -> EngineResult<()> {
         info!("[{er}] Trigger Test Case {action_id}", er=er.ref_id, action_id = id);
         let start = chrono::Utc::now();
-        let log_id = match log {
-            Some(l) => Some(l.id),
-            None => None,
-        };
+        let log_id = log.map(|l| l.id);
         let mut log_am = new(er.ref_id, ItemLogType::ActionGroup, id, log_id).save(self.db).await?;
         // let mut log_item = item_log::Model {
         //     ref_id: er.ref_id,
@@ -106,43 +103,49 @@ impl<'ccl> CaseController<'ccl> {
     /// switch_block - function to switch the block based on the type and kind of the block
     async fn switch_block(&self, block: &case_block::Model, er: &ExecutionRequest,
                           log: Option<&ItemLog>) -> EngineResult<()> {
+        debug!("Processing Block - {:#?}", block);
         let result = match block.kind {
             // BlockKind::Loop => match block.type_field {
             //     BlockType::InMemory => self.process_action_group(block),
             //     BlockType::DataTable => self.process_action_group(block),
             //     _ => todo!("Need to raise a error from here since non other supported"),
             // },
-            BlockKind::SelfReference => match block.type_field {
-                BlockType::Condition => self.process_action_group(block, er, log),
-                BlockType::YesCase => self.process_action_group(block, er, log),
-                BlockType::NoCase => self.process_action_group(block, er, log),
-                BlockType::Loop => self.process_action_group(block, er, log),
-                _ => todo!("Need to raise a error from here since non other supported"),
-            },
+            // BlockKind::SelfReference => match block.type_field {
+            //     BlockType::Condition => self.process_in_memory_loop(block, er, log),
+            //     BlockType::YesCase => self.process_in_memory_loop(block, er, log),
+            //     BlockType::NoCase => self.process_in_memory_loop(block, er, log),
+            //     BlockType::Loop => self.process_in_memory_loop(block, er, log),
+            //     _ => todo!("Need to raise a error from here since non other supported"),
+            // },
             BlockKind::Reference => match block.type_field {
                 BlockType::ActionGroup => self.process_action_group(block, er, log),
                 BlockType::Assertion => self.process_action_group(block, er, log),
                 _ => todo!("Need to raise a error from here since non other supported"),
             },
+            _ => return Ok(())
         }
             .await?;
         Ok(())
     }
 
-    async fn process_in_memory_loop(&self, block: &case_block::Model, er: &ExecutionRequest, log: Option<&ItemLog>) -> () {
-        ()
+    async fn process_in_memory_loop(&self, block: &case_block::Model, er: &ExecutionRequest, log: Option<&ItemLog>) -> EngineResult<()> {
+        Ok(())
     }
 
-    async fn process_datatable_loop(&self, block: &case_block::Model, er: &ExecutionRequest, log: Option<&ItemLog>) {}
+    async fn process_datatable_loop(&self, block: &case_block::Model, er: &ExecutionRequest, log: Option<&ItemLog>) -> EngineResult<()> {
+        Ok(())
+    }
 
-    async fn process_condition(&self, block: &case_block::Model, er: &ExecutionRequest, log: Option<&ItemLog>) {}
+    async fn process_condition(&self, block: &case_block::Model, er: &ExecutionRequest, log: Option<&ItemLog>) -> EngineResult<()> {
+        Ok(())
+    }
 
     async fn process_action_group(&self, block: &case_block::Model, er: &ExecutionRequest,
                                   log: Option<&ItemLog>) -> EngineResult<()> {
-        info!("Starting processing {block_id}", block_id = block.id);
+        info!("Starting processing {block_id} ", block_id = block.id);
         let controller = ActionController::new(self.db, self.drive.clone(), self.cli.clone());
         let result = controller
-            .execute(block.reference.unwrap_or_default(), er, log)
+            .execute(block.reference.unwrap(), er, log)
             .await?;
         Ok(result)
     }

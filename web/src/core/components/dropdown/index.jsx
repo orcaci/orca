@@ -4,7 +4,7 @@ import "./dropdown.css";
 
 
 
-const SearchableDropdown = ({
+export const SearchableDropdown = ({
   options,
   label,
   id,
@@ -93,6 +93,5 @@ SearchableDropdown.propTypes = {
     handleChange: PropTypes.func
   };
 
-export default SearchableDropdown;
 
 

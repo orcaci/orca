@@ -9,12 +9,12 @@ use cerium::client::Client;
 use cerium::client::driver::web::WebDriver;
 use cerium::client::storage::s3::S3Client;
 use entity::prelude::target::ActionTargetKind;
-use entity::test::ui::{ExecutionRequest, request};
 use entity::test::ui::action::action;
 use entity::test::ui::action::action::ActionKind;
 use entity::test::ui::action::group::{Entity as ActionGroupEntity, Model as ActionGroupModel};
-use entity::test::ui::log::{item_log, ItemLog};
+use entity::test::ui::ExecutionRequest;
 use entity::test::ui::log::item_log::{ItemLogStatus, ItemLogType, new};
+use entity::test::ui::log::ItemLog;
 
 use crate::error::{EngineError, EngineResult};
 
@@ -42,7 +42,6 @@ impl<'ccl> ActionController<'ccl> {
         driver: WebDriver,
         client: Client,
     ) -> ActionController<'ccl> {
-        // Clone the storage client from the provided client
         let storage_cli = client.storage_cli.clone();
         // Return a new ActionController instance
         Self {
@@ -247,27 +246,9 @@ impl<'ccl> ActionController<'ccl> {
 
     pub async fn execute_action(&self, action: &action::Model, er: &ExecutionRequest,
                                 log: Option<&ItemLog>) -> EngineResult<()> {
-        let log_id = match log {
-            Some(l) => Some(l.id),
-            None => None,
-        };
+        let log_id = log.map(|l| l.id);
         let mut log_am = new(er.ref_id, ItemLogType::Action, action.id, log_id).save(self.db).await?;
         info!("[{er}] Trigger Action {action_id}", er=er.ref_id, action_id = action.id);
-        // let mut log_item = item_log::Model {
-        //     ref_id: er.ref_id,
-        //     ref_type: ItemLogType::Action,
-        //     step_id: action.id,
-        //     has_screenshot: false,
-        //     has_recording: false,
-        //     execution_time: 0,
-        //     status: ItemLogStatus::Running,
-        //     log_id: None,
-        //     created_at: start.into(),
-        //     created_by: "system".to_string(),
-        //     finished_at: chrono::Utc::now().into(),
-        //     ..Default::default()
-        // };
-        // let mut log_item_am = log_item.into_active_model().save(self.db).await?;
         let start = chrono::Utc::now();
         info!(
             "Executing step == [id] {:?}, [desc] {:?}",
