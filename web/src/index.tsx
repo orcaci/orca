@@ -13,7 +13,6 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
     <Theme accentColor="blue" appearance="light" radius="medium">
       {/* <ThemeProvider defaultTheme="system" storageKey="ui-theme">
       <Theme
@@ -25,8 +24,6 @@ root.render(
       {/* <ThemePanel /> */}
       <App />
     </Theme>
-    {/* </ThemeProvider> */}
-  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

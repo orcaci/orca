@@ -24,7 +24,9 @@ export const Endpoint = {
       delete: (appId: string, suiteId: string) =>
         `/api/v1/app/${appId}/suite/${suiteId}`,
       itemList: (appId: string, suiteId: string) =>
-        `/api/v1/app/${appId}/suite/${suiteId}/detail`,
+        `/api/v1/app/${appId}/suite/${suiteId}/block`,
+      batchUpdate: (appId: string, suiteId: string) =>
+        `/api/v1/app/${appId}/suite/${suiteId}/batch/update`,
       itemCreate: (appId: string, suiteId: string) =>
         `/api/v1/app/${appId}/suite/${suiteId}/detail`
     },
