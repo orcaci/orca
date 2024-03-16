@@ -241,7 +241,7 @@ impl<'ccl> ActionController<'ccl> {
         let _result = self
             .storage_cli
             .create("orca", format!("session/{session_id}/{id}.png").as_str(), content.as_slice())
-            .await;
+            .await?;
         Ok(())
     }
 
