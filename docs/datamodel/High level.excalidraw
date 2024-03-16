@@ -2,7 +2,66 @@
   "type": "excalidraw",
   "version": 2,
   "source": "https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor",
-  "elements": [],
+  "elements": [
+    {
+      "id": "iIce74X2ACKw18ZFte400",
+      "type": "rectangle",
+      "x": 350.3046875,
+      "y": 182.7421875,
+      "width": 228.4375,
+      "height": 95.1171875,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "roundness": {
+        "type": 3
+      },
+      "seed": 1607689944,
+      "version": 2,
+      "versionNonce": 1265683416,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1708779204650,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "EykdL58L9Dtw1nyPfyKbn",
+      "type": "rectangle",
+      "x": 504.60546875,
+      "y": 182.48828125,
+      "width": 71.5,
+      "height": 199.16015625,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "roundness": {
+        "type": 3
+      },
+      "seed": 135893208,
+      "version": 113,
+      "versionNonce": 846092456,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1708779217618,
+      "link": null,
+      "locked": false
+    }
+  ],
   "appState": {
     "gridSize": null,
     "viewBackgroundColor": "#ffffff"

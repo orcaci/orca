@@ -7,7 +7,7 @@ use tracing::info;
 pub struct OrcaRequestId;
 
 impl MakeRequestId for OrcaRequestId {
-    fn make_request_id<B>(&mut self, request: &axum::http::Request<B>) -> Option<RequestId> {
+    fn make_request_id<B>(&mut self, _request: &axum::http::Request<B>) -> Option<RequestId> {
         let id = Uuid::new_v4();
         info!("Request ID - {:?}", id);
         Some(RequestId::new(id.to_string().parse().unwrap()))

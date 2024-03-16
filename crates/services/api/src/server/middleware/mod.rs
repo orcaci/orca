@@ -50,6 +50,7 @@ where
 
     fn call(&mut self, mut request: Request) -> Self::Future {
         let ext = request.extensions_mut();
+        info!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------------BEFORE REQUEST------------------>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         let trx = block_on(self.db.begin()).expect("got error on trx");
         ext.insert(OrcaSession::new(trx.clone()));
         let future = self.inner.call(request);
@@ -58,6 +59,7 @@ where
             let headers = response.headers_mut();
             trx.commit().await.expect("TODO: panic message");
             info!("headers - {:?}", headers);
+            info!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------------AFTER REQUEST------------------>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             Ok(response)
         })
     }

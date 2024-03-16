@@ -3,10 +3,10 @@ use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Extension, Json, Router};
+use cerium::client::Client;
 use entity::prelude::case::Model;
 use entity::prelude::case_block::Model as BlockModel;
 use uuid::Uuid;
-use cerium::client::Client;
 
 use crate::error::InternalResult;
 use crate::server::session::OrcaSession;
@@ -47,7 +47,9 @@ async fn create_case(
     Path(app_id): Path<Uuid>,
     Json(body): Json<Model>,
 ) -> InternalResult<impl IntoResponse> {
-    let result = CaseService::new(session, cli, app_id).create_case(body).await?;
+    let result = CaseService::new(session, cli, app_id)
+        .create_case(body)
+        .await?;
     Ok((StatusCode::CREATED, Json(result)))
 }
 

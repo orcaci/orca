@@ -1,4 +1,9 @@
 version: '3'
+
+networks:
+  orca:
+
+
 services:
   minio:
     container_name: minio-ser
@@ -58,32 +63,32 @@ services:
       - RCLONE_CONFIG_S3_PROVIDER=Minio
       - RCLONE_CONFIG_S3_ENV_AUTH=false
       - RCLONE_CONFIG_S3_REGION=us-east-1
-#      - RCLONE_CONFIG_S3_LOCATION_CONSTRAINT=asia-southeast1
+      #      - RCLONE_CONFIG_S3_LOCATION_CONSTRAINT=asia-southeast1
       - RCLONE_CONFIG_S3_ACL=private
       - RCLONE_CONFIG_S3_ACCESS_KEY_ID=minioadmin
       - RCLONE_CONFIG_S3_SECRET_ACCESS_KEY=minioadmin
       - RCLONE_CONFIG_S3_ENDPOINT=http://minio-ser:9000
 
-#  chrome_video:
-#    image: selenium/video:ffmpeg-4.3.1-20221208
-#    volumes:
-#      - /tmp/videos:/videos
-#    depends_on:
-#      - chrome
-#    environment:
-#      - DISPLAY_CONTAINER_NAME=chrome
-#      - FILE_NAME=chrome_video.mp4
+  #  chrome_video:
+  #    image: selenium/video:ffmpeg-4.3.1-20221208
+  #    volumes:
+  #      - /tmp/videos:/videos
+  #    depends_on:
+  #      - chrome
+  #    environment:
+  #      - DISPLAY_CONTAINER_NAME=chrome
+  #      - FILE_NAME=chrome_video.mp4
 
-#  firefox_video:
-#    platform: linux/amd64
-#    image: selenium/video:ffmpeg-4.3.1-20221208
-#    volumes:
-#      - /Users/vasanth/Documents/commit/OpenSource/orcan/orca/to/config/video:/videos
-#    depends_on:
-#      - firefox
-#    environment:
-#      - DISPLAY_CONTAINER_NAME=firefox
-#      - FILE_NAME=firefox_video.mp4
+  #  firefox_video:
+  #    platform: linux/amd64
+  #    image: selenium/video:ffmpeg-4.3.1-20221208
+  #    volumes:
+  #      - /Users/vasanth/Documents/commit/OpenSource/orcan/orca/to/config/video:/videos
+  #    depends_on:
+  #      - firefox
+  #    environment:
+  #      - DISPLAY_CONTAINER_NAME=firefox
+  #      - FILE_NAME=firefox_video.mp4
 
   selenium-hub:
     platform: linux/amd64
@@ -116,6 +121,65 @@ services:
       - "6379:6379"
     container_name: redis-ser
     command: redis-server --save "" --appendonly no
+
+#
+#  timescaledb:
+#    image: timescale/timescaledb:latest-pg12
+#    restart: always
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_USER: timescaledb
+#      POSTGRES_PASSWORD: password
+#    volumes:
+#      - "./data/timescaledb:/var/lib/postgresql/data"
+#
+#
+#  loki:
+#    image: grafana/loki:2.9.4
+#    ports:
+#      - "3100:3100"
+#    command: -config.file=/etc/loki/local-config.yaml
+#    networks:
+#      - orca
+#
+#  promtail:
+#    image: grafana/promtail:2.9.4
+#    volumes:
+#      - "/var/orca/log:/var/log"
+#    command: -config.file=/etc/promtail/config.yml
+#    networks:
+#      - orca
+#
+#  grafana:
+#    environment:
+#      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+#      - GF_AUTH_ANONYMOUS_ENABLED=true
+#      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+#    entrypoint:
+#      - sh
+#      - -euc
+#      - |
+#        mkdir -p /etc/grafana/provisioning/datasources
+#        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+#        apiVersion: 1
+#        datasources:
+#        - name: Loki
+#          type: loki
+#          access: proxy
+#          orgId: 1
+#          url: http://loki:3100
+#          basicAuth: false
+#          isDefault: true
+#          version: 1
+#          editable: false
+#        EOF
+#        /run.sh
+#    image: grafana/grafana:latest
+#    ports:
+#      - "4000:3000"
+#    networks:
+#      - orca
 
 
 volumes:

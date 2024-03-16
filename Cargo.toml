@@ -7,7 +7,8 @@ members=[
     "crates/libs/entity",
     "crates/libs/migration",
     "crates/services/engine",
-    "crates/services/api", "crates/workshop/webdriver",
+    "crates/services/api", "crates/workshop/webdriver", "crates/workshop/chrome",
+    "crates/macro/entity-macro",
 ]
 
 [workspace.package]
@@ -27,6 +28,8 @@ entity = { path = "crates/libs/entity", default-features = true }
 migration = { path = "crates/libs/migration", default-features = true }
 engine = { path = "crates/services/engine", default-features = true }
 api = { path = "crates/services/api", default-features = true }
+chrome = { path = "crates/workshop/chrome", default-features = true }
+entity_macro = { path = "crates/macro/entity-macro", default-features = true }
 
 thiserror = "1.0.31"
 jsonwebtoken = "9.2.0"

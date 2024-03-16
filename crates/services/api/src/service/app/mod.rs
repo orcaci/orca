@@ -10,9 +10,9 @@ pub(crate) mod action;
 pub(crate) mod case;
 pub(crate) mod datatable;
 pub(crate) mod group;
+pub(crate) mod history;
 pub(crate) mod profile;
 pub(crate) mod suit;
-pub(crate) mod history;
 
 pub(crate) struct AppService(OrcaSession);
 
