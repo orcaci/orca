@@ -1,10 +1,12 @@
 use crate::route::public::local_route;
 use axum::Router;
 use serde::Deserialize;
+use crate::route::auth::auth_route;
 
 pub(crate) mod admin;
 pub(crate) mod app;
 pub(crate) mod public;
+pub(crate) mod auth;
 
 fn v1_route() -> Router {
     Router::new()
@@ -16,6 +18,7 @@ pub fn handle_router() -> Router {
     let api_routes = Router::new().nest("/v1", v1_route());
     let routes = Router::new()
         .nest("/", local_route())
+        .nest("/auth", auth_route())
         .nest("/api", api_routes);
     routes
 }

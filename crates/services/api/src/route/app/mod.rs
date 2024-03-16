@@ -22,9 +22,9 @@ pub(crate) mod action;
 pub(crate) mod case;
 pub(crate) mod datatable;
 pub(crate) mod group;
+pub(crate) mod history;
 pub(crate) mod profile;
 pub(crate) mod suit;
-pub(crate) mod history;
 
 pub fn app_route() -> Router {
     Router::new()
@@ -41,7 +41,7 @@ pub fn app_route() -> Router {
                 .nest("/datatable", datatable_route())
                 .nest("/case", test_case_route())
                 .nest("/suite", suite_route())
-                .nest("/history", history_route())
+                .nest("/history", history_route()),
         )
 }
 

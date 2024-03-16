@@ -5,7 +5,6 @@ use sea_orm::{DatabaseConnection, DbErr};
 use tracing::Level;
 
 use cerium::client::Client;
-use cerium::env::Environment;
 use cerium::server::App;
 use migration::MigratorTrait;
 
