@@ -12,7 +12,7 @@ export const fetchTestSuite = async (
       return suites;
     })
     .catch((error) => {
-      console.log("fetch Actions failed with some reason =", error);
+      console.error("fetch Actions failed with some reason =", error);
       return [];
     });
   return _suites;
@@ -34,7 +34,7 @@ export const createNewSuit = async (
       return suite;
     })
     .catch((error) => {
-      console.log("fetch Actions failed with some reason =", error);
+      console.error("fetch Actions failed with some reason =", error);
       return [];
     });
   return _suite;
@@ -53,7 +53,7 @@ export const deleteSuite = async (
       return suiteItem;
     })
     .catch((error) => {
-      console.log("fetch Actions failed with some reason =", error);
+      console.error("fetch Actions failed with some reason =", error);
       return [];
     });
   return suiteItem;
@@ -82,7 +82,7 @@ export const batchUpdate = async (
       return batchItems;
     })
     .catch((error) => {
-      console.log("fetch Actions failed with some reason =", error);
+      console.error("fetch Actions failed with some reason =", error);
       return [];
     });
   return batchItems;
@@ -102,7 +102,7 @@ export const fetchSuiteItems = async (
       return suiteItem;
     })
     .catch((error) => {
-      console.log("fetch Actions failed with some reason =", error);
+      console.error("fetch Actions failed with some reason =", error);
       return [];
     });
   return suiteItem;
