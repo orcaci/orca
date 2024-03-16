@@ -12,7 +12,7 @@ export const fetchTestCases = async (
       return actions;
     })
     .catch((error) => {
-      console.log("fetch Actions failed with some reason =", error);
+      console.error("fetch Actions failed with some reason =", error);
       return [];
     });
   return _actions;
