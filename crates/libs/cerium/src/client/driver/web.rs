@@ -20,6 +20,7 @@ impl WebDriver {
     /// fn main() -> CeriumResult<()> {
     ///     let _driver = WD::default();
     ///     let driver = WebDriver::new(_driver)?;
+    ///     Ok(())
     /// }
     /// ```
     ///
@@ -28,6 +29,10 @@ impl WebDriver {
     pub fn new(driver: TFWebDriver) -> CeriumResult<Self> {
         let helper = WebDriver { driver };
         Ok(helper)
+    }
+    
+    pub async fn session_id(&self) -> CeriumResult<String> {
+        Ok(self.driver.session_id().await?.clone().to_string())
     }
 
     pub async fn default() -> CeriumResult<Self> {

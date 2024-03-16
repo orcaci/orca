@@ -13,7 +13,21 @@ pub struct Model {
     pub name: String,
     pub description: Option<String>,
     // pub created_by: Uuid,
+    // pub updated_by: Uuid,
+    // pub created_at: DateTimeWithTimeZone,
+    // pub updated_at: DateTimeWithTimeZone,
 }
+
+// impl ActiveModelBehavior for ActiveModel {
+//     async fn before_save<C>(mut self, _db: &C, _insert: bool) -> Result<Self, DbErr>
+//         where
+//             C: ConnectionTrait,
+//     {
+//         self.updated_at = Set(Utc::now().into());
+//         Ok(self)
+//     }
+//     
+// }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}

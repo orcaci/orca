@@ -1,16 +1,19 @@
-use entity::admin::user;
 use sea_orm_migration::prelude::*;
 
-use crate::sea_orm::{ConnectionTrait, Statement};
+use entity::admin::user;
 use entity::app::app;
 use entity::command;
 use entity::prelude::{case, case_block, data_binding};
-use entity::test::ui::action::{action, data, group as action_group, target};
-use entity::test::ui::suit::{suite, suite_block};
 use entity::test::{
     datatable, field,
     profile::{data as profile_data, profile},
 };
+use entity::test::ui::action::{action, data, group as action_group, target};
+use entity::test::ui::log::item_log;
+use entity::test::ui::request;
+use entity::test::ui::suit::{suite, suite_block};
+
+use crate::sea_orm::{ConnectionTrait, Statement};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -181,6 +184,8 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(ColumnDef::new(case_block::Column::Kind).string().not_null())
+                    .col(ColumnDef::new(case_block::Column::Name).string())
+                    .col(ColumnDef::new(case_block::Column::Desc).string())
                     .col(ColumnDef::new(case_block::Column::Reference).uuid())
                     .col(ColumnDef::new(case_block::Column::ParentId).uuid())
                     .col(ColumnDef::new(case_block::Column::CaseId).uuid().not_null())
@@ -452,39 +457,112 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        // manager.create_table(Table::create()
-        //             .table(target::Entity)
-        //             .if_not_exists()
-        //             .col(ColumnDef::new(target::Column::Id).uuid().not_null().primary_key())
-        //             .col(ColumnDef::new(target::Column::Kind).string().not_null())
-        //             .col(ColumnDef::new(target::Column::Value).string().not_null())
-        //             .col(ColumnDef::new(target::Column::ActionId).uuid().not_null())
-        //             .foreign_key(
-        //                  ForeignKey::create()
-        //                     .from(target::Entity, target::Column::ActionId)
-        //                     .to(action::Entity, action::Column::Id)
-        //                     .on_delete(ForeignKeyAction::Cascade)
-        //                     .on_update(ForeignKeyAction::Cascade)
-        //             )
-        //             .to_owned(),
-        //     ).await?;
-        //
-        // manager.create_table(Table::create()
-        //             .table(data::Entity)
-        //             .if_not_exists()
-        //             .col(ColumnDef::new(data::Column::Id).uuid().not_null().primary_key())
-        //             .col(ColumnDef::new(data::Column::Kind).string().not_null())
-        //             .col(ColumnDef::new(data::Column::Value).string().not_null())
-        //             .col(ColumnDef::new(data::Column::ActionId).uuid().not_null())
-        //             .foreign_key(
-        //                  ForeignKey::create()
-        //                     .from(data::Entity, data::Column::ActionId)
-        //                     .to(action::Entity, action::Column::Id)
-        //                     .on_delete(ForeignKeyAction::Cascade)
-        //                     .on_update(ForeignKeyAction::Cascade)
-        //             )
-        //             .to_owned(),
-        //     ).await?;
+        manager
+            .create_table(
+                Table::create()
+                    .table(item_log::Entity)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(item_log::Column::Id)
+                            .integer()
+                            .not_null()
+                            .primary_key(),
+                    )
+                    .col(
+                        ColumnDef::new(item_log::Column::RefId)
+                            .uuid()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(item_log::Column::RefType)
+                            .string_len(5)
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(item_log::Column::StepId)
+                            .uuid()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(item_log::Column::HasScreenshot)
+                            .boolean()
+                            .not_null().default(false),
+                    )
+                    .col(
+                        ColumnDef::new(item_log::Column::HasRecording)
+                            .boolean()
+                            .not_null().default(false),
+                    )
+                    .col(
+                        ColumnDef::new(item_log::Column::ExecutionTime)
+                            .integer()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(item_log::Column::Status)
+                            .string_len(5)
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(item_log::Column::LogId)
+                            .integer()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(item_log::Column::CreatedBy).string().not_null())
+                    .col(ColumnDef::new(item_log::Column::CreatedAt).timestamp_with_time_zone().not_null())
+                    .col(ColumnDef::new(item_log::Column::FinishedAt).timestamp_with_time_zone().not_null())
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(request::Entity)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(request::Column::Id)
+                            .integer()
+                            .not_null()
+                            .primary_key(),
+                    )
+                    .col(
+                        ColumnDef::new(request::Column::Description)
+                            .string(),
+                    )
+                    .col(
+                        ColumnDef::new(request::Column::IsDryRun)
+                            .boolean(),
+                    )
+                    .col(
+                        ColumnDef::new(request::Column::RefType)
+                            .string_len(5).not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(request::Column::RefId)
+                            .uuid()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(request::Column::Kind)
+                            .string_len(10)
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(request::Column::Args)
+                            .json(),
+                    )
+                    .col(
+                        ColumnDef::new(request::Column::LogId)
+                            .integer()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(item_log::Column::CreatedBy).string().not_null())
+                    .col(ColumnDef::new(item_log::Column::CreatedAt).timestamp_with_time_zone().not_null())
+                    .col(ColumnDef::new(item_log::Column::FinishedAt).timestamp_with_time_zone().not_null())
+                    .to_owned(),
+            )
+            .await?;
         Ok(())
     }
 

@@ -32,10 +32,11 @@ serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
-tracing.workspace=true
-tracing-subscriber.workspace=true
-rust-s3.workspace=true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+rust-s3.workspace = true
 
 
 thirtyfour.workspace = true
 anyhow = "1.0.79"
+chrono = "0.4.31"

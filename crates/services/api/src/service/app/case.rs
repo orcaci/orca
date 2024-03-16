@@ -1,15 +1,15 @@
 use async_recursion::async_recursion;
-use sea_orm::ActiveValue::Set;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, ModelTrait,
     QueryFilter, QueryOrder, QuerySelect, TryIntoModel,
 };
+use sea_orm::ActiveValue::Set;
 use sea_query::{Condition, Expr};
 use tracing::{debug, info};
 use uuid::Uuid;
 
-use cerium::client::driver::web::WebDriver;
 use cerium::client::Client;
+use cerium::client::driver::web::WebDriver;
 use engine::controller::case::CaseController;
 use entity::prelude::case::{Column, Entity, Model};
 use entity::prelude::case_block::{
@@ -17,7 +17,8 @@ use entity::prelude::case_block::{
     Model as BlockModel, SelfReferencingLink,
 };
 use entity::test::history;
-use entity::test::history::{ExecutionKind, ExecutionStatus, ExecutionType};
+use entity::test::ui::{ExecutionRequest, request};
+use entity::test::ui::request::{ExecutionKind, ExecutionStatus, ExecutionType, new};
 
 use crate::error::{InternalResult, OrcaRepoError};
 use crate::server::session::OrcaSession;
@@ -32,23 +33,6 @@ impl CaseService {
 
     pub fn trx(&self) -> &DatabaseTransaction {
         self.0.trx()
-    }
-
-    pub async fn create_history(
-        &self,
-        case_id: Uuid,
-        desc: Option<String>,
-    ) -> InternalResult<history::Model> {
-        let history = HistoryService::new(self.0.clone())
-            .create_history(
-                case_id,
-                ExecutionKind::Trigger,
-                ExecutionType::TestCase,
-                desc,
-                Some(true),
-            )
-            .await?;
-        Ok(history)
     }
 
     /// list all the test suites in the Orca Application
@@ -215,23 +199,33 @@ impl CaseService {
             ))?;
         }
         let _case = case.unwrap();
-        let history = self
-            .create_history(
-                case_id,
-                Some(format!("Executing - {case_name}", case_name = _case.name)),
-            )
-            .await?;
+        let er_am = new(case_id, ExecutionType::TestCase, ExecutionKind::Trigger, ExecutionStatus::Started, 0, false, None);
+        // let er = ExecutionRequest {
+        //     description: Some(format!("Executing - {case_name}", case_name = _case.name)),
+        //     is_dry_run: true,
+        //     ref_id: case_id,
+        //     ref_type: ExecutionType::TestCase,
+        //     kind: ExecutionKind::Trigger,
+        //     status: ExecutionStatus::Started,
+        //     args: None,
+        //     log_id: 0,
+        //     created_at: chrono::Utc::now().into(),
+        //     created_by: Some("system".to_string()),
+        //     finished_at: None,
+        //     updated_at: None,
+        // };
+        let mut er_am = er_am.save(self.trx()).await?;
         let ui_driver = WebDriver::default().await?;
         let controller = CaseController::new(self.trx(), ui_driver.clone(), self.1.clone());
-        controller.process(&_case).await?;
+        let er = er_am.clone().try_into_model()?;
+        controller.process(&_case, &er, None).await?;
         ui_driver.quit().await?;
-        let mut _history = history.into_active_model();
-        _history.status = Set(ExecutionStatus::Completed);
-        _history.description = Set(Some(format!(
-            "Executed - {case_name}",
-            case_name = _case.name
-        )));
-        _history.save(self.trx()).await?;
+
+        er_am.status = Set(ExecutionStatus::Completed);
+        er_am.finished_at = Set(chrono::Utc::now().into());
+        er_am.updated_at = Set(chrono::Utc::now().into());
+        er_am.save(self.trx()).await?;
+
         Ok(())
     }
 
