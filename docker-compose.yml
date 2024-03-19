@@ -107,10 +107,11 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=orca
+      # - PGDATA=/var/lib/postgresql/data/some_name/
     ports:
       - "5433:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./data/pg-data:/var/lib/postgresql/data
     container_name: postgres-ser
 
   ### Redis ################################################

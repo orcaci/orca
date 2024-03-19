@@ -11,21 +11,21 @@ import { shallow } from "zustand/shallow";
 
 export const New: React.FC<any> = () => {
   let options = [
-    {
-      key: "loop",
-      label: "Loop",
-      icon: <ArrowPathRoundedSquareIcon className="h-5 w-5 text-gray-400" />
-    },
-    {
-      key: "ifcondition",
-      label: "If Condidion",
-      icon: <HashtagIcon className="h-5 w-5 text-gray-400" />
-    },
-    {
-      key: "block",
-      label: "Block",
-      icon: <CodeBracketSquareIcon className="h-5 w-5 text-gray-400" />
-    },
+    // {
+    //   key: "loop",
+    //   label: "Loop",
+    //   icon: <ArrowPathRoundedSquareIcon className="h-5 w-5 text-gray-400" />
+    // },
+    // {
+    //   key: "ifcondition",
+    //   label: "If Condidion",
+    //   icon: <HashtagIcon className="h-5 w-5 text-gray-400" />
+    // },
+    // {
+    //   key: "block",
+    //   label: "Block",
+    //   icon: <CodeBracketSquareIcon className="h-5 w-5 text-gray-400" />
+    // },
     {
       key: "action_group",
       label: "Action group",

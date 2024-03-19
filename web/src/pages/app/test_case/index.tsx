@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Service } from "service";
 import { Endpoint } from "service/endpoint";
+import { fetchTestCases } from "service/app/test_case";
 
 export const TestCaseDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -123,19 +124,15 @@ export const TestCaseDashboard: React.FC = () => {
 
   const updateTableInfo = (event: EventSource, field_id: string) => {};
 
-  /**
-   * fetchTestCase - fetch all Test case from the specify Application
-   */
-  const fetchTestCase = async () => {
-    await Service.get(`${Endpoint.v1.case.list(appId)}`)
-      .then((cases) => {
-        setDataSource(cases);
-      })
-      .finally(() => {});
-  };
+  const getCaseList = () => {
+    fetchTestCases(appId).then((cases: any) => {
+      setDataSource(cases);
+    })
+    .finally(() => {});
+  }
 
   useEffect(() => {
-    fetchTestCase();
+    getCaseList();
   }, []);
 
   /**
@@ -159,7 +156,7 @@ export const TestCaseDashboard: React.FC = () => {
       body: payload
     })
       .then((record: any) => {
-        fetchTestCase();
+        getCaseList();
       })
       .finally(() => {});
   };
@@ -171,7 +168,7 @@ export const TestCaseDashboard: React.FC = () => {
   const onDelete = async (caseId: any) => {
     await Service.delete(`${Endpoint.v1.case.delete(appId, caseId)}`)
       .then(() => {
-        fetchTestCase();
+        getCaseList();
       })
       .finally(() => {});
   };

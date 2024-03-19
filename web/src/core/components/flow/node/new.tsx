@@ -27,21 +27,21 @@ type MyObject = { [key: string]: () => any };
 
 export const NewNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
   const options: Array<Option> = [
-    {
-      key: "loop",
-      label: "Loop",
-      icon: <ArrowPathRoundedSquareIcon className="h-5 w-5 text-gray-400" />
-    },
-    {
-      key: "ifcondition",
-      label: "If Condidion",
-      icon: <HashtagIcon className="h-5 w-5 text-gray-400" />
-    },
-    {
-      key: "assertion",
-      label: "Assertion",
-      icon: <CodeBracketSquareIcon className="h-5 w-5 text-gray-400" />
-    },
+    // {
+    //   key: "loop",
+    //   label: "Loop",
+    //   icon: <ArrowPathRoundedSquareIcon className="h-5 w-5 text-gray-400" />
+    // },
+    // {
+    //   key: "ifcondition",
+    //   label: "If Condidion",
+    //   icon: <HashtagIcon className="h-5 w-5 text-gray-400" />
+    // },
+    // {
+    //   key: "assertion",
+    //   label: "Assertion",
+    //   icon: <CodeBracketSquareIcon className="h-5 w-5 text-gray-400" />
+    // },
     {
       key: "action_group",
       label: "Action group",
