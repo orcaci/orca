@@ -89,7 +89,7 @@
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.6.1",
-    "postcss": "^8.4.35",
+    "postcss": "^8.4.36",
     "preline": "^2.0.3",
     "prettier": "^2.7.1",
     "prop-types": "^15.8.1",
