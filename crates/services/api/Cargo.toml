@@ -13,29 +13,29 @@ exclude.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde.workspace=true
-serde_json.workspace=true
-tracing.workspace=true
-tracing-subscriber.workspace=true
-jsonwebtoken.workspace=true
-tower.workspace=true
-tower-http.workspace=true
-uuid.workspace=true
-futures.workspace=true
-futures-util.workspace=true
-config.workspace=true
-chrono.workspace=true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+jsonwebtoken.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+uuid.workspace = true
+futures.workspace = true
+futures-util.workspace = true
+config.workspace = true
+chrono.workspace = true
 
-sea-orm.workspace =true
-sea-query.workspace=true
-sea-orm-migration.workspace=true
-axum.workspace=true
+sea-orm.workspace = true
+sea-query.workspace = true
+sea-orm-migration.workspace = true
+axum.workspace = true
 
-cerium.workspace=true
-engine.workspace=true
-migration.workspace=true
-entity.workspace=true
-thiserror.workspace=true
+cerium.workspace = true
+engine.workspace = true
+migration.workspace = true
+entity.workspace = true
+thiserror.workspace = true
 
 async-recursion = "1.0.5"
 

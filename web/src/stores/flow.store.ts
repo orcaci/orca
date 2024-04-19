@@ -15,23 +15,6 @@ import {
 } from "reactflow";
 import { create } from "zustand";
 
-const NODE_TYPES = {
-  newNode: { width: 28, height: 30 },
-  actionNode: { width: 384, height: 40 },
-  conditionalNode: { width: 384, height: 40 },
-  endloop: { width: 28, height: 30 },
-  loop: { width: 384, height: 40 }
-};
-
-const GRAPH_SETTINGS = {
-  rankdir: "TB",
-  ranker: "longest-path",
-  nodesep: 500,
-  edgesep: 0,
-  marginx: 30,
-  marginy: 20,
-  ranksep: 60
-};
 
 export const flowStateSelector = (state: RFState) => ({
   nodes: state.nodes,
@@ -108,11 +91,9 @@ export const useFlowStore = create<RFState>((set, get) => ({
     });
   },
   setNodes: (nodes: Node[]) => {
-    // console.log(`Updated the Node from the INtial value - ${nodes}`);
     set({ nodes });
   },
   setEdges: (edges: Edge[]) => {
-    // console.log(`Updated the edges - ${edges}`);
     set({ edges });
   },
   rearrangeNodePosition: () => {
@@ -120,7 +101,6 @@ export const useFlowStore = create<RFState>((set, get) => ({
     dagreGraph.setDefaultEdgeLabel(() => ({}));
     let nodes = get().nodes;
     let edges = get().edges;
-    // console.log(edges);
     if (nodes.length == 0) return;
     dagreGraph.setGraph({
       rankdir: "TB",
@@ -146,7 +126,6 @@ export const useFlowStore = create<RFState>((set, get) => ({
       Object.assign(wxh, sizeMatrix[nodeType] || { width: 400, height: 100 });
       dagreGraph.setNode(node.id, wxh);
     });
-    // console.log(nodes);
 
     edges
       .filter((item) => !item.id.startsWith("edge_continue"))
@@ -157,34 +136,23 @@ export const useFlowStore = create<RFState>((set, get) => ({
     layout(dagreGraph);
     dagreGraph.graph();
 
-    // console.log("result", "graph", );
 
     let resultNode: Array<any> = [];
     nodes.forEach((node: any) => {
       const nodeWithPosition = dagreGraph.node(node.id);
-      // console.log("result", node.id, nodeWithPosition);
       node.targetPosition = "top";
       node.sourcePosition = "bottom";
-
-      //   let t: string = node["type"];
-      //   let s: any = sizeMatrix[t] || { width: 172, height: 36 };
-
-      // We are shifting the dagre node position (anchor=center center) to the top left
-      // so it matches the React Flow node anchor point (top left).
       node.position = {
         x: nodeWithPosition.x - nodeWithPosition.width / 2,
-        y: nodeWithPosition.y //- nodeWithPosition.height / 2
+        y: nodeWithPosition.y
       };
-      // console.log("result", node.id, node.position);
       resultNode.push(node);
       return node;
     });
-    // console.log("currect value of the width and height ", " - ", nodes);
     set({ nodes, edges });
     return { nodes: resultNode, edges: edges };
   },
   addNewNode: (nodes: Node[]) => {
-    // console.log(`Updated the edges - ${nodes}`);
     set({ nodes: [] });
   }
 }));
@@ -209,7 +177,7 @@ const processNode = (
     edges.push({
       ...derivedEdge,
       id: `${derivedEdge?.id}_to_${_blockType}${item.id}`,
-      type: "defaultE",
+      type: "defaultEdge",
       target: `${_blockType}${item.id}`
     });
   }
@@ -222,7 +190,7 @@ const processNode = (
   if (_blockType == blockType.Assertion) {
     edges.push({
       id: `edge_${_blockType}_${item.id}`,
-      type: "defaultE",
+      type: "defaultEdge",
       source: `${_blockType}${item.id}`,
       target: `addBlock${item.id}`
     });
@@ -238,7 +206,7 @@ const processNode = (
     });
     derivedEdge = {
       id: `edge_newNode_${_blockType}_${item.id}`,
-      type: "defaultE",
+      type: "defaultEdge",
       source: `addBlock${item.id}`
     };
   } else if (_blockType == blockType.Loop) {
@@ -266,7 +234,7 @@ const processNode = (
 
     derivedEdge = {
       id: `edge_child_${_blockType}_${item.id}`,
-      type: "defaultE",
+      type: "defaultEdge",
       source: `addBlock_${_blockType}${item.id}`
     };
 
@@ -281,7 +249,7 @@ const processNode = (
     edges.push({
       ...derivedEdge,
       id: `${derivedEdge?.id}_to_end_${_blockType}${item.id}`,
-      type: "defaultE",
+      type: "defaultEdge",
       target: `endloop${item.id}`
     });
     nodes.push({
@@ -308,18 +276,12 @@ const processNode = (
 
     edges.push({
       id: `edge_end_${_blockType}_${item.id}`,
-      type: "defaultE",
+      type: "defaultEdge",
       sourceHandle: "end",
       source: `endloop${item.id}`,
       target: `addBlock${item.id}`
     });
 
-    // edges.push({
-    //   id: `edge_${_blockType}_${item.id}`,
-    //   type: "defaultE",
-    //   source: `${_blockType}${item.id}`,
-    //   target: `addBlock${item.id}`
-    // });
     nodes.push({
       id: `addBlock${item.id}`,
       type: "newNode",
@@ -332,14 +294,12 @@ const processNode = (
     });
     derivedEdge = {
       id: `edge_newNode_${_blockType}_${item.id}`,
-      type: "defaultE",
+      type: "defaultEdge",
       source: `addBlock${item.id}`
     };
   } else if (_blockType == blockType.Condition) {
-    // looping child action
     let child = item.children;
     if (child != undefined && child.length > 0) {
-      // generateNodeAndEdge(child, )
       child.map((child_item: any, _child_index: number) => {
         let field_type = blockType[child_item.type_field] || "actionNode";
 
@@ -363,7 +323,7 @@ const processNode = (
         });
         derivedEdge = {
           id: `edge_newNode_${field_type}_${child_item.id}`,
-          type: "defaultE",
+          type: "defaultEdge",
           source: `addBlock${field_type}${child_item.id}`
         };
         let _derivedEdge = generateNodeAndEdge(
@@ -377,7 +337,7 @@ const processNode = (
         edges.push({
           ..._derivedEdge,
           id: `${_derivedEdge?.id}_to_${field_type}${item.id}`,
-          type: "defaultE",
+          type: "defaultEdge",
           target: `addBlock_endBlockConstion_${item.id}`
         });
       });
@@ -395,7 +355,7 @@ const processNode = (
     });
     derivedEdge = {
       id: `edge_newNode_${_blockType}_${item.id}`,
-      type: "defaultE",
+      type: "defaultEdge",
       source: `addBlock_endBlockConstion_${item.id}`
     };
   }
@@ -424,6 +384,5 @@ const generateNodeAndEdge = (
       }
     });
   }
-  // if (parentID == undefined) console.log("Got result", nodes, edges);
   return derivedEdge;
 };

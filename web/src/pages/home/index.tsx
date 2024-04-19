@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ApplicationCard } from "core/components/app_card";
-// import { CreateModal } from "components/create_modal";
 import { Service } from "service";
 import { Endpoint } from "service/endpoint";
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -15,8 +14,6 @@ export interface Application {
 
 export function Home() {
   const [applications, setApplications] = useState([]);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isListLoading, setIsListLoading] = useState(false);
 
   const fetchApplications = async () => {
@@ -27,19 +24,6 @@ export function Home() {
       })
       .finally(() => {
         setIsListLoading(false);
-      });
-  };
-
-  const onAddApplication = async (data: any) => {
-    setIsLoading(true);
-    await Service.post(Endpoint.v1.application.createApplication, {
-      body: data
-    })
-      .then(() => {
-        fetchApplications();
-      })
-      .finally(() => {
-        setIsLoading(false);
       });
   };
 
@@ -57,7 +41,7 @@ export function Home() {
             size="3"
             color="indigo"
             variant="soft"
-            onClick={() => setIsCreateModalOpen(true)}
+            onClick={() => {}}
           >
             <PlusIcon width="22" height="22" />
           </IconButton>
@@ -76,16 +60,6 @@ export function Home() {
           {applications.map((app: Application) => (
             <ApplicationCard key={app.id} appDetails={app} />
           ))}
-
-          {isCreateModalOpen &&
-            // <CreateModal
-            //   isModalOpen={isCreateModalOpen}
-            //   onClose={() => setIsCreateModalOpen(false)}
-            //   onOk={onAddApplication}
-            //   isLoading={isLoading}
-            //   modelFor={"Application"}
-            // />
-            ""}
         </div>
       )}
     </>

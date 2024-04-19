@@ -15,8 +15,8 @@ export const fetchActions = async (
       return actions;
     })
     .catch((error) => {
-      console.log("fetch Actions failed with some reason =", error);
-      return [];
+      console.error("fetch Actions failed with some reason =", error);
+      return error;
     });
   return _actions;
 };

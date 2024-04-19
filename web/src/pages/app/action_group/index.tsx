@@ -1,8 +1,6 @@
-import { SearchSelect } from "core/components/select/search";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@radix-ui/react-icons";
 import {
-  Box,
   Button,
   Flex,
   IconButton,
@@ -15,7 +13,7 @@ import {
 } from "@radix-ui/themes";
 
 import { ColumnField } from "core/components/table";
-import { ReadOnlyTableV2 } from "core/components/table/read";
+import { ReadOnlyTable } from "core/components/table/read";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Service } from "service";
@@ -25,16 +23,14 @@ export const ActionGroupDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [dataSource, setDataSource] = useState([] as any);
   const [groupAction, setgroupAction] = useState({} as any);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const extra: Array<React.ReactNode> = [
-    <Popover.Root>
+    <Popover.Root key="popover">
       <Popover.Trigger>
         <Button
           variant="soft"
           onClick={() => {
             setgroupAction({});
-            setIsCreateModalOpen(true);
           }}
         >
           <PlusIcon width="16" height="16" />
@@ -127,8 +123,6 @@ export const ActionGroupDashboard: React.FC = () => {
     setgroupAction(_data);
   };
 
-  const updateTableInfo = (event: EventSource, field_id: string) => {};
-
   /**
    * fetchActionGroups - fetch all ActionGroup from the specify Application
    */
@@ -162,12 +156,10 @@ export const ActionGroupDashboard: React.FC = () => {
       app_id: appId,
       type_field: "ActionGroup"
     };
-    setIsCreateModalOpen(false);
     await Service.post(`${Endpoint.v1.group.create(appId)}`, {
       body: payload
     })
       .then((record: any) => {
-        // onHandleClick(`${record.id}`);
         fetchActionGroups();
       })
       .finally(() => {});
@@ -185,18 +177,11 @@ export const ActionGroupDashboard: React.FC = () => {
       .finally(() => {});
   };
 
-  return (
-    <>
-      {/* <AppHeader title="Action Group" extra={extra} />
-
-      <ReadOnlyTable column={columns} data={dataSource} /> */}
-
-      <ReadOnlyTableV2
+  return (<ReadOnlyTable
         title="Action Group"
         column={columns}
         data={dataSource}
         extra={extra}
       />
-    </>
   );
 };

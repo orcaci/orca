@@ -1,4 +1,5 @@
 use std::sync::{Arc, Mutex};
+use std::time::Duration;
 
 use axum::{Router, serve};
 use axum::http::{HeaderName, Method};
@@ -9,11 +10,13 @@ use tower_http::{
     compression::CompressionLayer,
     cors::{Any, CorsLayer},
 };
+use tower_http::classify::ServerErrorsFailureClass;
 use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
 use tower_http::trace::TraceLayer;
-use tracing::{info, Level};
-use tracing_subscriber::fmt;
+use tracing::{error, info, Level, Span};
+use tracing_subscriber::{filter, fmt};
 use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::client::Client;
 use crate::server::request_id::OrcaRequestId;
@@ -69,8 +72,19 @@ impl App {
     /// let app = App::new("my_app", client);
     /// app.set_logger(Level::INFO);
     ///
-    pub fn set_logger(&self, filter: Level) {
-        fmt().with_max_level(filter).init()
+    pub fn set_logger(&self, level: Level) {
+        let filter = filter::Targets::new()
+            .with_target("tower_http::trace::on_response", Level::TRACE)
+            .with_target("tower_http::trace::on_request", Level::TRACE)
+            .with_target("tower_http::trace::on_failure", Level::TRACE)
+            .with_target("tower_http::trace::make_span", Level::DEBUG)
+            .with_default(level);
+        let tracing_layer = tracing_subscriber::fmt::layer();
+
+        tracing_subscriber::registry()
+            .with(tracing_layer)
+            .with(filter)
+            .init();
         // .with(tracing_subscriber::fmt::layer())
         // .with_target(true)
         // .with_timer(tracing_subscriber::fmt::time::uptime())
@@ -102,7 +116,16 @@ impl App {
             .layer(cors)
             .layer(CompressionLayer::new())
             .layer(CatchPanicLayer::new())
-            .layer(TraceLayer::new_for_http());
+            .layer(
+                TraceLayer::new_for_http()
+                // .on_failure(|error: ServerErrorsFailureClass, latency: Duration, _span: &Span| {
+                //     let mut error_msg = format!("something went wrong: {:?}", error);
+                //     let backtrace = backtrace::Backtrace::new();
+                //     error_msg.push_str("\nBacktrace:\n");
+                //     // error_msg.push_str(&backtrace);
+                //     error!("{:?} - {:?} - {:#?}", error_msg, latency, backtrace);
+                // })
+            );
         self.router = router
     }
 

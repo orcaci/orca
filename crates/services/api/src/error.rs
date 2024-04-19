@@ -1,11 +1,15 @@
+use std::backtrace::Backtrace;
+
 use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
 use axum::Json;
+use axum::response::{IntoResponse, Response};
+use sea_orm::DbErr;
+use serde_json::{Error as SerdeJsonError, json};
+use thiserror::Error;
+use tracing::error;
+
 use cerium::error::CeriumError;
 use engine::error::EngineError;
-use sea_orm::DbErr;
-use serde_json::{json, Error as SerdeJsonError};
-use thiserror::Error;
 
 use crate::error::OrcaError::RepoError;
 
@@ -19,14 +23,13 @@ pub enum OrcaRepoError {
     #[error("{0} Not Found: {1}")]
     ModelNotFound(String, String),
     #[error("Invalid UserName: {0}")]
-    InvalidUsername(i32),
+    InvalidUsername(String),
 }
 
 /// Our app's top level error type.
 #[derive(Error, Debug)]
 pub enum OrcaError {
     /// Something went wrong when calling the user repo.
-
     #[error("DbErr error: {0}")]
     DataBaseError(#[from] DbErr),
 
@@ -43,46 +46,6 @@ pub enum OrcaError {
     CeriumError(#[from] CeriumError),
 }
 
-// /// This makes it possible to use `?` to automatically convert a `DbErr`
-// /// into an `OrcaError`.
-// impl From<OrcaRepoError> for OrcaError {
-//     fn from(inner: OrcaRepoError) -> Self {
-//         OrcaError::RepoError(inner)
-//     }
-// }
-//
-// /// This makes it possible to use `?` to automatically convert a `DbErr`
-// /// into an `OrcaError`.
-// impl From<DbErr> for OrcaError {
-//     fn from(inner: DbErr) -> Self {
-//         OrcaError::DataBaseError(inner)
-//     }
-// }
-//
-// /// This makes it possible to use `?` to automatically convert a `EngineError`
-// /// into an `OrcaError`.
-// impl From<EngineError> for OrcaError {
-//     fn from(inner: EngineError) -> Self {
-//         OrcaError::EngineError(inner)
-//     }
-// }
-//
-// /// This makes it possible to use `?` to automatically convert a `CeriumError`
-// /// into an `OrcaError`.
-// impl From<CeriumError> for OrcaError {
-//     fn from(inner: CeriumError) -> Self {
-//         OrcaError::CeriumError(inner)
-//     }
-// }
-
-// /// This makes it possible to use `?` to automatically convert a `DbErr`
-// /// into an `OrcaError`.
-// impl From<SerdeJsonError> for OrcaError {
-//     fn from(inner: SerdeJsonError) -> Self {
-//         OrcaError::SerializerError(inner)
-//     }
-// }
-
 impl IntoResponse for OrcaError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
@@ -96,7 +59,7 @@ impl IntoResponse for OrcaError {
                 "Internal Error Not Specify".to_string(),
             ),
         };
-
+        error!("Error: {}", Backtrace::force_capture());
         let body = Json(json!({
             "error": error_message,
         }));

@@ -2,7 +2,7 @@
 
 [workspace]
 name = "orca"
-members=[
+members = [
     "crates/libs/cerium",
     "crates/libs/entity",
     "crates/libs/migration",
@@ -12,7 +12,7 @@ members=[
 ]
 
 [workspace.package]
-authors = [ "Vasanth Kumar <mail@itsparser.in>" ]
+authors = ["Vasanth Kumar <mail@itsparser.in>"]
 edition = "2021"
 version = "0.1.0"
 license = "MIT OR Apache-2.0"
@@ -28,14 +28,14 @@ entity = { path = "crates/libs/entity", default-features = true }
 migration = { path = "crates/libs/migration", default-features = true }
 engine = { path = "crates/services/engine", default-features = true }
 api = { path = "crates/services/api", default-features = true }
-chrome = { path = "crates/workshop/chrome", default-features = true }
+#chrome = { path = "crates/workshop/chrome", default-features = true }
 entity_macro = { path = "crates/macro/entity-macro", default-features = true }
 
 thiserror = "1.0.31"
 jsonwebtoken = "9.2.0"
-serde = { version = "1.0.147"}
+serde = { version = "1.0.147" }
 serde_json = "1.0.87"
-chrono = { version = "0.4.31"}
+chrono = { version = "0.4.31" }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"
 uuid = { version = "1.6.1", features = ["serde", "v4"] }
@@ -47,28 +47,30 @@ rust_decimal = "1.14.3"
 cross-test = "0.1.6"
 
 sea-query = "0.30.5"
-sea-orm = { version = "0.12.3",  features = [
-  "macros",
-  "debug-print",
-  "runtime-async-std-native-tls",
-  "sqlx-postgres",
+sea-orm = { version = "0.12.3", features = [
+    "macros",
+    "debug-print",
+    "runtime-async-std-native-tls",
+    "sqlx-postgres",
 ] }
-sea-orm-migration = {version = "0.12.3", features = ["sqlx-postgres"]}
+sea-orm-migration = { version = "0.12.3", features = ["sqlx-postgres"] }
+
 axum = "0.7.1"
 axum-extra = "0.9.1"
 tokio = { version = "1.34.0", features = ["full"] }
 tower = "0.4.13"
 tower-http = { version = "0.5.0", default-features = true, features = ["uuid", "cors", "trace", "compression-br", "catch-panic", "request-id"] }
+#tower_governor = "0.3.2"
 
 
 rust-s3 = "0.33.0"
 
 thirtyfour = "0.31.0"
 
-geckodriver="0.34.0"
+geckodriver = "0.34.0"
 
 
 [patch.crates-io]
-sea-orm = { git="https://github.com/itsparser/sea-orm", branch = "master" }
-sea-orm-migration = { git="https://github.com/itsparser/sea-orm", branch = "master" }
+sea-orm = { git = "https://github.com/itsparser/sea-orm", branch = "master" }
+sea-orm-migration = { git = "https://github.com/itsparser/sea-orm", branch = "master" }
 

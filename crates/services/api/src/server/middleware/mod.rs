@@ -1,13 +1,14 @@
 use std::sync::Arc;
 use std::task::{Context, Poll};
 
-use crate::server::session::OrcaSession;
 use axum::{async_trait, extract::Request, response::Response};
 use futures::executor::block_on;
 use futures_util::future::BoxFuture;
 use sea_orm::{DatabaseConnection, TransactionTrait};
 use tower::{Layer, Service};
-use tracing::info;
+use tracing::{debug, info};
+
+use crate::server::session::OrcaSession;
 
 pub mod orca;
 
@@ -35,9 +36,9 @@ pub struct OrcaMiddleware<S> {
 
 #[async_trait]
 impl<S> Service<Request> for OrcaMiddleware<S>
-where
-    S: Service<Request, Response = Response> + Send + 'static,
-    S::Future: Send + 'static,
+    where
+        S: Service<Request, Response=Response> + Send + 'static,
+        S::Future: Send + 'static,
 {
     type Response = S::Response;
     type Error = S::Error;
@@ -50,16 +51,16 @@ where
 
     fn call(&mut self, mut request: Request) -> Self::Future {
         let ext = request.extensions_mut();
-        info!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------------BEFORE REQUEST------------------>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        info!(">>>>>>>>>--------------BEFORE REQUEST------------------>>>>>>>>>");
         let trx = block_on(self.db.begin()).expect("got error on trx");
-        ext.insert(OrcaSession::new(trx.clone()));
+        ext.insert(OrcaSession::new(trx.clone(), "system".to_string()));
         let future = self.inner.call(request);
         Box::pin(async move {
             let mut response: Response = future.await?;
             let headers = response.headers_mut();
             trx.commit().await.expect("TODO: panic message");
-            info!("headers - {:?}", headers);
-            info!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------------AFTER REQUEST------------------>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            debug!("headers - {:?}", headers);
+            info!(">>>>>>>>>-------------AFTER REQUEST------------->>>>>>>>>");
             Ok(response)
         })
     }

@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
 #[sea_orm(
-    rs_type = "String",
-    db_type = "String(Some(15))",
-    enum_name = "block_kind"
+rs_type = "String",
+db_type = "String(Some(15))",
+enum_name = "block_kind"
 )]
 pub enum BlockKind {
     #[sea_orm(string_value = "Loop")]
@@ -23,9 +23,9 @@ pub enum BlockKind {
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
 #[sea_orm(
-    rs_type = "String",
-    db_type = "String(Some(15))",
-    enum_name = "suit_block_type"
+rs_type = "String",
+db_type = "String(Some(15))",
+enum_name = "suit_block_type"
 )]
 pub enum SuiteBlockType {
     #[sea_orm(string_value = "TestCase")]
@@ -35,6 +35,7 @@ pub enum SuiteBlockType {
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
 #[sea_orm(table_name = "suite_block")]
 pub struct Model {
+    #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
     pub id: Uuid,
     #[serde(skip_deserializing)]
@@ -42,6 +43,11 @@ pub struct Model {
     #[sea_orm(column_name = "type")]
     pub type_field: SuiteBlockType,
     pub reference: Option<Uuid>,
+
+    #[sea_orm(ignore)]
+    pub name: Option<String>,
+    #[sea_orm(ignore)]
+    pub description: Option<String>,
 
     #[serde(skip_deserializing)]
     pub suite_id: Uuid,
@@ -52,9 +58,9 @@ pub enum Relation {
     // #[sea_orm(belongs_to = "Entity", from = "Column::Id", to = "Column::ParentId")]
     // SelfReferencing,
     #[sea_orm(
-        belongs_to = "super::suite::Entity",
-        from = "Column::SuiteId",
-        to = "super::suite::Column::Id"
+    belongs_to = "super::suite::Entity",
+    from = "Column::SuiteId",
+    to = "super::suite::Column::Id"
     )]
     Suite,
 }

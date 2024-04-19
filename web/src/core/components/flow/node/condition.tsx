@@ -1,11 +1,7 @@
-import { useState } from "react";
-import { NodeProps, Position, useNodeId } from "reactflow";
+import { NodeProps, Position } from "reactflow";
 import CustomHandle from "../handler/test";
 
 export const ConditionalNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
-  const [selected, setValueSelected] = useState({} as any);
-  const [open, setOpen] = useState(false);
-  const nodeId = useNodeId();
   return (
     <>
       <CustomHandle
@@ -19,7 +15,6 @@ export const ConditionalNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
       <div className="w-96 h-10 border-white bg-orange-100 rounded-lg shadow-sm hover:shadow-md">
         <div className="self-center p-2 align-middle text-center ">
           <h3 className=" text-ellipsis text-nowrap ">
-            If new more content comming into this Node[ Condition ] -{" "}
             {data?.payload?.name}
           </h3>
         </div>
@@ -34,7 +29,6 @@ export const ConditionalNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
         isConnectable={true}
         isConnectableEnd={false}
       />
-
       <CustomHandle
         id="no"
         type="source"

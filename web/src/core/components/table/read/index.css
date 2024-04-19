@@ -1,0 +1,14 @@
+.tableCell{
+    background: white;
+}
+
+.dragging{
+    background: rgba(127, 207, 250, 0.3);
+    min-height: 41px;
+}
+
+.indexCell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

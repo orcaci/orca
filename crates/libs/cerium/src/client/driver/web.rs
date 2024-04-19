@@ -1,7 +1,7 @@
-use thirtyfour::{CapabilitiesHelper, WebDriver as TFWebDriver};
+use thirtyfour::{By, CapabilitiesHelper, DesiredCapabilities, WebElement};
+use thirtyfour::WebDriver as TFWebDriver;
 
 use crate::error::CeriumResult;
-use thirtyfour::{By, DesiredCapabilities, WebElement};
 
 #[derive(Clone)]
 pub struct WebDriver {
@@ -30,13 +30,14 @@ impl WebDriver {
         let helper = WebDriver { driver };
         Ok(helper)
     }
-    
+
     pub async fn session_id(&self) -> CeriumResult<String> {
         Ok(self.driver.session_id().await?.clone().to_string())
     }
 
     pub async fn default() -> CeriumResult<Self> {
         let mut caps = DesiredCapabilities::firefox();
+        caps.set_headless()?;
         caps.add("se:recordVideo", true)?;
         let driver = TFWebDriver::new("http://localhost:4444/wd/hub/session", caps).await?;
         Self::new(driver)

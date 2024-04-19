@@ -27,12 +27,15 @@ db_type = "String(Some(10))",
 enum_name = "execution_type"
 )]
 pub enum ExecutionType {
-    #[sea_orm(string_value = "TestCase")]
-    #[serde(rename = "TestCase")]
+    #[sea_orm(string_value = "TC")]
+    #[serde(rename = "TC")]
     TestCase,
-    #[sea_orm(string_value = "TestSuite")]
-    #[serde(rename = "TestSuite")]
+    #[sea_orm(string_value = "TS")]
+    #[serde(rename = "TS")]
     TestSuite,
+    #[sea_orm(string_value = "AG")]
+    #[serde(rename = "AG")]
+    ActionGroup,
 }
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
@@ -78,31 +81,59 @@ pub struct Model {
     pub updated_at: DateTimeWithTimeZone,
 }
 
-pub fn new(
-    ref_id: Uuid,
-    ref_type: ExecutionType,
-    kind: ExecutionKind,
-    status: ExecutionStatus,
-    log_id: i32,
-    is_dry_run: bool,
-    desc: Option<String>,
-) -> ActiveModel {
-    ActiveModel {
-        id: Default::default(),
-        description: Set(desc),
-        is_dry_run: Set(is_dry_run),
-        ref_id: Set(ref_id),
-        ref_type: Set(ref_type),
-        kind: Set(kind),
-        status: Set(status),
-        args: NotSet,
-        log_id: Set(log_id),
-        created_at: Set(chrono::Utc::now().into()),
-        created_by: Set("System".to_string()),
-        finished_at: Set(chrono::Utc::now().into()),
-        updated_at: Set(chrono::Utc::now().into()),
+impl ActiveModel {
+    pub fn new(
+        ref_id: Uuid,
+        ref_type: ExecutionType,
+        kind: ExecutionKind,
+        status: ExecutionStatus,
+        log_id: i32,
+        is_dry_run: bool,
+        desc: Option<String>,
+    ) -> Self {
+        Self {
+            id: Default::default(),
+            description: Set(desc),
+            is_dry_run: Set(is_dry_run),
+            ref_id: Set(ref_id),
+            ref_type: Set(ref_type),
+            kind: Set(kind),
+            status: Set(status),
+            args: NotSet,
+            log_id: Set(log_id),
+            created_at: Set(chrono::Utc::now().into()),
+            created_by: Set("System".to_string()),
+            finished_at: Set(chrono::Utc::now().into()),
+            updated_at: Set(chrono::Utc::now().into()),
+        }
     }
 }
+
+// pub fn new(
+//     ref_id: Uuid,
+//     ref_type: ExecutionType,
+//     kind: ExecutionKind,
+//     status: ExecutionStatus,
+//     log_id: i32,
+//     is_dry_run: bool,
+//     desc: Option<String>,
+// ) -> ActiveModel {
+//     ActiveModel {
+//         id: Default::default(),
+//         description: Set(desc),
+//         is_dry_run: Set(is_dry_run),
+//         ref_id: Set(ref_id),
+//         ref_type: Set(ref_type),
+//         kind: Set(kind),
+//         status: Set(status),
+//         args: NotSet,
+//         log_id: Set(log_id),
+//         created_at: Set(chrono::Utc::now().into()),
+//         created_by: Set("System".to_string()),
+//         finished_at: Set(chrono::Utc::now().into()),
+//         updated_at: Set(chrono::Utc::now().into()),
+//     }
+// }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}

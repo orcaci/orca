@@ -1,21 +1,15 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import {
-  ArrowPathRoundedSquareIcon,
   CodeBracketSquareIcon,
-  HashtagIcon
+  // HashtagIcon
 } from "@heroicons/react/24/solid";
 import { Fragment, useState } from "react";
-import { NodeProps, Position, useEdges, useNodeId, useStore } from "reactflow";
+import { NodeProps, Position } from "reactflow";
 import { flowStateSelector, useFlowStore } from "stores/flow.store";
 import { v4 as uuidv4 } from "uuid";
 import { shallow } from "zustand/shallow";
 import CustomHandle from "../handler/test";
-
-const selector = (s: any) => ({
-  nodeInternals: s.nodeInternals,
-  edges: s.edges
-});
 
 interface Option {
   key: string;
@@ -27,41 +21,31 @@ type MyObject = { [key: string]: () => any };
 
 export const NewNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
   const options: Array<Option> = [
-    {
-      key: "loop",
-      label: "Loop",
-      icon: <ArrowPathRoundedSquareIcon className="h-5 w-5 text-gray-400" />
-    },
-    {
-      key: "ifcondition",
-      label: "If Condidion",
-      icon: <HashtagIcon className="h-5 w-5 text-gray-400" />
-    },
-    {
-      key: "assertion",
-      label: "Assertion",
-      icon: <CodeBracketSquareIcon className="h-5 w-5 text-gray-400" />
-    },
+    // {
+    //   key: "loop",
+    //   label: "Loop",
+    //   icon: <ArrowPathRoundedSquareIcon className="h-5 w-5 text-gray-400" />
+    // },
+    // {
+    //   key: "ifcondition",
+    //   label: "If Condidion",
+    //   icon: <HashtagIcon className="h-5 w-5 text-gray-400" />
+    // },
+    // {
+    //   key: "assertion",
+    //   label: "Assertion",
+    //   icon: <CodeBracketSquareIcon className="h-5 w-5 text-gray-400" />
+    // },
     {
       key: "action_group",
       label: "Action group",
       icon: <CodeBracketSquareIcon className="h-5 w-5 text-gray-400" />
     }
   ];
-  const [selected, setValueSelected] = useState({} as any);
   const [open, setOpen] = useState(false);
-  const nodeId = useNodeId();
-  const useedges = useEdges();
-
-  // const store = useStoreApi();
-
-  // const { getNodes, setNodes } = store.getState();
-
-  const { nodeInternals } = useStore(selector);
 
   const { graph, setGraph } = useFlowStore(flowStateSelector, shallow);
 
-  const node = nodeInternals.get(nodeId);
 
   const findAddNode = (
     graph: Array<any>,
@@ -93,6 +77,8 @@ export const NewNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
     setOpen(false);
     return false;
   };
+
+
   const getNewNode: MyObject = {
     action_group: () => {
       return {
@@ -100,7 +86,6 @@ export const NewNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
         execution_order: data.execution_order,
         kind: "Reference",
         type_field: "ActionGroup",
-        reference: uuidv4(),
         parent_id: data.parent_id,
         case_id: data.case_id,
         children: []
@@ -113,7 +98,6 @@ export const NewNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
         execution_order: data.execution_order,
         kind: "Reference",
         type_field: "Assertion",
-        reference: uuidv4(),
         parent_id: data.parent_id,
         case_id: data.case_id,
         children: []
@@ -173,7 +157,7 @@ export const NewNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
     const newNode: any = getNewNode[option.key]();
     findAddNode(graph, newNode, data.execution_order);
     setGraph(graph);
-    console.log(graph);
+    console.log(graph, "graph")
   };
 
   return (

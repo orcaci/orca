@@ -1,9 +1,9 @@
-use sea_orm::prelude::Uuid;
-use sea_orm::ActiveValue::Set;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, IntoActiveModel, NotSet,
     QueryFilter, QueryOrder, TryIntoModel,
 };
+use sea_orm::ActiveValue::Set;
+use sea_orm::prelude::Uuid;
 use sea_query::Expr;
 use tracing::info;
 
@@ -44,7 +44,7 @@ impl ActionService {
     }
 
     /// update_action - this will update existing Action in Application in Orca
-    pub async fn update_action(&self, action_id: Uuid, mut action: Model) -> InternalResult<Model> {
+    pub async fn update_action(&self, action_id: Uuid, action: Model) -> InternalResult<Model> {
         let mut _action = action::Entity::find_by_id(action_id)
             .one(self.trx())
             .await?;

@@ -9,15 +9,52 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
-    pub id: i32,
+    pub id: String,
     pub name: String,
     pub first_name: String,
     pub last_name: Option<String>,
+    #[sea_orm(unique_key)]
     pub email: String,
-    pub profile_url: String,
+    pub profile_url: Option<String>,
+
+    pub created_at: DateTimeWithTimeZone,
+    pub updated_at: DateTimeWithTimeZone,
+    pub deleted_at: Option<DateTimeWithTimeZone>,
+    pub created_by: Option<String>,
+    pub updated_by: Option<String>,
+
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+    #[sea_orm(belongs_to = "Entity", from = "Column::CreatedBy", to = "Column::Id")]
+    CSelfReferencing,
+    #[sea_orm(belongs_to = "Entity", from = "Column::UpdatedBy", to = "Column::Id")]
+    USelfReferencing,
+}
+
+pub struct SelfReferencingLink;
+
+impl Linked for SelfReferencingLink {
+    type FromEntity = Entity;
+
+    type ToEntity = Entity;
+
+    fn link(&self) -> Vec<RelationDef> {
+        vec![Relation::CSelfReferencing.def()]
+    }
+}
+
+pub struct USelfReferencingLink;
+
+impl Linked for USelfReferencingLink {
+    type FromEntity = Entity;
+
+    type ToEntity = Entity;
+
+    fn link(&self) -> Vec<RelationDef> {
+        vec![Relation::USelfReferencing.def()]
+    }
+}
 
 impl ActiveModelBehavior for ActiveModel {}

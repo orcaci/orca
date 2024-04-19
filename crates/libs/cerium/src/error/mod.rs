@@ -1,12 +1,15 @@
+use std::backtrace::Backtrace;
+
 use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
 use axum::Json;
+use axum::response::{IntoResponse, Response};
 use s3::creds::error::CredentialsError;
 use s3::error::S3Error;
 use sea_orm::DbErr;
-use serde_json::{json, Error as SerdeJsonError};
+use serde_json::{Error as SerdeJsonError, json};
 use thirtyfour::error::WebDriverError;
 use thiserror::Error;
+use tracing::error;
 
 // pub use cerium::{CeriumError as OtherCeriumError, CeriumResult, ErrorResponse};
 pub type CeriumResult<T> = Result<T, CeriumError>;
@@ -29,7 +32,6 @@ pub enum CeriumError {
     #[error("CredentialsError error: {0}")]
     S3Error(#[from] S3Error),
 
-
 }
 
 impl IntoResponse for CeriumError {
@@ -44,6 +46,8 @@ impl IntoResponse for CeriumError {
                 "Internal Error Not Specify".to_string(),
             ),
         };
+
+        error!("Error: {}", Backtrace::force_capture());
 
         let body = Json(json!({
             "error": error_message,

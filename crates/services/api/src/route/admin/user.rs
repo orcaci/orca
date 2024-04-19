@@ -1,8 +1,8 @@
+use axum::{Extension, Json, Router};
 use axum::extract::{Path, Query};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
-use axum::{Extension, Json, Router};
 use sea_orm::ActiveValue::Set;
 use sea_orm::IntoActiveModel;
 use serde_json::json;
@@ -50,7 +50,7 @@ async fn list_user(
 /// get_user - this will get User by ID in Orca
 async fn get_user_by_id(
     Extension(session): Extension<OrcaSession>,
-    Path(user_id): Path<i32>,
+    Path(user_id): Path<String>,
 ) -> InternalResult<impl IntoResponse> {
     let result = UserService::new(session).get_user_by_id(user_id).await?;
     Ok(Json(result))
@@ -59,11 +59,11 @@ async fn get_user_by_id(
 /// update_user_by_id - update user by user ID in Orca
 async fn update_user_by_id(
     Extension(session): Extension<OrcaSession>,
-    Path(user_id): Path<i32>,
+    Path(user_id): Path<String>,
     Json(body): Json<user::Model>,
 ) -> InternalResult<impl IntoResponse> {
     let mut _user = body.clone().into_active_model();
-    _user.id = Set(user_id);
+    _user.id = Set(user_id.clone());
     let result = UserService::new(session).update_user(_user).await?;
     info!("User Got Updated - {:?}", user_id);
     Ok(Json(result))
@@ -72,7 +72,7 @@ async fn update_user_by_id(
 /// delete_user_by_id - delete user by User by ID in Orca
 async fn delete_user_by_id(
     Extension(session): Extension<OrcaSession>,
-    Path(user_id): Path<i32>,
+    Path(user_id): Path<String>,
 ) -> InternalResult<impl IntoResponse> {
     UserService::new(session).delete_user_by_id(user_id).await?;
     Ok(Json(json!({"status": "success"})))

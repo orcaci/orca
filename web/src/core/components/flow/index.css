@@ -1,0 +1,27 @@
+.closeForm {
+    position: absolute;
+    padding: 4px;
+    right: 28px;
+  }
+  .closeForm:hover {
+    opacity: 1;
+  }
+  .closeForm:before, .closeForm:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 16px;
+    width: 2px;
+    background-color: #333;
+  }
+  .closeForm:before {
+    transform: rotate(45deg);
+  }
+  .closeForm:after {
+    transform: rotate(-45deg);
+  }
+  
+  .workflow{
+    height: calc(100% - 66px);
+  }
+  

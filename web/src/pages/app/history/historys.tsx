@@ -2,9 +2,17 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { Badge, Link, Text } from "@radix-ui/themes";
 import { ColumnField, ReadOnlyTable } from "core/components/table";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Service } from "service";
 import { Endpoint } from "service/endpoint";
+
+const REF_TYPE_MAPPING: any = {
+  TC: "TestCase",
+  TS: "TestSuite",
+  TestCase: "TestCase",
+  ActionGroup: "ActionGroup",
+  Action: "Action"
+}
 
 const TYPE_MAPPING: any = {
   TestCase: (
@@ -21,36 +29,52 @@ const TYPE_MAPPING: any = {
 
 export const ExecutionHistory: React.FC = () => {
   const navigate = useNavigate();
+  const { appId = "" } = useParams();
+  const location = useLocation();
+  const pathDict = location.pathname.split("/");
+  const historyId = pathDict[4];
   /**
    * onHandleClick - Handle the Test case redirect
    * @param record
    */
   const onHandleClick = (record: any) => {
-    navigate(`${record.id}`);
+    if(record.ref_type === "Action") {
+      return null;
+    } else {
+      navigate(`/app/${appId}/history/${historyId || record.id}/log/${REF_TYPE_MAPPING[record.ref_type]}/${record.step_id || record.ref_id}`); // Redirect to the Test case page
+    }
   };
+
   const columns: Array<ColumnField> = [
     {
       key: "id",
       label: "Execution No",
       className: "flex-auto ",
       render: (text, record) => (
-        <Link size="2" onClick={() => onHandleClick(record)}>
+        <div>
           {text}
-        </Link>
+        </div>
       )
     },
     {
       key: "description",
       label: "Description",
       className: "flex-auto ",
-      render: (text, record) => (
-        <Link
+      render: (text, record) => {
+        if(record.ref_type !== "Action") {
+        return <Link
           size="2"
           onClick={() => onHandleClick(record)} //
         >
-          {text} ({record["reference"]})
+          {text} Description
         </Link>
-      )
+        }
+        else{
+            return <div>
+               {text} Description
+            </div>
+        }
+    }
     },
     {
       key: "type",
@@ -97,64 +121,24 @@ export const ExecutionHistory: React.FC = () => {
       )
     }
   ];
-
-  const { appId = "" } = useParams();
   const [dataSource, setDataSource] = useState([] as any);
   const fetchActions = async () => {
-    await Service.get(`${Endpoint.v1.history.list(appId)}`)
+    let url = `${Endpoint.v1.history.list(appId)}`
+    if(historyId) {
+        url = `${Endpoint.v1.history.list(appId)}/${historyId}/log/${pathDict[6]}/${pathDict[7]}/blocks`
+    }
+    await Service.get(url)
       .then((history) => {
         setDataSource(history);
       })
-      .finally(() => {});
+      .finally(() => { });
   };
 
   useEffect(() => {
     fetchActions();
-  }, []);
+  }, [location.pathname]);
+
   return (
-    // <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
-    //   <CardHeader
-    //     floated={false}
-    //     shadow={false}
-    //     color="transparent"
-    //     className="m-0 flex items-center justify-between p-6"
-    //   >
-    //     <div>
-    //       <Typography variant="h6" color="blue-gray" className="mb-1">
-    //         Execution History
-    //       </Typography>
-    //       <Typography
-    //         variant="small"
-    //         className="flex items-center gap-1 font-normal text-blue-gray-600"
-    //       >
-    //         <CheckCircleIcon
-    //           strokeWidth={3}
-    //           className="h-4 w-4 text-blue-gray-200"
-    //         />
-    //         last <strong>30</strong> days
-    //       </Typography>
-    //     </div>
-    //     <Menu placement="left-start">
-    //       <MenuHandler>
-    //         <IconButton size="sm" variant="text" color="blue-gray">
-    //           <EllipsisVerticalIcon
-    //             strokeWidth={3}
-    //             fill="currenColor"
-    //             className="h-6 w-6"
-    //           />
-    //         </IconButton>
-    //       </MenuHandler>
-    //       <MenuList>
-    //         <MenuItem>Action</MenuItem>
-    //         <MenuItem>Another Action</MenuItem>
-    //         <MenuItem>Something else here</MenuItem>
-    //       </MenuList>
-    //     </Menu>
-    //   </CardHeader>
-    //   <CardBody className="overflow-x-scroll px-0 pt-0 pb-0">
-    //     <ReadOnlyTable column={columns} data={dataSource}></ReadOnlyTable>
-    //   </CardBody>
-    // </Card>
     <>
       <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
         <div className="flex items-center justify-between gap-8 mb-8">

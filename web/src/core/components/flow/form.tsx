@@ -1,92 +1,95 @@
-import {Service} from "service";
-import {Select as OSelect} from "core/components/select";
-import {Endpoint} from "service/endpoint";
-import React, {useEffect, useState} from "react";
-import {useFlowStore} from "stores/flow.store";
-import {shallow} from "zustand/shallow";
-import {useParams} from "react-router-dom";
+import { Service } from "service";
+import { Endpoint } from "service/endpoint";
+import { useEffect, useState } from "react";
+import { useFlowStore } from "stores/flow.store";
+import { Button } from "@radix-ui/themes";
 
-export interface WorkflowFormParm {
-    title: string;
-}
+import { shallow } from "zustand/shallow";
+import { useParams } from "react-router-dom";
+import { SearchableDropdown } from "core/components/dropdown/index.jsx";
 
-export const WorkflowForm: React.FC<WorkflowFormParm> = ({title}) => {
-    const [obj, setObject] = useState({} as any);
-    const {appId = ""} = useParams();
-    const [dataSource, setDataSource] = useState([] as any);
-    const {nodes, edges, currentNode} = useFlowStore(
-        (state: any) => ({
-            nodes: state.nodes,
-            edges: state.edges,
-            currentNode: state.currentNode
-        }),
-        shallow
-    );
+import "./index.css"
 
-    /**
-     * fetchActionGroups - fetch all ActionGroup from the specify Application
-     */
-    const fetchActionGroups = async () => {
-        await Service.get(`${Endpoint.v1.group.getList(appId)}`)
-            .then((groups) => {
-                setDataSource(groups);
-                setObject(currentNode);
-            })
-            .finally(() => {
-            });
-    };
 
-    const onCurrentNode = (node: any) => {
-        setObject(node);
-    };
+export const WorkflowForm: React.FC = () => {
+  const { appId = "" } = useParams();
+  const [dataSource, setDataSource] = useState([] as any);
+  const [actionGroup, setActionGroup] = useState({});
+  const { currentNode, graph, setGraph } = useFlowStore(
+    (state: any) => ({
+      currentNode: state.currentNode,
+      graph: state.graph,
+      setGraph: state.setGraph,
+    }),
+    shallow
+  );
 
-    useEffect(() => {
-        fetchActionGroups();
-        // onCurrentNode(currentNode);
-        // console.log(currentNode);
-    }, []);
+  /**
+   * fetchActionGroups - fetch all ActionGroup from the specify Application
+   */
+  const fetchActionGroups = async () => {
+    await Service.get(`${Endpoint.v1.group.getList(appId)}`)
+      .then((groups) => {
+        setDataSource(groups);
 
-    return (
-        <>
-            <div className="pl-4 py-4 shadow-md lg:flex lg:items-center lg:justify-between">
-                <div className="min-w-0">
-                    <h2 className="text-lg font-bold leading-7 text-gray-900 sm:truncate sm:tracking-tight">
-                        {obj.name}
-                    </h2>
-                </div>
-            </div>
-            <div className="flex w-full">
-                <OSelect
-                    buttonClassName="relative w-full cursor-default bg-transparent py-1.5 pl-3 pr-10 text-left text-gray-900  ring-inset  focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                    options={dataSource || []}
-                    dataIndex="id"
-                    defaultValue={obj["id"]}
-                    onSelect={(value: any) => {
-                        console.log(value);
-                        // row["kind"] = value["key"];
-                    }}
-                    render={(row: any) => {
-                        return <span className="ml-3 block truncate">{row["name"]}</span>;
-                    }}
-                ></OSelect>
-                {/* <SearchSelect /> */}
-                {/* <select defaultValue={obj.id}>
-          <option value="">Select Option</option>
-          {(dataSource || []).map((item: any) => {
-            return <option key={item.id}>{item.name}</option>;
-          })}
-        </select> */}
-                {/* <Flex gap="3">
-          <Select.Root defaultValue={obj.id} key={"selectId"}>
-            <Select.Trigger />
-            <Select.Content>
-              {(dataSource || []).map((item: any) => {
-                return <Select.Item value={item.id}>{item.name}</Select.Item>;
-              })}
-            </Select.Content>
-          </Select.Root>
-        </Flex> */}
-            </div>
-        </>
-    );
+      })
+      .finally(() => {
+      });
+  };
+
+
+  useEffect(() => {
+    fetchActionGroups();
+  }, []);
+
+
+  useEffect(() => {
+    if (dataSource.length > 0) {
+      const selectedActionGroup = dataSource.find((item: any) => item.id === currentNode.reference);
+      setActionGroup(selectedActionGroup || {});
+    }
+  }, [currentNode, dataSource]);
+
+
+  const onUpdateActionGroup = (val: any) => {
+    const newGraph = graph.map((item: any) => {
+      if (item.id === currentNode.id) {
+        return {
+          ...item,
+          name: val.name,
+          reference: val.id,
+        };
+      }
+      return item;
+    })
+    setGraph(newGraph);
+  }
+
+  return (
+    <>
+      <div className="closeForm" onClick={() => useFlowStore.getState().setCurrentNode({})} />
+      <div className="p-4">
+        <div className="pb-4 text-gray-900"> Select action group:</div>
+        <SearchableDropdown
+          options={dataSource || []}
+          label="name"
+          id="id"
+          selectedValue={actionGroup}
+          handleChange={(val: any) => {
+            setActionGroup(val)
+          }}
+        />
+        {Object.keys(actionGroup).length > 0 &&
+          <div className="mt-8">
+            <Button
+              variant="soft"
+              className="flex  items-center gap-3"
+              onClick={() => onUpdateActionGroup(actionGroup)}
+            >
+              Save
+            </Button>
+          </div>}
+      </div>
+    </>
+  );
 };

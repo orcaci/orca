@@ -21,7 +21,7 @@ services:
 
   chrome:
     platform: linux/amd64
-    image: selenium/node-chrome:nightly
+    image: selenium/node-chrome:latest
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -34,7 +34,7 @@ services:
   firefox:
     container_name: firefox
     platform: linux/amd64
-    image: selenium/node-firefox:nightly
+    image: selenium/node-firefox:latest
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -47,7 +47,7 @@ services:
 
   firefox_video:
     platform: linux/amd64
-    image: selenium/video:nightly
+    image: selenium/video:latest
     depends_on:
       - firefox
       - minio
@@ -92,7 +92,7 @@ services:
 
   selenium-hub:
     platform: linux/amd64
-    image: selenium/hub:nightly
+    image: selenium/hub:latest
     container_name: selenium-hub
     ports:
       - "4442:4442"
@@ -107,10 +107,11 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=orca
+      # - PGDATA=/var/lib/postgresql/data/some_name/
     ports:
       - "5433:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./data/pg-data:/var/lib/postgresql/data
     container_name: postgres-ser
 
   ### Redis ################################################

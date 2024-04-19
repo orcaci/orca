@@ -11,26 +11,25 @@ import {
   Tooltip
 } from "@radix-ui/themes";
 import { ColumnField } from "core/components/table";
-import { ReadOnlyTableV2 } from "core/components/table/read";
+import { ReadOnlyTable } from "core/components/table/read";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Service } from "service";
 import { Endpoint } from "service/endpoint";
+import { fetchTestCases } from "service/app/test_case";
 
 export const TestCaseDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [dataSource, setDataSource] = useState([] as any);
   const [testcase, setTestcase] = useState({} as any);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const extra: Array<React.ReactNode> = [
-    <Popover.Root>
+    <Popover.Root key="index">
       <Popover.Trigger>
         <Button
           variant="soft"
           onClick={() => {
             setTestcase({});
-            setIsCreateModalOpen(true);
           }}
         >
           <PlusIcon width="16" height="16" />
@@ -123,19 +122,15 @@ export const TestCaseDashboard: React.FC = () => {
 
   const updateTableInfo = (event: EventSource, field_id: string) => {};
 
-  /**
-   * fetchTestCase - fetch all Test case from the specify Application
-   */
-  const fetchTestCase = async () => {
-    await Service.get(`${Endpoint.v1.case.list(appId)}`)
-      .then((cases) => {
-        setDataSource(cases);
-      })
-      .finally(() => {});
-  };
+  const getCaseList = () => {
+    fetchTestCases(appId).then((cases: any) => {
+      setDataSource(cases);
+    })
+    .finally(() => {});
+  }
 
   useEffect(() => {
-    fetchTestCase();
+    getCaseList();
   }, []);
 
   /**
@@ -159,7 +154,7 @@ export const TestCaseDashboard: React.FC = () => {
       body: payload
     })
       .then((record: any) => {
-        fetchTestCase();
+        getCaseList();
       })
       .finally(() => {});
   };
@@ -171,13 +166,13 @@ export const TestCaseDashboard: React.FC = () => {
   const onDelete = async (caseId: any) => {
     await Service.delete(`${Endpoint.v1.case.delete(appId, caseId)}`)
       .then(() => {
-        fetchTestCase();
+        getCaseList();
       })
       .finally(() => {});
   };
 
   return (
-    <ReadOnlyTableV2
+    <ReadOnlyTable
       title="Test Case"
       column={columns}
       data={dataSource}

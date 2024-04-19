@@ -11,6 +11,7 @@ use uuid::Uuid;
 use cerium::client::Client;
 use cerium::client::driver::web::WebDriver;
 use engine::controller::case::CaseController;
+use entity::prelude::ActiveExecutionRequest;
 use entity::prelude::case::{Column, Entity, Model};
 use entity::prelude::case_block::{
     ActiveModel as BlockActiveModel, Column as BlockColumn, Entity as BlockEntity,
@@ -18,7 +19,7 @@ use entity::prelude::case_block::{
 };
 use entity::test::history;
 use entity::test::ui::{ExecutionRequest, request};
-use entity::test::ui::request::{ExecutionKind, ExecutionStatus, ExecutionType, new};
+use entity::test::ui::request::{ExecutionKind, ExecutionStatus, ExecutionType};
 
 use crate::error::{InternalResult, OrcaRepoError};
 use crate::server::session::OrcaSession;
@@ -191,43 +192,10 @@ impl CaseService {
 
     /// run - this will run the single tes case
     pub async fn run(&self, case_id: Uuid) -> InternalResult<()> {
-        let case = Entity::find_by_id(case_id).one(self.trx()).await?;
-        debug!("run {:?}", case);
-        if case.is_none() {
-            return Err(OrcaRepoError::ModelNotFound(
-                "Test Case".to_string(),
-                case_id.to_string(),
-            ))?;
-        }
-        let _case = case.unwrap();
-        let er_am = new(case_id, ExecutionType::TestCase, ExecutionKind::Trigger, ExecutionStatus::Started, 0, false, None);
-        // let er = ExecutionRequest {
-        //     description: Some(format!("Executing - {case_name}", case_name = _case.name)),
-        //     is_dry_run: true,
-        //     ref_id: case_id,
-        //     ref_type: ExecutionType::TestCase,
-        //     kind: ExecutionKind::Trigger,
-        //     status: ExecutionStatus::Started,
-        //     args: None,
-        //     log_id: 0,
-        //     created_at: chrono::Utc::now().into(),
-        //     created_by: Some("system".to_string()),
-        //     finished_at: None,
-        //     updated_at: None,
-        // };
-
-        let mut er_am = er_am.save(self.trx()).await?;
-        debug!("run 2 {:?}", er_am);
         let ui_driver = WebDriver::default().await?;
         let controller = CaseController::new(self.trx(), ui_driver.clone(), self.1.clone());
-        let er = er_am.clone().try_into_model()?;
-        controller.process(&_case, &er, None).await?;
+        controller.run(case_id, true).await?;
         ui_driver.quit().await?;
-
-        er_am.status = Set(ExecutionStatus::Completed);
-        er_am.finished_at = Set(chrono::Utc::now().into());
-        er_am.updated_at = Set(chrono::Utc::now().into());
-        er_am.save(self.trx()).await?;
 
         Ok(())
     }

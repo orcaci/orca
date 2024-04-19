@@ -1,7 +1,6 @@
 import { Select as OSelect } from "core/components/select";
 import { ArrowsPointingInIcon } from "@heroicons/react/20/solid";
 import {
-  ArrowDownTrayIcon,
   CommandLineIcon
 } from "@heroicons/react/24/outline";
 import { InputGroup } from "core/components/input";
@@ -9,18 +8,17 @@ import { PageHeader } from "core/components/page_header";
 import EditableTable from "core/components/table/edit";
 import { ActionKind } from "constants/action";
 import { Target } from "constants/target";
-import { Button as OrcaButton } from "components/ui/button";
+import { Button } from "@radix-ui/themes";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Service } from "service";
-import { fetchActions, saveBatch } from "service/app";
+import { fetchActions, saveBatch } from "service/app/action_group";
 import { Endpoint } from "service/endpoint";
 import { v4 as uuidv4 } from "uuid";
 
 export const ActionGroup: React.FC = () => {
   const [dataSource, setDataSource] = useState([] as any);
-  // const [savedData, setSavedData] = useState({ data_kind: "Static" } as object);
   const { appId = "", actionGroupId = "" } = useParams();
 
   const addNewRow = async () => {
@@ -41,7 +39,7 @@ export const ActionGroup: React.FC = () => {
       .then((_action) => {
         setDataSource([...dataSource, _action]);
       })
-      .finally(() => {});
+      .finally(() => { });
   };
 
   useEffect(() => {
@@ -56,12 +54,13 @@ export const ActionGroup: React.FC = () => {
         title={"Action Groups"}
         extra={
           <div className=" flex items-center gap-3">
-            <OrcaButton
-              className="flex gap-2"
+            <Button
+              variant="soft"
+              className="flex items-center gap-3"
               onClick={() => saveBatch(appId, actionGroupId, dataSource)}
             >
-              <ArrowDownTrayIcon className="size-4" /> Save
-            </OrcaButton>
+              Save
+            </Button>
           </div>
         }
       />

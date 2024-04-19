@@ -25,12 +25,6 @@ export const CustomHandle: React.FC<CustomHandleProps> = ({
   const nodeId = useNodeId();
 
   const isHandleConnectable = useMemo(() => {
-    if (typeof connectionSize === "function") {
-      const node = nodeInternals.get(nodeId);
-      const connectedEdges = getConnectedEdges([node], edges);
-
-      //   return connectionSize({ node, connectedEdges });
-    }
 
     if (typeof connectionSize === "number") {
       const node = nodeInternals.get(nodeId);
@@ -46,14 +40,6 @@ export const CustomHandle: React.FC<CustomHandleProps> = ({
     <Handle
       {...props}
       style={{ opacity: 0 }}
-      //   {
-      //     {
-      //       // backgroundColor: "transparent",
-      //       // borderColor: "transparent",
-      //       // top: "0px !important"
-      //     }
-      //   }
-
       isConnectable={isHandleConnectable}
     ></Handle>
   );

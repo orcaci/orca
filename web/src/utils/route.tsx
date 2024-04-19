@@ -65,24 +65,24 @@ export const ROUTES = [
               return AppDashboard;
             }
           },
-          // {
-          //   path: ":appId/testsuite",
-          //   component: () => {
-          //     const { TestSuiteDashboard } = lazily(
-          //       () => import("../pages/app/test_suite")
-          //     );
-          //     return TestSuiteDashboard;
-          //   }
-          // },
-          // {
-          //   path: ":appId/testsuite/:testSuiteId",
-          //   component: () => {
-          //     const { TestSuite } = lazily(
-          //       () => import("../pages/app/test_suite/testsuite")
-          //     );
-          //     return TestSuite;
-          //   }
-          // },
+          {
+            path: ":appId/testsuite",
+            component: () => {
+              const { TestSuiteDashboard } = lazily(
+                () => import("../pages/app/test_suite")
+              );
+              return TestSuiteDashboard;
+            }
+          },
+          {
+            path: ":appId/testsuite/:testSuiteId",
+            component: () => {
+              const { TestSuitePage } = lazily(
+                () => import("../pages/app/test_suite/testsuite")
+              );
+              return TestSuitePage;
+            }
+          },
           {
             path: ":appId/actiongroup",
             component: () => {
@@ -138,7 +138,7 @@ export const ROUTES = [
           //   }
           // },
           {
-            path: ":appId/history",
+            path: ":appId/history/*",
             component: () => {
               const { History } = lazily(() => import("pages/app/history"));
               return History;

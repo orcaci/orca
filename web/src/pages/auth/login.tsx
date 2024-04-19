@@ -1,61 +1,5 @@
 export function Login() {
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
-  };
   return (
-    // <div className="loginContainer">
-    //   <Card style={{ width: 300 }}>
-    //     <Form
-    //       name="normal_login"
-    //       className="login-form"
-    //       initialValues={{ remember: true }}
-    //       onFinish={onFinish}
-    //     >
-    //       <h1>Orca</h1>
-    //       <Form.Item
-    //         name="username"
-    //         rules={[{ required: true, message: "Please input your Username!" }]}
-    //       >
-    //         <Input
-    //           prefix={<UserOutlined className="site-form-item-icon" />}
-    //           placeholder="Username"
-    //         />
-    //       </Form.Item>
-    //       <Form.Item
-    //         name="password"
-    //         rules={[{ required: true, message: "Please input your Password!" }]}
-    //       >
-    //         <Input
-    //           prefix={<LockOutlined className="site-form-item-icon" />}
-    //           type="password"
-    //           placeholder="Password"
-    //         />
-    //       </Form.Item>
-    //       <Form.Item>
-    //         <Form.Item name="remember" valuePropName="checked" noStyle>
-    //           <Checkbox>Remember me</Checkbox>
-    //         </Form.Item>
-    //         <Link className="login-form-forgot" to={"/auth/forgotpassword"}>
-    //           Forgot password
-    //         </Link>
-    //       </Form.Item>
-
-    //       <Form.Item>
-    //         <Button
-    //           type="primary"
-    //           htmlType="submit"
-    //           className="login-form-button"
-    //         >
-    //           Log in
-    //         </Button>
-    //       </Form.Item>
-
-    //       <div className="register-now">
-    //         Or <Link to={"/auth/signup"}>register now!</Link>
-    //       </div>
-    //     </Form>
-    //   </Card>
-    // </div>
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
@@ -67,18 +11,6 @@ export function Login() {
           Sign in to your account
         </h2>
       </div>
-      {/* <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600 max-w">
-          Or
-          <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-            create an account
-          </a>
-        </p>
-      </div> */}
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" action="#" method="POST">

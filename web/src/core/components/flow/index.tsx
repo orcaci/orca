@@ -1,7 +1,4 @@
 import { Workflow } from "./workflow";
+import {classNames} from "./utils/index";
 
-export { Workflow };
-
-export function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
+export { Workflow, classNames };

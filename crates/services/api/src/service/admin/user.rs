@@ -1,12 +1,14 @@
-use crate::error::{InternalResult, OrcaRepoError};
-use crate::route::Pagination;
-use crate::server::session::OrcaSession;
-use entity::admin::user;
-use entity::admin::user::{ActiveModel, Model};
 use sea_orm::{
     ActiveModelTrait, DatabaseTransaction, EntityTrait, NotSet, QuerySelect, TryIntoModel,
 };
 use tracing::info;
+
+use entity::admin::user;
+use entity::admin::user::{ActiveModel, Model};
+
+use crate::error::{InternalResult, OrcaRepoError};
+use crate::route::Pagination;
+use crate::server::session::OrcaSession;
 
 pub(crate) struct UserService(OrcaSession);
 
@@ -34,15 +36,11 @@ impl UserService {
         Ok(users)
     }
 
-    pub async fn get_user_by_id(&self, id: i32) -> InternalResult<Model> {
-        let user = user::Entity::find_by_id(id).one(self.trx()).await?;
-        if user.is_none() {
-            return Err(OrcaRepoError::ModelNotFound(
-                "User".to_string(),
-                id.to_string(),
-            ))?;
-        }
-        return Ok(user.unwrap());
+    pub async fn get_user_by_id(&self, id: String) -> InternalResult<()> {
+        let user = user::Entity::find_by_id(&id).one(self.trx()).await?.ok_or_else(|| {
+            OrcaRepoError::ModelNotFound("User".to_string(), id.clone())
+        })?;
+        return Ok(());
     }
 
     pub async fn update_user(&self, mut user: ActiveModel) -> InternalResult<Model> {
@@ -50,12 +48,12 @@ impl UserService {
         return Ok(result);
     }
 
-    pub async fn delete_user_by_id(&self, id: i32) -> InternalResult<()> {
-        let result = user::Entity::delete_by_id(id).exec(self.trx()).await?;
+    pub async fn delete_user_by_id(&self, id: String) -> InternalResult<()> {
+        let result = user::Entity::delete_by_id(id.clone()).exec(self.trx()).await?;
         if result.rows_affected == 0 {
             return Err(OrcaRepoError::ModelNotFound(
                 "User".to_string(),
-                id.to_string(),
+                id.clone(),
             ))?;
         }
         info!(

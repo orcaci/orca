@@ -1,11 +1,7 @@
-import { useState } from "react";
-import { NodeProps, Position, useNodeId } from "reactflow";
+import { NodeProps, Position } from "reactflow";
 import CustomHandle from "../handler/test";
 
 export const LoopNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
-  const [selected, setValueSelected] = useState({} as any);
-  const [open, setOpen] = useState(false);
-  const nodeId = useNodeId();
   return (
     <>
       <CustomHandle

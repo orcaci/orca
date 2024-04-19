@@ -1,10 +1,7 @@
-import { useState } from "react";
 import { NodeProps, Position, useNodeId } from "reactflow";
 import CustomHandle from "../handler/test";
 
 export const ForNode: React.FC<NodeProps> = ({ data, xPos, yPos }) => {
-  const [selected, setValueSelected] = useState({} as any);
-  const [open, setOpen] = useState(false);
   const nodeId = useNodeId();
   console.log("x - ", xPos, ", y -", yPos);
   return (

@@ -26,17 +26,19 @@ pub enum ItemLogStatus {
 #[sea_orm(rs_type = "String", db_type = "String(Some(5))", enum_name = "item_log_type")]
 pub enum ItemLogType {
     #[sea_orm(string_value = "A")]
-    #[serde(rename = "Action")]
     Action,
     #[sea_orm(string_value = "AG")]
-    #[serde(rename = "ActionGroup")]
     ActionGroup,
     #[sea_orm(string_value = "AS")]
-    #[serde(rename = "Assertion")]
     Assertion,
+    #[sea_orm(string_value = "TCB")]
+    TestCaseBlock,
     #[sea_orm(string_value = "TC")]
-    #[serde(rename = "TestCase")]
     TestCase,
+    #[sea_orm(string_value = "TS")]
+    TestSuite,
+    #[sea_orm(string_value = "TSB")]
+    TestSuiteBlock,
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
@@ -45,10 +47,11 @@ pub struct Model {
     #[serde(skip_deserializing)]
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub ref_id: Uuid,
+    pub step_id: Uuid,
+    pub ref_id: Option<Uuid>,
     pub ref_type: ItemLogType,
 
-    pub step_id: Uuid,
+    pub er_id: i32,
     pub has_screenshot: bool,
     pub has_recording: bool,
     pub execution_time: i32,
@@ -59,23 +62,34 @@ pub struct Model {
     pub finished_at: DateTimeWithTimeZone,
 }
 
-pub fn new(ref_id: Uuid, ref_type: ItemLogType, step_id: Uuid, log_id: Option<i32>) -> ActiveModel {
-    ActiveModel {
-        id: Default::default(),
-        ref_id: Set(ref_id),
-        ref_type: Set(ref_type),
-        step_id: Set(step_id),
-        has_screenshot: Set(false),
-        has_recording: Set(false),
-        execution_time: Set(0),
-        status: Set(ItemLogStatus::Running),
-        log_id: Set(log_id),
-        created_at: Set(chrono::Utc::now().into()),
-        created_by: Set("System".to_string()),
-        finished_at: Set(chrono::Utc::now().into()),
+impl ActiveModel {
+    pub fn new(er_id: i32, ref_id: Option<Uuid>, ref_type: ItemLogType, step_id: Uuid, log_id: Option<i32>) -> ActiveModel {
+        ActiveModel {
+            id: Default::default(),
+            er_id: Set(er_id),
+            ref_id: Set(ref_id),
+            ref_type: Set(ref_type),
+            step_id: Set(step_id),
+            has_screenshot: Set(false),
+            has_recording: Set(false),
+            execution_time: Set(0),
+            status: Set(ItemLogStatus::Running),
+            log_id: Set(log_id),
+            created_at: Set(chrono::Utc::now().into()),
+            created_by: Set("System".to_string()),
+            finished_at: Set(chrono::Utc::now().into()),
+        }
+    }
+
+    pub async fn save_status<'a, C>(mut self, db: &'a C, status: ItemLogStatus) -> Result<Self, DbErr>
+        where
+            Self: ActiveModelBehavior + 'a,
+            C: ConnectionTrait,
+    {
+        self.status = Set(status);
+        Ok(self.save(db).await?)
     }
 }
-
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {

@@ -25,29 +25,30 @@ default = []
 #axum = ["dep:axum"]
 
 [dependencies]
-entity.workspace=true
+entity.workspace = true
 
-tracing.workspace=true
-tracing-subscriber.workspace=true
-tokio.workspace=true
-axum.workspace=true
-axum-extra.workspace=true
-tower.workspace=true
-tower-http.workspace=true
-config.workspace=true
-sea-orm.workspace=true
-sea-query.workspace=true
-thirtyfour.workspace=true
-chrono.workspace=true
-jsonwebtoken.workspace=true
-thiserror.workspace=true
-serde.workspace=true
-serde_json.workspace=true
-rust-s3.workspace=true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tokio.workspace = true
+axum.workspace = true
+axum-extra.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+config.workspace = true
+sea-orm.workspace = true
+sea-query.workspace = true
+thirtyfour.workspace = true
+chrono.workspace = true
+jsonwebtoken.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rust-s3.workspace = true
 
 lazy_static = "1.4.0"
 async_once = "0.2.6"
 rand = { version = "0.8.5", default-features = false, features = ["std"] }
 log = "0.4.20"
+backtrace = "0.3.71"
 
 

@@ -3,17 +3,18 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseTransaction, EntityTrait, I
 use sea_orm::ActiveValue::Set;
 use sea_orm::prelude::{DateTimeWithTimeZone, Uuid};
 use thirtyfour::By;
-use tracing::info;
+use tracing::{error, info};
 
 use cerium::client::Client;
 use cerium::client::driver::web::WebDriver;
 use cerium::client::storage::s3::S3Client;
+use entity::prelude::ActiveItemLog;
 use entity::prelude::target::ActionTargetKind;
 use entity::test::ui::action::action;
 use entity::test::ui::action::action::ActionKind;
 use entity::test::ui::action::group::{Entity as ActionGroupEntity, Model as ActionGroupModel};
 use entity::test::ui::ExecutionRequest;
-use entity::test::ui::log::item_log::{ItemLogStatus, ItemLogType, new};
+use entity::test::ui::log::item_log::{ItemLogStatus, ItemLogType};
 use entity::test::ui::log::ItemLog;
 
 use crate::error::{EngineError, EngineResult};
@@ -78,13 +79,19 @@ impl<'ccl> ActionController<'ccl> {
     ///
     /// * `Result<(), EngineError>` - If the `data_value` field is `None`, it returns an `Err` with an `EngineError::Forbidden` variant. If the `data_value` field is not `None`, it opens the URL using the `drive` object and returns `Ok(())`.
     pub async fn command_open(&self, action: &action::Model) -> EngineResult<()> {
-        match action.data_value.clone() {
-            Some(value) => Ok(self.driver.open(value.as_str()).await?),
-            None => Err(EngineError::MissingParameter(
-                "url".to_string(),
-                "".to_string(),
-            )),
-        }
+        let url = action.data_value.clone().ok_or_else(|| {
+            EngineError::MissingParameter("url".to_string(), "".to_string())
+        })?;
+        info!("Opening URL: {}", url);
+        self.driver.open(url.as_str()).await?;
+        Ok(())
+        // match action.data_value.clone() {
+        //     Some(value) => Ok(self.driver.open(value.as_str()).await?),
+        //     None => Err(EngineError::MissingParameter(
+        //         "url".to_string(),
+        //         "".to_string(),
+        //     )),
+        // }
     }
 
     /// Asynchronously enters data into a target element on a web page using a WebDriver.
@@ -245,25 +252,23 @@ impl<'ccl> ActionController<'ccl> {
     }
 
     pub async fn execute_action(&self, action: &action::Model, er: &ExecutionRequest,
-                                log: Option<&ItemLog>) -> EngineResult<()> {
-        let log_id = log.map(|l| l.id);
-        let mut log_am = new(er.ref_id, ItemLogType::Action, action.id, log_id).save(self.db).await?;
+                                log: &ItemLog) -> EngineResult<()> {
+        // let log_id = log.map(|l| l.id);
+        // let mut log_am = ActiveItemLog::new(er.id, Some(action.id), ItemLogType::Action,
+        //                                     action.id, log_id).save(self.db).await?;
         info!("[{er}] Trigger Action {action_id}", er=er.ref_id, action_id = action.id);
-        let start = chrono::Utc::now();
-        info!(
-            "Executing step == [id] {:?}, [desc] {:?}",
-            action.id, action.description
-        );
+        info!("Action {:#?}", action);
+        // let start = chrono::Utc::now();
         self.step_executor(&action).await?;
         self.take_screenshot(action.id.to_string()).await?;
         info!(
             "Done step == [id] {:?}, [desc] {:?}",
             action.id, action.description
         );
-        log_am.execution_time = Set((chrono::Utc::now() - start).num_milliseconds() as i32);
-        log_am.status = Set(ItemLogStatus::Success);
-        log_am.finished_at = Set(chrono::Utc::now().into());
-        log_am.save(self.db).await?;
+        // log_am.execution_time = Set((chrono::Utc::now() - start).num_milliseconds() as i32);
+        // log_am.status = Set(ItemLogStatus::Success);
+        // log_am.finished_at = Set(chrono::Utc::now().into());
+        // log_am.save(self.db).await?;
         Ok(())
     }
 
@@ -275,7 +280,27 @@ impl<'ccl> ActionController<'ccl> {
             .paginate(self.db, 50);
         while let Some(actions) = action_page.fetch_and_next().await? {
             for action in actions.into_iter() {
-                self.execute_action(&action, er, log).await?;
+                let start = chrono::Utc::now();
+                let log_id = log.map(|l| l.id);
+                let mut action_log = ActiveItemLog::new(er.id, Some(action.id.clone()),
+                                                        ItemLogType::Action, action.id.clone(),
+                                                        log_id).save(self.db).await?;
+                let _log = action_log.clone().try_into_model()?;
+                let result = self.execute_action(&action, er, &_log).await;
+                action_log.execution_time = Set((chrono::Utc::now() - start).num_milliseconds() as i32);
+                action_log.finished_at = Set(chrono::Utc::now().into());
+                match result {
+                    Ok(_) => {
+                        action_log.status = Set(ItemLogStatus::Success);
+                        action_log.save(self.db).await?;
+                    }
+                    Err(e) => {
+                        error!("Error in Action: {:?}", e);
+                        action_log.status = Set(ItemLogStatus::Failed);
+                        action_log.save(self.db).await?;
+                        return Err(e);
+                    }
+                }
             }
         }
         Ok(())
@@ -283,9 +308,9 @@ impl<'ccl> ActionController<'ccl> {
 
     /// run_case - will execute the test case by the case ID
     pub async fn execute(&self, id: Uuid, er: &ExecutionRequest,
-                         log: Option<&ItemLog>) -> EngineResult<()> {
+                         log: Option<&ItemLog>, ref_id: Option<Uuid>) -> EngineResult<()> {
         let start = chrono::Utc::now();
-        let mut log_am = new(er.ref_id, ItemLogType::Action, id, None).save(self.db).await?;
+        let mut log_am = ActiveItemLog::new(er.id, ref_id, ItemLogType::ActionGroup, id, None).save(self.db).await?;
         info!("[{er}] Trigger Action {action_id}", er=er.ref_id, action_id = id);
         let action_group = ActionGroupEntity::find_by_id(id).one(self.db)
             .await?
