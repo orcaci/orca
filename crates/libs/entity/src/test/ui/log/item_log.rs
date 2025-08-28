@@ -2,11 +2,11 @@
 
 use sea_orm::ActiveValue::Set;
 use sea_orm::entity::prelude::*;
-use sea_orm::EntityTrait;
+use sea_orm::prelude::StringLen;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(5))", enum_name = "item_log_status")]
+#[sea_orm(rs_type = "String", db_type = "String(StringLen::None)", enum_name = "item_log_status")]
 pub enum ItemLogStatus {
     #[sea_orm(string_value = "SUCC")]
     #[serde(rename = "Scheduled")]
@@ -23,7 +23,7 @@ pub enum ItemLogStatus {
 }
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
-#[sea_orm(rs_type = "String", db_type = "String(Some(5))", enum_name = "item_log_type")]
+#[sea_orm(rs_type = "String", db_type = "String(StringLen::None)", enum_name = "item_log_type")]
 pub enum ItemLogType {
     #[sea_orm(string_value = "A")]
     #[serde(rename = "Action")]

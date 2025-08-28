@@ -18,9 +18,7 @@ pub(crate) mod service;
 pub(crate) mod utils;
 
 pub(crate) async fn run_migration(db: &DatabaseConnection) -> Result<(), DbErr> {
-    migration::Migrator::up(db, None)
-        .await
-        .expect("TODO: panic message");
+    migration::Migrator::up(db, None).await?;
     Ok(())
 }
 pub(crate) async fn get_config() -> Client {
@@ -34,7 +32,10 @@ async fn main() {
     app.set_logger(Level::DEBUG);
     app.set_port(8080);
 
-    run_migration(cli.db()).await.expect("TODO: panic message");
+    if let Err(e) = run_migration(cli.db()).await {
+        tracing::error!("Failed to run migrations: {}", e);
+        std::process::exit(1);
+    }
     let routers = handle_router()
         .layer(Extension(cli.clone()))
         .layer(OrcaLayer {

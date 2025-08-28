@@ -1,7 +1,7 @@
 ## See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-name = "orca"
+resolver = "2"
 members=[
     "crates/libs/cerium",
     "crates/libs/entity",
@@ -31,44 +31,41 @@ api = { path = "crates/services/api", default-features = true }
 chrome = { path = "crates/workshop/chrome", default-features = true }
 entity_macro = { path = "crates/macro/entity-macro", default-features = true }
 
-thiserror = "1.0.31"
-jsonwebtoken = "9.2.0"
-serde = { version = "1.0.147"}
-serde_json = "1.0.87"
-chrono = { version = "0.4.31"}
-tracing = "0.1.37"
-tracing-subscriber = "0.3.16"
-uuid = { version = "1.6.1", features = ["serde", "v4"] }
+thiserror = "2.0.16"
+jsonwebtoken = "9.3.1"
+serde = { version = "1.0.219"}
+serde_json = "1.0.143"
+chrono = { version = "0.4.41"}
+tracing = "0.1.41"
+tracing-subscriber = "0.3.19"
+uuid = { version = "1.18.0", features = ["serde", "v4"] }
 config = "0.14.0"
 dotenv = "0.15.0"
-futures = "0.3.29"
-futures-util = "0.3.29"
-rust_decimal = "1.14.3"
+futures = "0.3.31"
+futures-util = "0.3.31"
+rust_decimal = "1.37.2"
 cross-test = "0.1.6"
 
-sea-query = "0.30.5"
-sea-orm = { version = "0.12.3",  features = [
+sea-query = "0.32.7"
+sea-orm = { version = "1.1.1",  features = [
   "macros",
   "debug-print",
   "runtime-async-std-native-tls",
   "sqlx-postgres",
 ] }
-sea-orm-migration = {version = "0.12.3", features = ["sqlx-postgres"]}
-axum = "0.7.1"
-axum-extra = "0.9.1"
-tokio = { version = "1.34.0", features = ["full"] }
-tower = "0.4.13"
-tower-http = { version = "0.5.0", default-features = true, features = ["uuid", "cors", "trace", "compression-br", "catch-panic", "request-id"] }
+sea-orm-migration = {version = "1.1.14", features = ["sqlx-postgres"]}
+axum = "0.7.9"
+axum-extra = "0.9.6"
+tokio = { version = "1.47.1", features = ["full"] }
+tower = "0.5.2"
+tower-http = { version = "0.6.6", default-features = true, features = ["uuid", "cors", "trace", "compression-br", "catch-panic", "request-id"] }
 
 
-rust-s3 = "0.33.0"
+rust-s3 = "0.35.1"
 
-thirtyfour = "0.31.0"
+thirtyfour = "0.36.1"
 
-geckodriver="0.34.0"
+geckodriver="0.36.0"
 
 
-[patch.crates-io]
-sea-orm = { git="https://github.com/itsparser/sea-orm", branch = "master" }
-sea-orm-migration = { git="https://github.com/itsparser/sea-orm", branch = "master" }
 

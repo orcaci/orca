@@ -3,12 +3,13 @@
 use sea_orm::{EntityTrait, NotSet};
 use sea_orm::ActiveValue::Set;
 use sea_orm::entity::prelude::*;
+use sea_orm::prelude::StringLen;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
 #[sea_orm(
 rs_type = "String",
-db_type = "String(Some(10))",
+db_type = "String(StringLen::None)",
 enum_name = "execution_kind"
 )]
 pub enum ExecutionKind {
@@ -23,7 +24,7 @@ pub enum ExecutionKind {
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
 #[sea_orm(
 rs_type = "String",
-db_type = "String(Some(10))",
+db_type = "String(StringLen::None)",
 enum_name = "execution_type"
 )]
 pub enum ExecutionType {
@@ -38,7 +39,7 @@ pub enum ExecutionType {
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Deserialize, Serialize)]
 #[sea_orm(
 rs_type = "String",
-db_type = "String(Some(10))",
+db_type = "String(StringLen::None)",
 enum_name = "execution_status"
 )]
 pub enum ExecutionStatus {

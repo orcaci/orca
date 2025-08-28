@@ -46,11 +46,16 @@ use std::error::Error;
 
 use headless_chrome::Browser;
 use headless_chrome::protocol::cdp::Page;
+use tracing::{debug, info};
 
 // fn browse_wikipedia() -> Result<(), Box<dyn Error>> {
 
 #[async_std::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    // Initialize tracing subscriber for logging
+    tracing_subscriber::fmt::init();
+    
+    info!("Chrome workshop starting...");
     let browser = Browser::default()?;
 
     let tab = browser.new_tab()?;
@@ -91,7 +96,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     "#, vec![], false)?;
     match remote_object.value {
         Some(returned_string) => {
-            dbg!(&returned_string);
+            debug!("JavaScript execution result: {:?}", returned_string);
             assert_eq!(returned_string, "firstHeadingfirstHeading".to_string());
         }
         _ => unreachable!()

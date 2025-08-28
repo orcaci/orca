@@ -13,7 +13,7 @@ use syn::{DeriveInput, parse_macro_input};
 /// [1]: https://doc.rust-lang.org/reference/procedural-macros.html#derive-mode-macros
 #[proc_macro_derive(MyDerive)]
 pub fn my_derive(input: TokenStream) -> TokenStream {
-    eprintln!("input : {:#?}", input);
+    // Debug output removed - use RUSTC_LOG=debug for proc-macro debugging
     // Parse the input tokens into a syntax tree
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -25,7 +25,7 @@ pub fn my_derive(input: TokenStream) -> TokenStream {
         new_field: i32,
     };
 
-    eprintln!("marco input : {:#?}", input);
+    // Debug output removed - use RUSTC_LOG=debug for proc-macro debugging
 
     // Generate the implementation of the trait for the struct
     let expanded = quote! {
@@ -33,7 +33,7 @@ pub fn my_derive(input: TokenStream) -> TokenStream {
             #new_field
         }
     };
-    eprintln!("expanded: {:#?}", expanded);
+    // Debug output removed - use RUSTC_LOG=debug for proc-macro debugging
     //
     // // Return the generated implementation as a TokenStream
     expanded.into()

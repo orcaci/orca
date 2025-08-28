@@ -1,0 +1,21 @@
+{
+  "name": "@extension/orca-api",
+  "version": "0.0.1",
+  "description": "Orca API client for Chrome extension",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.ts",
+  "exports": {
+    ".": "./lib/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@extension/tsconfig": "workspace:*",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {}
+}

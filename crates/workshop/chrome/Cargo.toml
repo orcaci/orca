@@ -14,7 +14,9 @@ exclude.workspace = true
 
 [dependencies]
 chromiumoxide = { git = "https://github.com/mattsse/chromiumoxide", branch = "main"}
-async-std = "1.12.0"
-futures = "0.3.29"
+async-std = "1.13.2"
+futures = "0.3.31"
 headless_chrome = {git = "https://github.com/rust-headless-chrome/rust-headless-chrome", features = ["fetch"]}
+tracing.workspace = true
+tracing-subscriber.workspace = true
 

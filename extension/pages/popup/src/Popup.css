@@ -1,0 +1,70 @@
+/* Orca Extension Popup Styles */
+
+.orca-popup {
+  width: 320px;
+  min-height: 400px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.orca-popup-header {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.orca-popup-content {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* Utility classes for better text handling */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Custom scrollbar for popup content */
+.orca-popup-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.orca-popup-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.orca-popup-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+.orca-popup-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animation for recording indicator */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

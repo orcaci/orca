@@ -50,7 +50,7 @@ impl S3Client {
     pub fn get_bucket(&self, bucket_name: &str) -> CeriumResult<Bucket> {
         let mut bucket = Bucket::new(bucket_name, self.region.clone(), self.credentials.clone())?;
         bucket.set_path_style();
-        Ok(bucket)
+        Ok(*bucket)
     }
 
     /// Asynchronously lists the buckets.
@@ -77,7 +77,7 @@ impl S3Client {
     /// A CeriumResult indicating success or failure.
     pub async fn create(&self, bucket: &str, key: &str, data: &[u8]) -> CeriumResult<()> {
         let _bucket_obj = self.get_bucket(bucket)?;
-        let result = _bucket_obj.put_object(key, data).await?;
+        let _result = _bucket_obj.put_object(key, data).await?;
         Ok(())
     }
 

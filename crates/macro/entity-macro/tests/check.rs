@@ -49,6 +49,8 @@ mod tests {
     #[test]
     fn dry_run_test_controller() {
         let c = Model{_name: "mani".to_string(), _age: 32};
-        println!("got the controller, c = {:?}", c);
+        // Test passes if the model can be created successfully
+        assert_eq!(c._name, "mani");
+        assert_eq!(c._age, 32);
     }
 }

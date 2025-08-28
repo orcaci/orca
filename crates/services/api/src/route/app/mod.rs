@@ -47,7 +47,6 @@ pub fn app_route() -> Router {
 
 /// get_app - list all the Application in the Orca Application
 async fn get_app(Extension(session): Extension<OrcaSession>) -> InternalResult<impl IntoResponse> {
-    println!("Heelo");
     let result = AppService::new(session).list_apps().await?;
     Ok(Json(result))
 }

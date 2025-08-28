@@ -1,4 +1,4 @@
-use thirtyfour::{CapabilitiesHelper, WebDriver as TFWebDriver};
+use thirtyfour::{WebDriver as TFWebDriver};
 
 use crate::error::CeriumResult;
 use thirtyfour::{By, DesiredCapabilities, WebElement};
@@ -32,13 +32,12 @@ impl WebDriver {
     }
     
     pub async fn session_id(&self) -> CeriumResult<String> {
-        Ok(self.driver.session_id().await?.clone().to_string())
+        Ok(self.driver.session_id().to_string())
     }
 
     pub async fn default() -> CeriumResult<Self> {
-        let mut caps = DesiredCapabilities::firefox();
-        caps.add("se:recordVideo", true)?;
-        let driver = TFWebDriver::new("http://localhost:4444/wd/hub/session", caps).await?;
+        let caps = DesiredCapabilities::firefox();
+        let driver = TFWebDriver::new("http://localhost:4444", caps).await?;
         Self::new(driver)
     }
 
@@ -59,7 +58,7 @@ impl WebDriver {
     }
 
     pub async fn find(&self, by: impl Into<By>) -> CeriumResult<WebElement> {
-        Ok(self.driver.find(by).await?)
+        Ok(self.driver.find(by.into()).await?)
     }
 
     /// take_screenshot - will take screenshot and send png back to the requester

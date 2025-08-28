@@ -1,3 +1,8 @@
+use tracing::info;
+
 fn main() {
-    println!("Hello, world!");
+    // Initialize tracing subscriber for logging
+    tracing_subscriber::fmt::init();
+    
+    info!("WebDriver workshop starting...");
 }

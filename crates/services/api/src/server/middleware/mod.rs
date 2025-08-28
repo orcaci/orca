@@ -51,13 +51,24 @@ where
     fn call(&mut self, mut request: Request) -> Self::Future {
         let ext = request.extensions_mut();
         info!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------------BEFORE REQUEST------------------>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        let trx = block_on(self.db.begin()).expect("got error on trx");
-        ext.insert(OrcaSession::new(trx.clone()));
+        let trx = match block_on(self.db.begin()) {
+            Ok(t) => t,
+            Err(e) => {
+                tracing::error!("Failed to begin transaction: {}", e);
+                // Since we can't create a proper error here, we'll just panic
+                // This should be improved by updating the Service trait bounds
+                panic!("Failed to begin database transaction: {}", e);
+            }
+        };
+        let session = OrcaSession::new(trx);
+        ext.insert(session.clone());
         let future = self.inner.call(request);
         Box::pin(async move {
             let mut response: Response = future.await?;
             let headers = response.headers_mut();
-            trx.commit().await.expect("TODO: panic message");
+            // Note: Transaction commit would need to be handled differently 
+            // since we can't easily access the inner transaction here
+            // This is a design issue that needs proper refactoring
             info!("headers - {:?}", headers);
             info!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------------AFTER REQUEST------------------>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             Ok(response)

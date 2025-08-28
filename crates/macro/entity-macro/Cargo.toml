@@ -17,8 +17,8 @@ proc-macro = true
 [dependencies]
 quote = "1"
 proc-macro2 = "1.0"
-syn = "1.0"
+syn = "2.0"
 sea-orm.workspace=true
 sea-query.workspace=true
 
-serde = { version = "1.0.193", features = ["derive"] }
+serde = { version = "1.0.219", features = ["derive"] }

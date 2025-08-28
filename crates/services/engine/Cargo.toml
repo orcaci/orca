@@ -38,5 +38,5 @@ rust-s3.workspace = true
 
 
 thirtyfour.workspace = true
-anyhow = "1.0.79"
-chrono = "0.4.31"
+anyhow = "1.0.99"
+chrono = "0.4.41"

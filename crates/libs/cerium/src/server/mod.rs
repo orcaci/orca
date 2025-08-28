@@ -7,13 +7,12 @@ use tokio::net::TcpListener;
 use tower_http::{
     catch_panic::CatchPanicLayer,
     compression::CompressionLayer,
-    cors::{Any, CorsLayer},
+    cors::{CorsLayer},
 };
 use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
 use tower_http::trace::TraceLayer;
 use tracing::{info, Level};
 use tracing_subscriber::fmt;
-use tracing_subscriber::layer::SubscriberExt;
 
 use crate::client::Client;
 use crate::server::request_id::OrcaRequestId;

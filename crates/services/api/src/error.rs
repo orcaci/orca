@@ -90,11 +90,7 @@ impl IntoResponse for OrcaError {
             OrcaError::SerializerError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
             OrcaError::CeriumError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
             OrcaError::EngineError(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
-            RepoError(err) => (StatusCode::NOT_FOUND, err.to_string()),
-            _ => (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "Internal Error Not Specify".to_string(),
-            ),
+            OrcaError::RepoError(err) => (StatusCode::NOT_FOUND, err.to_string()),
         };
 
         let body = Json(json!({

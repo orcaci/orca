@@ -43,7 +43,7 @@ impl MigrationTrait for Migration {
         };
         let app_g: action_group::Model = action_g_am.insert(db).await?;
 
-        let action_ms = vec![
+        let _action_ms = vec![
             action::ActiveModel {
                 id: Set(Uuid::new_v4()),
                 description: Set(Some("Navigation to URL".to_string())),
@@ -87,7 +87,7 @@ impl MigrationTrait for Migration {
         ];
         // let _action_m: InsertResult<action::ActiveModel> =
         //     action::Entity::insert_many(action_ms).exec(db).await?;
-        /// check assert
+        // check assert
         let assert_g_am = action_group::ActiveModel {
             id: Set(Uuid::new_v4()),
             name: Set("Wikipedia Assert".to_string()),
@@ -129,7 +129,7 @@ impl MigrationTrait for Migration {
         let uuid2 =  Uuid::new_v4();
         let uuid3 =  Uuid::new_v4();
 
-        let case_blocks = vec![
+        let _case_blocks = vec![
             case_block::ActiveModel {
                 id: Set(Uuid::new_v4()),
                 execution_order: Set(1),
@@ -213,7 +213,7 @@ impl MigrationTrait for Migration {
         Ok(())
     }
 
-    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+    async fn down(&self, _manager: &SchemaManager) -> Result<(), DbErr> {
         Ok(())
     }
 }
